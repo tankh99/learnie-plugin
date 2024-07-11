@@ -1,0 +1,3 @@
+- [ ] Command: Convert to note
+    - [ ] Adds an ID to the note and starts tracking version history for this particular note
+- [ ] 

@@ -1,4 +1,6 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { createNewFile } from 'utils/file';
+import { convertToNote, handleNoteChange } from "utils/note";
 
 // Remember to rename these classes and interfaces!
 
@@ -16,6 +18,15 @@ export default class MyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
+		this.addCommand({
+			id: "add-question",
+			name: "Add a question",
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				const selectedText = editor.getSelection();
+				console.log(selectedText);
+				editor.getCursor();
+			}
+		})
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
@@ -65,6 +76,28 @@ export default class MyPlugin extends Plugin {
 			}
 		});
 
+		this.addCommand({
+			id: "create-file",
+			name: "Create a new file",
+			callback: () => {
+				createNewFile(this.app.vault)
+			}
+		})
+
+		this.addCommand({
+			id: "convert-to-note",
+			name: "Convert to note",
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				const file = view.file;
+				if (!file) return new Notice("No file selected")
+				// TODO: Check that the file is NOT already
+				// 1. a note
+				// 2. a file in the history folder
+				convertToNote(this.app.vault, file)
+			}
+		
+		})
+
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SampleSettingTab(this.app, this));
 
@@ -76,6 +109,10 @@ export default class MyPlugin extends Plugin {
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+
+		this.registerEvent(this.app.vault.on("modify", () => {
+			handleNoteChange(this.app.vault, this.app.workspace.getActiveFile())
+		}))
 	}
 
 	onunload() {
@@ -130,5 +167,9 @@ class SampleSettingTab extends PluginSettingTab {
 					this.plugin.settings.mySetting = value;
 					await this.plugin.saveSettings();
 				}));
+
+		new Setting(containerEl)
+				.setName("Test")
+				.setDesc("Test only")
 	}
 }
