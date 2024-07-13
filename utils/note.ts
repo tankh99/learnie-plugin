@@ -53,6 +53,14 @@ export async function readNoteId(vault: Vault, file: TFile) {
     return null;
 }
 
+export function extractContentFromNote(content: string) {
+    const lines = content.split("\n");
+    // Skip the first 3 lines, which is usually the id line
+    // TODO: Check if any line breaks will fuck this up
+    const contentLines = lines.slice(3, lines.length);
+    return contentLines.join("\n");
+}
+
 export async function addUniqueIdToNote(vault: Vault, file: TFile) {
     const content = await vault.read(file);
     
