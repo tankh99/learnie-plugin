@@ -1,0 +1,7 @@
+.diff-insert {
+    color: rgb(0, 190, 0);
+}
+
+.diff-delete {
+    color: red;
+}

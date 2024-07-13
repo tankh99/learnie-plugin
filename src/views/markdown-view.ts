@@ -1,5 +1,4 @@
 import { App, Component, MarkdownRenderChild, MarkdownRenderer, TFile } from "obsidian";
-import { formatDiffContent } from "src/utils/diff-utils";
 import { extractContentFromNote } from "src/utils/note";
 
 export class DiffMarkdownView extends MarkdownRenderChild {

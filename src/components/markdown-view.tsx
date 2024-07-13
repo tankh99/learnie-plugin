@@ -1,7 +1,11 @@
 import React, { StrictMode, useEffect, useRef } from "react"
 import {App, Component, ItemView, MarkdownRenderer, Notice, WorkspaceLeaf} from 'obsidian';
 import { createRoot, Root } from "react-dom/client";
-import { convertPathToObsidianLink } from "utils/md-utils";
+import { convertPathToObsidianLink } from "../utils/md-utils";
+import { getLatestNoteRevision } from "src/utils/noteRevisions";
+import * as diff from 'diff';
+import { readNoteId } from "src/utils/note";
+import { ensureNewline, formatDiffContent } from "src/utils/diff-utils";
 
 type P = {
     app: App,
@@ -10,7 +14,7 @@ type P = {
     component: Component,
 }
 
-export const ReactView = ({app, markdown, srcPath, component}: P) => {
+export const ReactMarkdownView = ({app, markdown, srcPath, component}: P) => {
     const markdownRef = useRef<HTMLDivElement | null>(null);
     
     useEffect(() => {
@@ -25,19 +29,23 @@ export const ReactView = ({app, markdown, srcPath, component}: P) => {
         }
     }, [markdown])
 
-    const handleLinkClick = (event: any) => {
+    // Overrides default link behavior with Obsidian's linking logic instead
+    const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         const target = event.target;
-        if (target.tagName === "A" && target.dataset.href) {
-            event.preventDefault();
-            const href = target.getAttribute("href");
-            app.workspace.openLinkText(href, srcPath);
-        }
+        // if (target.tagName === "A" && target.dataset.href) {
+        //     event.preventDefault();
+        //     const href = target.getAttribute("href");
+        //     app.workspace.openLinkText(href, srcPath);
+        // }
     }
 
 	return (
-        <div>
+        <div style={{userSelect: "text"}}>
             <div ref={markdownRef}></div>
+            {/* <Markdown>{markdown}</Markdown> */}
             <a href={srcPath}>Original File</a>
+            <div className="learnie-container">Testing BOY</div>
+            <a href="obsidian://open?vault=dev-vault&file=create%20a%20link">Open Vault Link</a>
         </div>
     )
 }
@@ -69,12 +77,31 @@ export class ExampleView extends ItemView {
             return;
         }
 
-        const content = await this.app.vault.read(file);
+        const noteId = await readNoteId (this.app.vault, file);
+        if (!noteId)  {
+            new Notice("No note ID found in note");
+            return;
+        }
+        const revisionFile = await getLatestNoteRevision(this.app.vault, noteId);
+        if (!revisionFile) {
+            new Notice("No revision found. Is this a note?");
+            return;
+        }
+
+        let content = await this.app.vault.read(file);
+        content = ensureNewline(content)
+        let oldContent = await this.app.vault.read(revisionFile);
+        oldContent = ensureNewline(oldContent)
+
+        let diffContent = diff.createPatch(file.path, oldContent, content);
+        // diffContent = content
+        console.log(diffContent)
+        diffContent = formatDiffContent(this.app, diffContent);
         // console.log(content);
-        const srcPath = convertPathToObsidianLink(file.path);
+        const srcPath = convertPathToObsidianLink(this.app, file.path);
         this.root.render(
             <StrictMode>
-                <ReactView app={this.app} srcPath={srcPath} component={this} markdown={content} />
+                <ReactMarkdownView app={this.app} srcPath={srcPath} component={this} markdown={diffContent} />
             </StrictMode>
         );
 

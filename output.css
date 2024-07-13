@@ -1,4 +1,4 @@
-export const tailwindCss = `/*
+/*
 ! tailwindcss v3.4.4 | MIT License | https://tailwindcss.com
 */
 
@@ -516,4 +516,4 @@ export const tailwindCss = `/*
     --tw-contain-paint:  ;
     --tw-contain-style:  ;
   }
-}`;
+}

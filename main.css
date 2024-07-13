@@ -1,0 +1,8 @@
+/* styles.css */
+.diff-insert {
+  color: rgb(0, 190, 0);
+}
+.diff-delete {
+  color: red;
+}
+/*# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsic3R5bGVzLmNzcyJdLAogICJzb3VyY2VzQ29udGVudCI6IFsiLmRpZmYtaW5zZXJ0IHtcbiAgICBjb2xvcjogcmdiKDAsIDE5MCwgMCk7XG59XG5cbi5kaWZmLWRlbGV0ZSB7XG4gICAgY29sb3I6IHJlZDtcbn0iXSwKICAibWFwcGluZ3MiOiAiO0FBQUE7QUFDSTtBQUFBO0FBR0o7QUFDSTtBQUFBOyIsCiAgIm5hbWVzIjogW10KfQo= */
