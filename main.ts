@@ -3,7 +3,6 @@ import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, T
 import { convertToNote, handleNoteChange } from "src/utils/note";
 import { ChangedNotesView, VIEW_TYPE } from 'src/views/changed-notes-view';
 
-import {tailwindCss} from './styles';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -88,9 +87,10 @@ export default class MyPlugin extends Plugin {
 
 	loadStyles() {
 		const style = document.createElement("style")
+
 		style.id = "learnie-tailwind"
-		console.log(tailwindCss)
-		style.textContent = tailwindCss
+		// console.log(tailwindCss)
+		// style.textContent = tailwindCss
 		document.head.appendChild(style);
 	}
 
