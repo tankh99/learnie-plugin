@@ -73,12 +73,14 @@ export default class MyPlugin extends Plugin {
 				const leaf = this.app.workspace.getLeaf(true);
 				await leaf.setViewState({ type: EXAMPLE_VIEW_TYPE, active: true });
 				this.app.workspace.setActiveLeaf(leaf);
-				// const file = this.app.workspace.getActiveFile();
-				// if (!file) return new Notice("No file selected");
-				// const mdContent = await this.app.vault.read(file);
-				// console.log(mdContent);
-				// const modal = new DiffModal(this.app, mdContent, file.path, this)
-				// modal.open()
+			}
+		})
+
+		this.addCommand({
+			id: "test",
+			name: "test",
+			callback: async () => {
+				await handleNoteChange(this.app.vault, this.app.workspace.getActiveFile())
 			}
 		})
 

@@ -21,3 +21,13 @@ export async function createNewFile(vault: Vault, filename: string, content: str
     }
 
 }
+
+export async function deleteFile(vault: Vault, file: TFile) {
+    try {
+        await vault.delete(file)
+        new Notice(`File deleted: ${file.name}`)
+    } catch (err) {
+        console.error(err);
+        new Notice(`Error deleting file: ${err}`)
+    }
+}

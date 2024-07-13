@@ -1,9 +1,21 @@
 import { Notice, Vault } from "obsidian";
-import { BASE_FOLDER_PATH } from "./file";
+import { BASE_FOLDER_PATH, createNewFile } from "./file";
+
+export async function createNoteRevision(vault: Vault, noteId: string, originalContent: string) {
+    const noteRevisionName = generateNoteRevisionName(noteId)
+    await createNewFile(vault, noteRevisionName, originalContent);
+}
 
 export function getNoteRevisionFileName(noteId: string) {
     const date = new Date().toISOString().split("T")[0];
     return `${noteId}_${date}.md`;
+}
+
+export function getNoteRevisionDate(name: string) {
+    // Separate the ID, and the .md extension
+    const dateStr = name.split("_")[1].split(".")[0]
+    console.log(dateStr);
+    return new Date(dateStr);
 }
 
 export async function getLatestNoteRevision(vault: Vault, noteId: string) {
@@ -27,6 +39,9 @@ export async function getLatestNoteRevision(vault: Vault, noteId: string) {
     })
 
     return latestNoteRevision;
+}
+export function generateNoteRevisionName(id: string) {
+    return `${id}_${new Date().toISOString().split('T')[0]}`;
 }
 
 // export async function showNoteDiff(vault: Vault, filePath: string) {

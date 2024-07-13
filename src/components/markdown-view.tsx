@@ -43,9 +43,12 @@ export const ReactMarkdownView = ({app, markdown, srcPath, component}: P) => {
         <div style={{userSelect: "text"}}>
             <div ref={markdownRef}></div>
             {/* <Markdown>{markdown}</Markdown> */}
-            <a href={srcPath}>Original File</a>
-            <div className="learnie-container">Testing BOY</div>
-            <a href="obsidian://open?vault=dev-vault&file=create%20a%20link">Open Vault Link</a>
+            <div>
+                <a href={srcPath}>Original File</a>
+                <div style={{display: "flex", alignItems: "center",}}>
+                    <input id="learnie-reviewed" type="checkbox"/> <p style={{paddingLeft: "2px"}}>Reviewed</p>
+                </div>
+            </div>
         </div>
     )
 }
@@ -95,7 +98,6 @@ export class ExampleView extends ItemView {
 
         let diffContent = diff.createPatch(file.path, oldContent, content);
         // diffContent = content
-        console.log(diffContent)
         diffContent = formatDiffContent(this.app, diffContent);
         // console.log(content);
         const srcPath = convertPathToObsidianLink(this.app, file.path);

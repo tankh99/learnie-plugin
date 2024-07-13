@@ -1,25 +1,63 @@
 import { Vault, TFile, Notice } from "obsidian";
 import {v4 as uuidv4} from 'uuid'
-import { createNewFile } from "./file";
+import { createNewFile, deleteFile } from "./file";
+import { createNoteRevision, generateNoteRevisionName, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
+import { endOfDay, isAfter, isBefore } from "date-fns";
 
-const marker = "---"
+export const idMarker = "---"
 
 export async function handleNoteChange(vault: Vault, file: TFile | null) {
     if (!file) return;
     const isNote = await checkIfNote(vault, file);
-    console.log("isnote", isNote);
+
+    const noteId = await readNoteId(vault, file);
+    if (!noteId) {
+        new Notice("No id found in note")
+        return;
+    }
+    const latestNoteRevision = await getLatestNoteRevision(vault, noteId);
+    if (!latestNoteRevision) {
+        new Notice("No latest note revision found")
+        return;
+    }
+
+    const revisionContent = await vault.read(latestNoteRevision);
+    const domParser = new DOMParser();
+
+    const revisionDoc = domParser.parseFromString(revisionContent, "text/html");
+    const reviewed = await checkIfReviewed(revisionDoc)
+    if (reviewed) {
+        new Notice("Note is reviewed")
+    }
+    const noteRevisionDate = getNoteRevisionDate(latestNoteRevision.name);
+    const today = endOfDay(new Date());
+    if (isBefore(noteRevisionDate, today)) {
+        new Notice("Creating a new note revision")
+        const originalContent = await vault.read(file);
+        await createNoteRevision(vault, noteId, originalContent);
+        // Delete the old one, we no longer need it.
+        await deleteFile(vault, latestNoteRevision);
+    }
+    // console.log(reviewed);
+}
+
+export async function checkIfReviewed(document: Document) {
+    const checkbox = document.getElementById("learnie-reviewed")
+    if (!checkbox) {
+        console.error("No checkbox found")
+        return true;
+    }
+
+    const checked = (checkbox as HTMLInputElement).checked;
+    return checked
+
 
 }
 
 export async function checkIfNote(vault: Vault, file: TFile) {
     const content = await vault.read(file);
-    const marker = "---"
-    return content.startsWith(marker);
+    return content.startsWith(idMarker);
 
-}
-
-export function generateNoteRevisionName(id: string) {
-    return `${id}_${new Date().toISOString().split('T')[0]}`;
 }
 
 // Converts a non-note file into a note. 
@@ -34,16 +72,15 @@ export async function convertToNote(vault: Vault, file: TFile) {
     /** TODO: Create note history file if 
      * - not exists yet
      **/
-    const originalContent = await vault.read(file);
-    const noteRevisionName = generateNoteRevisionName(id)
-    await createNewFile(vault, noteRevisionName, originalContent);
+    const content = await vault.read(file);
+    await createNoteRevision(vault, id, content);
 
     // TODO: Track changes
 }
 
 export async function readNoteId(vault: Vault, file: TFile) {
     const content = await vault.read(file);
-    if (content.startsWith(marker)) {
+    if (content.startsWith(idMarker)) {
         const lines = content.split("\n");
         const idLine = lines.find(line => line.trim().includes("id:"))
         if (idLine) {
@@ -65,25 +102,11 @@ export async function addUniqueIdToNote(vault: Vault, file: TFile) {
     const content = await vault.read(file);
     
     const id = uuidv4();
-    if (!content.startsWith(marker)) {
-        const newContent = `${marker}\n id:${id}\n${marker}\n${content}`
+    if (!content.startsWith(idMarker)) {
+        const newContent = `${idMarker}\n id:${id}\n${idMarker}\n${content}`
         await vault.modify(file, newContent);
         return id
     } else {
         return null
     }
-}
-
-export async function createNewNoteRevision(vault: Vault, file: TFile) {
-    const content = await vault.read(file);
-    const id = await readNoteId(vault, file);
-    if (!id) {
-        new Notice("No id found in note")
-        return;
-    }
-
-    const newContent = `${marker}\n id:${id}\n${marker}\n${content}`
-
-    await vault.modify(file, newContent);
-    new Notice("Note revision created")
 }
