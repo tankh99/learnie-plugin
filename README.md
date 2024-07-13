@@ -1,3 +1,13 @@
+
+## Adding tailwind
+1. Install the necessary packages
+2. `npx tailwindcss init`
+3. Create a css file with the standard tailwind imports
+4. `npx tailwindcss -i path/to/globals.css -o ./output.css`
+5. Copy the output.css into a string and put it into a variable called tailwindCss in a file named `styles.ts`
+6. Export the style string and put it inside a style tag which will be appended on plugin load
+
+
 # Obsidian Sample Plugin
 
 This is a sample plugin for Obsidian (https://obsidian.md).

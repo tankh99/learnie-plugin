@@ -3,7 +3,7 @@ import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, T
 import { convertToNote, handleNoteChange } from "src/utils/note";
 import { ChangedNotesView, VIEW_TYPE } from 'src/views/changed-notes-view';
 
-// Remember to rename these classes and interfaces!
+import {tailwindCss} from './styles';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -82,6 +82,16 @@ export default class MyPlugin extends Plugin {
 				// modal.open()
 			}
 		})
+
+		this.loadStyles()
+	}
+
+	loadStyles() {
+		const style = document.createElement("style")
+		style.id = "learnie-tailwind"
+		console.log(tailwindCss)
+		style.textContent = tailwindCss
+		document.head.appendChild(style);
 	}
 
 	// async showMarkdownView() {
@@ -108,7 +118,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	onunload() {
-
+		document.getElementById("learnie-tailwind")?.remove()
 	}
 
 	async loadSettings() {
