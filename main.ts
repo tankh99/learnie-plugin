@@ -1,7 +1,7 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { convertToNote, handleNoteChange } from "utils/note";
-import { getLatestNoteRevision } from 'utils/noteRevisions';
-import { ChangedNotesView, VIEW_TYPE } from 'views/changed-notes-view';
+import { EXAMPLE_VIEW_TYPE, ExampleView } from './src/components/markdown-view';
+import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
+import { convertToNote, handleNoteChange } from "src/utils/note";
+import { ChangedNotesView, VIEW_TYPE } from 'src/views/changed-notes-view';
 
 // Remember to rename these classes and interfaces!
 
@@ -57,7 +57,54 @@ export default class MyPlugin extends Plugin {
 		this.registerView(
 			VIEW_TYPE,
 			(leaf) => new ChangedNotesView(leaf, this.app)
+		);
+
+		this.registerView(
+			EXAMPLE_VIEW_TYPE,
+			(leaf) => {
+				return new ExampleView(leaf, this.app)
+			}
 		)
+
+		this.addCommand({
+			id: "show-markdown",
+			name: "Show Markdown",
+			callback: async () => {
+				// this.showMarkdownView();
+				const leaf = this.app.workspace.getLeaf(true);
+				await leaf.setViewState({ type: EXAMPLE_VIEW_TYPE, active: true });
+				this.app.workspace.setActiveLeaf(leaf);
+				// const file = this.app.workspace.getActiveFile();
+				// if (!file) return new Notice("No file selected");
+				// const mdContent = await this.app.vault.read(file);
+				// console.log(mdContent);
+				// const modal = new DiffModal(this.app, mdContent, file.path, this)
+				// modal.open()
+			}
+		})
+	}
+
+	// async showMarkdownView() {
+	// 	const containerEl = this.addRootElement();
+	// 	const file = this.app.workspace.getActiveFile();
+	// 	if (!file) return;
+
+	// 	const content = await this.app.vault.read(file);
+	// 	const mdView = new DiffMarkdownView(containerEl, content, this.app, file.path, this);
+	// 	this.registerView("md-view", mdView);
+	// }
+
+
+	addRootElement() {
+		const rootEl = document.body.createDiv();
+		rootEl.style.position = 'fixed';
+		rootEl.style.top = '50%';
+		rootEl.style.left = '50%';
+		rootEl.style.transform = 'translate(-50%, -50%)';
+		rootEl.style.backgroundColor = 'white';
+		rootEl.style.padding = '1rem';
+		rootEl.style.zIndex = '1000';
+		return rootEl;
 	}
 
 	onunload() {
@@ -79,21 +126,7 @@ export default class MyPlugin extends Plugin {
 	}
 }
 
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
 
-	onOpen() {
-		const {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
-
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
-	}
-}
 
 class SampleSettingTab extends PluginSettingTab {
 	plugin: MyPlugin;

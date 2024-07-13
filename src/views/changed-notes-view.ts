@@ -1,10 +1,10 @@
 import { differenceInDays, startOfDay } from "date-fns";
 import { App, ItemView, Notice, TFile, WorkspaceLeaf } from "obsidian";
-import { BASE_FOLDER_PATH } from "utils/file";
-import { DiffModal } from "./diff-modal";
+import { BASE_FOLDER_PATH } from "src/utils/file";
+import { DiffModal } from "../modals/diff-modal";
 import * as diff from 'diff';
-import { readNoteId } from "utils/note";
-import { getLatestNoteRevision } from "utils/noteRevisions";
+import { readNoteId } from "src/utils/note";
+import { getLatestNoteRevision } from "src/utils/noteRevisions";
 
 export const VIEW_TYPE = "changed-notes-view"
 
@@ -71,12 +71,10 @@ export class ChangedNotesView extends ItemView {
       return;
     }
 
-    
     const historyContent = await this.appInstance.vault.read(latestNoteRevision);
 
     const diffResult = diff.createPatch(file.path, historyContent, currentContent);
-    console.log("diff result", diffResult);
-    const diffModal = new DiffModal(this.appInstance, diffResult);
+    const diffModal = new DiffModal(this.appInstance, diffResult, file.path, this);
     diffModal.open();
   }
 
