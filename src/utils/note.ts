@@ -73,7 +73,11 @@ export async function convertToNote(vault: Vault, file: TFile) {
     }
     const link = noteRevision.path
 
-    await addMetadataToNote(vault, file, noteId, link);
+    const metadata: NoteMetadata = {
+        id: noteId,
+        link: formatRelativeLink(link, "View Revision")
+    }
+    await addMetadataToNote(vault, file, metadata);
 }
 
 export async function readNoteId(vault: Vault, file: TFile) {
@@ -91,17 +95,17 @@ export function extractContentFromNote(content: string) {
     return contentLines.join("\n");
 }
 
-export async function addMetadataToNote(vault: Vault, file: TFile, noteId: string, noteRevisionPath?: string) {
+export async function addMetadataToNote(vault: Vault, file: TFile, metadata: NoteMetadata) {
 
     // const link = 
     
-    const metadata: NoteMetadata = {
-        id: noteId,
-    }
-    if (noteRevisionPath) {
-        const formattedLink = formatRelativeLink(noteRevisionPath, "View Revision")
-        metadata.link = formattedLink
-    }
+    // const metadata: NoteMetadata = {
+    //     id: noteId,
+    // }
+    // if (noteRevisionPath) {
+    //     const formattedLink = formatRelativeLink(noteRevisionPath, "View Revision")
+    //     metadata.link = formattedLink
+    // }
 
     modifyFrontmatter(file, metadata)
 }
