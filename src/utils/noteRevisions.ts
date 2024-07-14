@@ -1,10 +1,14 @@
 import { Notice, Vault } from "obsidian";
-import { BASE_FOLDER_PATH, createNewFile, modifyFile } from "./file";
+import { BASE_FOLDER_PATH, createNewFile, modifyFile, readContentWithoutFrontmatter, readFileContent } from "./file";
 import { addMetadataToNote } from "./note";
+import {toZonedTime} from 'date-fns-tz';
+import { getDatePart } from "./date";
 
 export async function createNoteRevision(vault: Vault, noteId: string, originalContent: string, isNew = true) {
     const noteRevisionName = generateNoteRevisionName(noteId)
-    const createdFile = await createNewFile(vault, noteRevisionName, originalContent);
+    const originalContentWithoutFrontmatter = readContentWithoutFrontmatter(originalContent);
+    const createdFile = await createNewFile(vault, noteRevisionName, originalContentWithoutFrontmatter);
+
     if (!createdFile) {
         console.error(`Error creating file ${noteRevisionName}`)
         return;
@@ -18,8 +22,8 @@ export async function createNoteRevision(vault: Vault, noteId: string, originalC
 }
 
 export function getNoteRevisionFileName(noteId: string) {
-    const date = new Date().toISOString().split("T")[0];
-    return `${noteId}_${date}.md`;
+    const datePart = getDatePart(new Date())
+    return `${noteId}_${datePart}.md`;
 }
 
 export function getNoteRevisionDate(name: string) {
@@ -52,7 +56,8 @@ export async function getLatestNoteRevision(vault: Vault, noteId: string) {
     return latestNoteRevision;
 }
 export function generateNoteRevisionName(id: string) {
-    return `${id}_${new Date().toISOString().split('T')[0]}`;
+    const datePart = getDatePart(new Date());
+    return `${id}_${datePart}`;
 }
 
 // export async function showNoteDiff(vault: Vault, filePath: string) {

@@ -46,34 +46,45 @@ export async function deleteFile(vault: Vault, file: TFile) {
 
 const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
 
-export async function readFrontmatter(file: TFile): Promise<Record<string, any>> {
-    const fileContent = await this.app.vault.read(file);
+export function readFrontmatter(fileContent: string): Record<string, any> {
+    const match = fileContent.match(frontmatterRegex);
+    if (match) {
+        const frontmatter = parse(match[1])
+        return frontmatter
+    }
+    return {}
+}
 
+export function readContentWithoutFrontmatter(fileContent: string) {
     const match = fileContent.match(frontmatterRegex);
 
     if (match) {
-        return parse(match[1]);
+        return fileContent.replace(frontmatterRegex, '').trim();
     }
 
-    return {};
+    return fileContent;
 
+} 
+
+type FileContent = {
+    frontmatter: Record<string, any>;
+    content: string;
 }
 
-export async function modifyFrontmatter(file: TFile, newFrontmatter: Record<string, any>) {
+export async function readFileContent(file: TFile): Promise<FileContent> {
     const fileContent = await this.app.vault.read(file);
+    const frontmatter = readFrontmatter(fileContent);
+    const content = readContentWithoutFrontmatter(fileContent);
 
-    // Extract the existing frontmatter
-    let existingFrontmatter = {};
-    let contentWithoutFrontmatter = fileContent;
+    return { frontmatter, content, };
+}
 
-    existingFrontmatter = await readFrontmatter(file)
-    existingFrontmatter
-    if (existingFrontmatter) {
-        contentWithoutFrontmatter = fileContent.replace(frontmatterRegex, '').trim();
-    }
+
+export async function modifyFrontmatter(file: TFile, newFrontmatter: Record<string, any>) {
+    const { frontmatter: existingFrontmatter, content: contentWithoutFrontmatter } = await readFileContent(file);
 
     // Merge the existing frontmatter with the new frontmatter
-    
+
     const updatedFrontmatter = {
         ...existingFrontmatter,
         ...newFrontmatter

@@ -71,12 +71,13 @@ export async function convertToNote(vault: Vault, file: TFile) {
         return;
     }
     const link = noteRevision.path
-    console.log("link", link)
+
     await addMetadataToNote(vault, file, noteId, link);
 }
 
 export async function readNoteId(vault: Vault, file: TFile) {
-    const frontmatter = await readFrontmatter(file);
+    const fileContent = await vault.read(file)
+    const frontmatter = readFrontmatter(fileContent);
 
     return frontmatter["id"];
 }
