@@ -11,13 +11,24 @@ export async function createNewFile(vault: Vault, filename: string, content: str
         vault.createFolder(folderPath)
     }
 
-    let file: TFile;
+    let file: TFile | null = null;
     try {
         file = await vault.create(filePath, content)
         new Notice(`File created: ${file.name}`)
     } catch (err) {
         console.error(err);
         new Notice(`Error creating file: ${err}`)
+        
+    }
+    return file;
+}
+
+export async function modifyFile(vault: Vault, file: TFile, content: string) {
+    try {
+        await vault.modify(file, content)
+        console.info(`File modified: ${file.name}`)
+    } catch (err) {
+        console.error(err);
     }
 
 }

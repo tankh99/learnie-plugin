@@ -33,6 +33,8 @@ export class ChangedNotesView extends ItemView {
         const files = this.appInstance.vault.getFiles().filter(file => !file.path.startsWith(BASE_FOLDER_PATH));
         
         for (const file of files) {
+            const noteId = await readNoteId(this.app.vault, file);
+            if (!noteId) continue;
             const fileStats = await this.appInstance.vault.adapter.stat(file.path);
             const lastModified = fileStats!.mtime;
 

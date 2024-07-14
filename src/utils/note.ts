@@ -1,14 +1,13 @@
 import { Vault, TFile, Notice } from "obsidian";
 import {v4 as uuidv4} from 'uuid'
-import { createNewFile, deleteFile } from "./file";
+import { createNewFile, deleteFile, modifyFile } from "./file";
 import { createNoteRevision, generateNoteRevisionName, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
-import { endOfDay, isAfter, isBefore } from "date-fns";
+import { endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
 
 export const idMarker = "---"
 
 export async function handleNoteChange(vault: Vault, file: TFile | null) {
     if (!file) return;
-    const isNote = await checkIfNote(vault, file);
 
     const noteId = await readNoteId(vault, file);
     if (!noteId) {
@@ -17,7 +16,8 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
     }
     const latestNoteRevision = await getLatestNoteRevision(vault, noteId);
     if (!latestNoteRevision) {
-        new Notice("No latest note revision found")
+        new Notice("Creating a new note revision")
+        await createNoteRevision(vault, noteId, "", true);
         return;
     }
 
@@ -30,11 +30,11 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
         new Notice("Note is reviewed")
     }
     const noteRevisionDate = getNoteRevisionDate(latestNoteRevision.name);
-    const today = endOfDay(new Date());
+    const today = startOfDay(new Date());
     if (isBefore(noteRevisionDate, today)) {
         new Notice("Creating a new note revision")
         const originalContent = await vault.read(file);
-        await createNoteRevision(vault, noteId, originalContent);
+        await createNoteRevision(vault, noteId, originalContent, true);
         // Delete the old one, we no longer need it.
         await deleteFile(vault, latestNoteRevision);
     }
@@ -53,17 +53,11 @@ export async function checkIfReviewed(document: Document) {
 
 
 }
-
-export async function checkIfNote(vault: Vault, file: TFile) {
-    const content = await vault.read(file);
-    return content.startsWith(idMarker);
-
-}
-
 // Converts a non-note file into a note. 
 // For pre-existing notes it shouldn't do anything
 export async function convertToNote(vault: Vault, file: TFile) {
-    const id = await addUniqueIdToNote(vault, file);
+    const noteId = uuidv4()
+    const id = await addIdToNote(vault, file, noteId);
     if (!id) {
         new Notice("File is already a note!")
         return;
@@ -98,14 +92,14 @@ export function extractContentFromNote(content: string) {
     return contentLines.join("\n");
 }
 
-export async function addUniqueIdToNote(vault: Vault, file: TFile) {
+export async function addIdToNote(vault: Vault, file: TFile, noteId: string) {
     const content = await vault.read(file);
     
-    const id = uuidv4();
     if (!content.startsWith(idMarker)) {
-        const newContent = `${idMarker}\n id:${id}\n${idMarker}\n${content}`
-        await vault.modify(file, newContent);
-        return id
+        const newContent = `${idMarker}\n id:${noteId}\n${idMarker}\n${content}`
+        // await vault.modify(file, newContent);
+        modifyFile(vault, file, newContent)
+        return noteId
     } else {
         return null
     }
