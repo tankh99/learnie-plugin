@@ -1,27 +1,30 @@
 import React, { StrictMode, useEffect, useRef } from "react"
-import {App, Component, ItemView, MarkdownRenderer, Notice, WorkspaceLeaf} from 'obsidian';
+import { App, Component, ItemView, MarkdownRenderer, Notice, TFile, WorkspaceLeaf } from 'obsidian';
 import { createRoot, Root } from "react-dom/client";
 import { convertPathToObsidianLink } from "src/utils/obsidian-utils";
 import { getLatestNoteRevision } from "src/utils/noteRevisions";
 import * as diff from 'diff';
 import { readNoteId } from "src/utils/note";
 import { ensureNewline, formatDiffContent } from "src/utils/diff-utils";
+import { modifyFrontmatter, readFrontmatter } from "src/utils/file";
 
 type P = {
     app: App,
     markdown: string;
     srcPath: string;
     component: Component,
+    revisionFile: TFile;
+    revisionFrontmatter: Record<string, any>;
 }
 
-export const ReactMarkdownView = ({app, markdown, srcPath, component}: P) => {
+export const ReactMarkdownView = ({ app, markdown, srcPath, component, revisionFile, revisionFrontmatter }: P) => {
     const markdownRef = useRef<HTMLDivElement | null>(null);
-    
+
     useEffect(() => {
         if (markdownRef.current) {
             MarkdownRenderer.render(app, markdown, markdownRef.current, srcPath, component)
 
-            markdownRef.current.addEventListener("click", handleLinkClick)
+            // markdownRef.current.addEventListener("click", handleLinkClick)
         }
 
         return () => {
@@ -40,22 +43,27 @@ export const ReactMarkdownView = ({app, markdown, srcPath, component}: P) => {
     }
 
     const handleReviewed = (event: any) => {
-        console.log(event.target.checked)
+        const target = event.target;
+        const newFrontmatter = {
+            ...revisionFrontmatter,
+            reviewed: target.checked
+        }
+        modifyFrontmatter(revisionFile, newFrontmatter)
     }
 
-	return (
-        <div style={{userSelect: "text"}}>
+    return (
+        <div style={{ userSelect: "text" }}>
             <div ref={markdownRef}></div>
             {/* <Markdown>{markdown}</Markdown> */}
             <div>
                 <a href={srcPath}>Original File</a>
-                <div style={{display: "flex", alignItems: "center",}}>
+                <div style={{ display: "flex", alignItems: "center", }}>
                     <input id="learnie-reviewed"
                         onChange={handleReviewed}
-                        type="checkbox"/> 
-                        <p style={{paddingLeft: "2px"}}>
-                            Reviewed
-                        </p>
+                        type="checkbox" />
+                    <p style={{ paddingLeft: "2px" }}>
+                        Reviewed
+                    </p>
                 </div>
             </div>
         </div>
@@ -89,8 +97,8 @@ export class ExampleView extends ItemView {
             return;
         }
 
-        const noteId = await readNoteId (this.app.vault, file);
-        if (!noteId)  {
+        const noteId = await readNoteId(this.app.vault, file);
+        if (!noteId) {
             new Notice("No note ID found in note");
             return;
         }
@@ -110,9 +118,17 @@ export class ExampleView extends ItemView {
         diffContent = formatDiffContent(this.app, diffContent);
         // console.log(content);
         const srcPath = convertPathToObsidianLink(this.app, file.path);
+
+        const noteRevisionFrontmatter = readFrontmatter(oldContent)
         this.root.render(
             <StrictMode>
-                <ReactMarkdownView app={this.app} srcPath={srcPath} component={this} markdown={diffContent} />
+                <ReactMarkdownView
+                    app={this.app}
+                    srcPath={srcPath} 
+                    component={this} 
+                    markdown={diffContent}
+                    revisionFile={revisionFile}
+                    revisionFrontmatter={noteRevisionFrontmatter} />
             </StrictMode>
         );
 

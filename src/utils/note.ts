@@ -17,7 +17,7 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
 
     const isNoteRevision = await checkIfNoteRevision(file);
     if (isNoteRevision) return;
-    
+
     const latestNoteRevision = await getLatestNoteRevision(vault, noteId);
     if (!latestNoteRevision) {
         new Notice("Creating a new note revision")
@@ -26,10 +26,7 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
     }
 
     const revisionContent = await vault.read(latestNoteRevision);
-    const domParser = new DOMParser();
-
-    const revisionDoc = domParser.parseFromString(revisionContent, "text/html");
-    const reviewed = await checkIfReviewed(revisionDoc)
+    const reviewed = await checkIfReviewed(revisionContent)
     if (reviewed) {
         new Notice("Note is reviewed")
     }
@@ -45,17 +42,12 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
     // console.log(reviewed);
 }
 
-export async function checkIfReviewed(document: Document) {
-    const checkbox = document.getElementById("learnie-reviewed")
-    if (!checkbox) {
-        console.error("No checkbox found")
-        return true;
-    }
 
-    const checked = (checkbox as HTMLInputElement).checked;
-    return checked
+// Checks a note's frontmatter to see if it has been reviewed already or not
+export async function checkIfReviewed(content: string) {
+    const frontmatter = readFrontmatter(content);
 
-
+    return frontmatter["reviewed"] ?? false
 }
 // Converts a non-note file into a note. 
 // For pre-existing notes it shouldn't do anything
