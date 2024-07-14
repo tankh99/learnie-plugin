@@ -1,6 +1,7 @@
+import { FrontmatterContent } from './../../node_modules/@types/mdast/index.d';
 import { Vault, TFile, Notice } from "obsidian";
 import {v4 as uuidv4} from 'uuid'
-import { createNewFile, deleteFile, modifyFile } from "./file";
+import { createNewFile, deleteFile, modifyFile, modifyFrontmatter, readFrontmatter } from "./file";
 import { createNoteRevision, generateNoteRevisionName, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
 import { endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
 
@@ -58,10 +59,6 @@ export async function checkIfReviewed(document: Document) {
 export async function convertToNote(vault: Vault, file: TFile) {
     const noteId = uuidv4()
     const id = await addIdToNote(vault, file, noteId);
-    if (!id) {
-        new Notice("File is already a note!")
-        return;
-    }
 
     /** TODO: Create note history file if 
      * - not exists yet
@@ -73,15 +70,9 @@ export async function convertToNote(vault: Vault, file: TFile) {
 }
 
 export async function readNoteId(vault: Vault, file: TFile) {
-    const content = await vault.read(file);
-    if (content.startsWith(idMarker)) {
-        const lines = content.split("\n");
-        const idLine = lines.find(line => line.trim().includes("id:"))
-        if (idLine) {
-            return idLine.split(":")[1].trim();
-        }
-    }
-    return null;
+    const frontmatter = await readFrontmatter(file);
+
+    return frontmatter["id"];
 }
 
 export function extractContentFromNote(content: string) {
@@ -95,12 +86,12 @@ export function extractContentFromNote(content: string) {
 export async function addIdToNote(vault: Vault, file: TFile, noteId: string) {
     const content = await vault.read(file);
     
-    if (!content.startsWith(idMarker)) {
-        const newContent = `${idMarker}\n id:${noteId}\n${idMarker}\n${content}`
-        // await vault.modify(file, newContent);
-        modifyFile(vault, file, newContent)
-        return noteId
-    } else {
-        return null
-    }
+    modifyFrontmatter(file, {id: noteId})
+    // if (!content.startsWith(idMarker)) {
+    //     const newContent = `${idMarker}\n id:${noteId}\n${idMarker}\n${content}`
+    //     // await vault.modify(file, newContent);
+    //     modifyFile(vault, file, newContent)
+    //     return noteId
+    // } else {
+    //     return null
 }

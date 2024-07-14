@@ -39,6 +39,10 @@ export const ReactMarkdownView = ({app, markdown, srcPath, component}: P) => {
         // }
     }
 
+    const handleReviewed = (event: any) => {
+        console.log(event.target.checked)
+    }
+
 	return (
         <div style={{userSelect: "text"}}>
             <div ref={markdownRef}></div>
@@ -46,7 +50,12 @@ export const ReactMarkdownView = ({app, markdown, srcPath, component}: P) => {
             <div>
                 <a href={srcPath}>Original File</a>
                 <div style={{display: "flex", alignItems: "center",}}>
-                    <input id="learnie-reviewed" type="checkbox"/> <p style={{paddingLeft: "2px"}}>Reviewed</p>
+                    <input id="learnie-reviewed"
+                        onChange={handleReviewed}
+                        type="checkbox"/> 
+                        <p style={{paddingLeft: "2px"}}>
+                            Reviewed
+                        </p>
                 </div>
             </div>
         </div>

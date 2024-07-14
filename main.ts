@@ -3,6 +3,7 @@ import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, T
 import { convertToNote, handleNoteChange } from "src/utils/note";
 import { ChangedNotesView, VIEW_TYPE } from 'src/views/changed-notes-view';
 import "./styles.css"
+import { modifyFrontmatter } from 'src/utils/file';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -80,7 +81,12 @@ export default class MyPlugin extends Plugin {
 			id: "test",
 			name: "test",
 			callback: async () => {
-				await handleNoteChange(this.app.vault, this.app.workspace.getActiveFile())
+				const file = this.app.workspace.getActiveFile();
+				if (!file) return
+				await modifyFrontmatter(file, { "test": "test" })
+				// const frontmatter = this.app.metadataCache.getFileCache(file)?.frontmatter
+				// console.log(frontmatter);
+				// // await handleNoteChange(this.app.vault, this.app.workspace.getActiveFile())
 			}
 		})
 

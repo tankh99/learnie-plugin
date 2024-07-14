@@ -1,4 +1,5 @@
 import { Notice, TFile, Vault } from "obsidian"
+import {parse, stringify} from 'yaml'
 
 export const BASE_FOLDER_PATH = "_Learnie History"
 
@@ -41,4 +42,51 @@ export async function deleteFile(vault: Vault, file: TFile) {
         console.error(err);
         new Notice(`Error deleting file: ${err}`)
     }
+}
+
+const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
+
+export async function readFrontmatter(file: TFile): Promise<Record<string, any>> {
+    const fileContent = await this.app.vault.read(file);
+
+    const match = fileContent.match(frontmatterRegex);
+
+    if (match) {
+        return parse(match[1]);
+    }
+
+    return {};
+
+}
+
+export async function modifyFrontmatter(file: TFile, newFrontmatter: Record<string, any>) {
+    const fileContent = await this.app.vault.read(file);
+
+    // Extract the existing frontmatter
+    let existingFrontmatter = {};
+    let contentWithoutFrontmatter = fileContent;
+
+    existingFrontmatter = await readFrontmatter(file)
+    existingFrontmatter
+    if (existingFrontmatter) {
+        contentWithoutFrontmatter = fileContent.replace(frontmatterRegex, '').trim();
+    }
+
+    // Merge the existing frontmatter with the new frontmatter
+    
+    const updatedFrontmatter = {
+        ...existingFrontmatter,
+        ...newFrontmatter
+    };
+
+    // Convert the updated frontmatter to YAML
+    const updatedFrontmatterYAML = stringify(updatedFrontmatter);
+
+    // Construct the new file content with the updated frontmatter
+    const updatedContent = `---\n${updatedFrontmatterYAML}---\n\n${contentWithoutFrontmatter}`;
+
+    // Write the updated content back to the file
+    await this.app.vault.modify(file, updatedContent);
+
+    console.log(`Frontmatter updated for ${file.path}`);
 }

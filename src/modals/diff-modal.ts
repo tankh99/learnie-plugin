@@ -20,15 +20,6 @@ export class DiffModal extends Modal {
 
         const mdView = new DiffMarkdownView(contentEl, this.diffContent, this.app, this.srcPath, this.component);
         mdView.onload();
-        // contentEl.setText('');
-
-        // const styledDiff = this.createStyledDiff(this.diffContent);
-        // // const div = contentEl.createDiv({ cls: 'diff-container', });
-        // // div.innerHTML = styledDiff;
-        // // // this.render
-        
-        // this.renderMarkdown(styledDiff, contentEl, this.srcPath);
-        // this.addStyles();
     }
 
     private renderMarkdown(markdown: string, container: HTMLElement, sourcePath: string) {
