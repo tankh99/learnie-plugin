@@ -5,6 +5,7 @@ import { createNewFile, deleteFile, modifyFile, modifyFrontmatter, readFrontmatt
 import { createNoteRevision, generateNoteRevisionName, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
 import { endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
 import { formatLink, formatRelativeLink } from './obsidian-utils';
+import { NoteMetadata } from 'types/types';
 
 export const idMarker = "---"
 
@@ -90,13 +91,17 @@ export function extractContentFromNote(content: string) {
     return contentLines.join("\n");
 }
 
-export async function addMetadataToNote(vault: Vault, file: TFile, noteId: string, noteRevisionPath: string) {
+export async function addMetadataToNote(vault: Vault, file: TFile, noteId: string, noteRevisionPath?: string) {
 
     // const link = 
-    const formattedLink = formatRelativeLink(noteRevisionPath, "View Revision")
-
-    modifyFrontmatter(file, {
+    
+    const metadata: NoteMetadata = {
         id: noteId,
-        link: formattedLink
-    })
+    }
+    if (noteRevisionPath) {
+        const formattedLink = formatRelativeLink(noteRevisionPath, "View Revision")
+        metadata.link = formattedLink
+    }
+
+    modifyFrontmatter(file, metadata)
 }
