@@ -2,7 +2,7 @@ import { FrontmatterContent } from './../../node_modules/@types/mdast/index.d';
 import { Vault, TFile, Notice } from "obsidian";
 import {v4 as uuidv4} from 'uuid'
 import { createNewFile, deleteFile, modifyFile, modifyFrontmatter, readFrontmatter } from "./file";
-import { createNoteRevision, generateNoteRevisionName, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
+import { checkIfNoteRevision, createNoteRevision, generateNoteRevisionName, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
 import { endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
 import { formatLink, formatRelativeLink } from './obsidian-utils';
 import { NoteMetadata } from 'types/types';
@@ -13,10 +13,11 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
     if (!file) return;
 
     const noteId = await readNoteId(vault, file);
-    if (!noteId) {
-        new Notice("No id found in note")
-        return;
-    }
+    if (!noteId) return;
+
+    const isNoteRevision = await checkIfNoteRevision(file);
+    if (isNoteRevision) return;
+    
     const latestNoteRevision = await getLatestNoteRevision(vault, noteId);
     if (!latestNoteRevision) {
         new Notice("Creating a new note revision")
