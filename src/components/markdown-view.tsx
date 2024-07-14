@@ -1,7 +1,7 @@
 import React, { StrictMode, useEffect, useRef } from "react"
 import {App, Component, ItemView, MarkdownRenderer, Notice, WorkspaceLeaf} from 'obsidian';
 import { createRoot, Root } from "react-dom/client";
-import { convertPathToObsidianLink } from "../utils/md-utils";
+import { convertPathToObsidianLink } from "src/utils/obsidian-utils";
 import { getLatestNoteRevision } from "src/utils/noteRevisions";
 import * as diff from 'diff';
 import { readNoteId } from "src/utils/note";

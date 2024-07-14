@@ -1,6 +1,6 @@
 import { Notice, Vault } from "obsidian";
 import { BASE_FOLDER_PATH, createNewFile, modifyFile } from "./file";
-import { addIdToNote } from "./note";
+import { addMetadataToNote } from "./note";
 
 export async function createNoteRevision(vault: Vault, noteId: string, originalContent: string, isNew = true) {
     const noteRevisionName = generateNoteRevisionName(noteId)
@@ -10,9 +10,11 @@ export async function createNoteRevision(vault: Vault, noteId: string, originalC
         return;
     }
     if (isNew) {
-        const newContent = await addIdToNote(vault, createdFile, noteId);
+        await addMetadataToNote(vault, createdFile, noteId, createdFile.path);
         console.info("Added id to note")
+        return createdFile
     }
+    return null;
 }
 
 export function getNoteRevisionFileName(noteId: string) {

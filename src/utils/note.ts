@@ -4,6 +4,7 @@ import {v4 as uuidv4} from 'uuid'
 import { createNewFile, deleteFile, modifyFile, modifyFrontmatter, readFrontmatter } from "./file";
 import { createNoteRevision, generateNoteRevisionName, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
 import { endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
+import { formatLink, formatRelativeLink } from './obsidian-utils';
 
 export const idMarker = "---"
 
@@ -58,15 +59,20 @@ export async function checkIfReviewed(document: Document) {
 // For pre-existing notes it shouldn't do anything
 export async function convertToNote(vault: Vault, file: TFile) {
     const noteId = uuidv4()
-    const id = await addIdToNote(vault, file, noteId);
 
     /** TODO: Create note history file if 
      * - not exists yet
      **/
     const content = await vault.read(file);
-    await createNoteRevision(vault, id, content);
+    const noteRevision = await createNoteRevision(vault, noteId, content);
 
-    // TODO: Track changes
+    if (!noteRevision) {
+        console.error(`Error creating note revision for ${file.name}`)
+        return;
+    }
+    const link = noteRevision.path
+    console.log("link", link)
+    await addMetadataToNote(vault, file, noteId, link);
 }
 
 export async function readNoteId(vault: Vault, file: TFile) {
@@ -83,15 +89,13 @@ export function extractContentFromNote(content: string) {
     return contentLines.join("\n");
 }
 
-export async function addIdToNote(vault: Vault, file: TFile, noteId: string) {
-    const content = await vault.read(file);
-    
-    modifyFrontmatter(file, {id: noteId})
-    // if (!content.startsWith(idMarker)) {
-    //     const newContent = `${idMarker}\n id:${noteId}\n${idMarker}\n${content}`
-    //     // await vault.modify(file, newContent);
-    //     modifyFile(vault, file, newContent)
-    //     return noteId
-    // } else {
-    //     return null
+export async function addMetadataToNote(vault: Vault, file: TFile, noteId: string, noteRevisionPath: string) {
+
+    // const link = 
+    const formattedLink = formatRelativeLink(noteRevisionPath, "View Revision")
+
+    modifyFrontmatter(file, {
+        id: noteId,
+        link: formattedLink
+    })
 }
