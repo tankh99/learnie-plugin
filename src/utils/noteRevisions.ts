@@ -50,12 +50,20 @@ export async function getLatestNoteRevision(vault: Vault, noteId: string) {
     const folderPath = BASE_FOLDER_PATH;
     const files = vault.getFiles().filter(file => file.path.startsWith(folderPath));
 
-    const matchedFiles = files.filter(file => {
-        return file.name.startsWith(noteId);
-    })
+    const matches = await Promise.all(files.map(async (file) => {
+        const fileContent = await vault.read(file);
+        // console.log(fileContent)
+        const frontmatter = readFrontmatter(fileContent);
+        const result = frontmatter["id"] === noteId 
+            && "reviewed" in frontmatter 
+            && frontmatter["reviewed"] === false;
+        return result ? file : null;
+    }));
+
+    const matchedFiles = matches.filter(file => file != null)
 
     if (matchedFiles.length === 0) {
-        new Notice(`No files found with ID ${noteId}`)
+        new Notice(`No files found with ID ${noteId} or they are already reviewed.`)
         return null;
     }
 
