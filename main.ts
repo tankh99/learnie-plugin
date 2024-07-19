@@ -1,9 +1,10 @@
 import { EXAMPLE_VIEW_TYPE, ExampleView } from './src/components/markdown-view';
-import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
+import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { convertToNote, handleNoteChange } from "src/utils/note";
 import { ChangedNotesView, VIEW_TYPE } from 'src/views/changed-notes-view';
-import "./styles.css"
-import { modifyFrontmatter } from 'src/utils/file';
+import "./styles.css";
+import { readFrontmatter } from 'src/utils/file';
+import { addQuestion, getQuestions } from 'src/utils/questions';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -83,10 +84,21 @@ export default class MyPlugin extends Plugin {
 			callback: async () => {
 				const file = this.app.workspace.getActiveFile();
 				if (!file) return
-				await modifyFrontmatter(file, { "test": "test" })
-				// const frontmatter = this.app.metadataCache.getFileCache(file)?.frontmatter
-				// console.log(frontmatter);
-				// // await handleNoteChange(this.app.vault, this.app.workspace.getActiveFile())
+				const content = await this.app.vault.read(file)
+				const frontmatter = readFrontmatter(content);
+				const noteId = frontmatter["id"]
+				console.log(frontmatter, noteId)
+				await addQuestion(noteId, "What is the capital of France?", "Paris")
+
+				const questionse = await getQuestions(noteId)
+				console.log("questions", questionse)
+				// const questions = await readFileContent()
+				// const noteRevision = await getLatestNoteRevision(this.app.vault, frontmatter["id"])
+				// if (!noteRevision) return;
+				// const {content: noteRevisionContent} = await readFileContent(noteRevision);
+				// console.log("latest note revision", noteRevisionContent);
+				// const is = await checkIfReviewed(content);
+				// console.log(is)
 			}
 		})
 

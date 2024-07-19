@@ -1,9 +1,8 @@
 import { differenceInDays, startOfDay } from "date-fns";
 import { App, ItemView, Notice, TFile, WorkspaceLeaf } from "obsidian";
-import { BASE_FOLDER_PATH } from "src/utils/file";
 import { DiffModal } from "../modals/diff-modal";
 import * as diff from 'diff';
-import { readNoteId } from "src/utils/note";
+import { NOTE_FOLDER_PATH, readNoteId } from "src/utils/note";
 import { getLatestNoteRevision } from "src/utils/noteRevisions";
 
 export const VIEW_TYPE = "changed-notes-view"
@@ -30,7 +29,7 @@ export class ChangedNotesView extends ItemView {
         const today = startOfDay(new Date());
         const filesModifiedToday: TFile[] = [];
 
-        const files = this.appInstance.vault.getFiles().filter(file => !file.path.startsWith(BASE_FOLDER_PATH));
+        const files = this.appInstance.vault.getFiles().filter(file => !file.path.startsWith(NOTE_FOLDER_PATH));
         
         for (const file of files) {
             const noteId = await readNoteId(this.app.vault, file);

@@ -1,10 +1,14 @@
 import { Notice, TFile, Vault } from "obsidian"
 import {parse, stringify} from 'yaml'
 
-export const BASE_FOLDER_PATH = "_Learnie History"
+export async function getFile(vault: Vault, folderPath: string, filename: string) {
+    const fileName = `${filename}.md`
+    const filePath = `${folderPath}/${fileName}`;
+    const file = vault.getFileByPath(filePath)
+    return file;
+}
 
-export async function createNewFile(vault: Vault, filename: string, content: string) {
-    const folderPath = BASE_FOLDER_PATH
+export async function createNewFile(vault: Vault, folderPath: string, filename: string, content: string) {
     const fileName = `${filename}.md`
     const filePath = `${folderPath}/${fileName}`;
     const folder = vault.getAbstractFileByPath(folderPath)

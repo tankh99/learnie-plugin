@@ -8,6 +8,7 @@ import { formatLink, formatRelativeLink } from './obsidian-utils';
 import { NoteMetadata } from 'types/types';
 
 export const idMarker = "---"
+export const NOTE_FOLDER_PATH = "_Learnie History"
 
 export async function handleNoteChange(vault: Vault, file: TFile | null) {
     if (!file) return;

@@ -1,6 +1,6 @@
 import { Notice, TFile, Vault } from "obsidian";
-import { BASE_FOLDER_PATH, createNewFile, modifyFile, readContentWithoutFrontmatter, readFileContent, readFrontmatter } from "./file";
-import { addMetadataToNote } from "./note";
+import { createNewFile, modifyFile, readContentWithoutFrontmatter, readFileContent, readFrontmatter } from "./file";
+import { addMetadataToNote, NOTE_FOLDER_PATH } from "./note";
 import {toZonedTime} from 'date-fns-tz';
 import { getDatePart } from "./date";
 import { NoteMetadata } from "types/types";
@@ -17,7 +17,8 @@ export async function checkIfNoteRevision(file: TFile) {
 export async function createNoteRevision(vault: Vault, noteId: string, originalContent: string, isNew = true) {
     const noteRevisionName = generateNoteRevisionName(noteId)
     const originalContentWithoutFrontmatter = readContentWithoutFrontmatter(originalContent);
-    const createdFile = await createNewFile(vault, noteRevisionName, originalContentWithoutFrontmatter);
+    const folderPath = NOTE_FOLDER_PATH
+    const createdFile = await createNewFile(vault, folderPath, noteRevisionName, originalContentWithoutFrontmatter);
 
     if (!createdFile) {
         console.error(`Error creating file ${noteRevisionName}`)
@@ -47,7 +48,7 @@ export function getNoteRevisionDate(name: string) {
 }
 
 export async function getLatestNoteRevision(vault: Vault, noteId: string) {
-    const folderPath = BASE_FOLDER_PATH;
+    const folderPath = NOTE_FOLDER_PATH;
     const files = vault.getFiles().filter(file => file.path.startsWith(folderPath));
 
     const matches = await Promise.all(files.map(async (file) => {

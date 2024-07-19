@@ -22,6 +22,7 @@ export function formatDiffContent(app: App, content: string) {
     const fileName = indexTitle.slice(1, diffLines.length).join(" ");
 
     const title = fileName.split(".").slice(0, fileName.split(".").length - 1).join(".");
+
     result += `<h2>${title}</h2>`
     diffLines.forEach(line => {
         // Ignore all metadata from diff and the id header
@@ -30,8 +31,7 @@ export function formatDiffContent(app: App, content: string) {
             || line.trim().startsWith('===')
             || line.trim().startsWith("Index:")
             || line.trim().startsWith("--")
-            || line.trim().startsWith("++")
-            || line.trim().startsWith("id:")){
+            || line.trim().startsWith("++")){
             return; // Ignore title lines
         }
 
