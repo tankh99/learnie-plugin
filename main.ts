@@ -4,7 +4,7 @@ import { convertToNote, handleNoteChange } from "src/utils/note";
 import { ChangedNotesView, VIEW_TYPE } from 'src/views/changed-notes-view';
 import "./styles.css";
 import { readFrontmatter } from 'src/utils/file';
-import { addQuestion, getQuestions } from 'src/utils/questions';
+import { QuestionAnswerModal } from 'src/modals/qna-modal';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -79,26 +79,40 @@ export default class MyPlugin extends Plugin {
 		})
 
 		this.addCommand({
+			id: "creat-question",
+			name: "Create Question",
+			callback: async () => {
+				// selected text
+				const editor = this.app.workspace.getActiveViewOfType(MarkdownView)?.editor;
+				if (!editor) return;
+				const file = await this.app.workspace.getActiveFile();
+				if (!file) return;
+
+				const filecontent = await this.app.vault.read(file);
+				const frnotmatter = readFrontmatter(filecontent);
+				const noteId = frnotmatter["id"];
+
+				const selectedText = editor.getSelection();
+
+				new QuestionAnswerModal(this.app, noteId, selectedText).open()
+			}
+		})
+
+		this.addCommand({
 			id: "test",
 			name: "test",
 			callback: async () => {
-				const file = this.app.workspace.getActiveFile();
-				if (!file) return
-				const content = await this.app.vault.read(file)
-				const frontmatter = readFrontmatter(content);
-				const noteId = frontmatter["id"]
-				console.log(frontmatter, noteId)
-				await addQuestion(noteId, "What is the capital of France?", "Paris")
+				// new QuestionAnswerModal(this.app,).open()
+				// const file = this.app.workspace.getActiveFile();
+				// if (!file) return
+				// const content = await this.app.vault.read(file)
+				// const frontmatter = readFrontmatter(content);
+				// const noteId = frontmatter["id"]
+				// console.log(frontmatter, noteId)
+				// await addQuestion(noteId, "What is the capital of France?", "Paris")
 
-				const questionse = await getQuestions(noteId)
-				console.log("questions", questionse)
-				// const questions = await readFileContent()
-				// const noteRevision = await getLatestNoteRevision(this.app.vault, frontmatter["id"])
-				// if (!noteRevision) return;
-				// const {content: noteRevisionContent} = await readFileContent(noteRevision);
-				// console.log("latest note revision", noteRevisionContent);
-				// const is = await checkIfReviewed(content);
-				// console.log(is)
+				// const questionse = await getQuestions(noteId)
+				// console.log("questions", questionse)
 			}
 		})
 
