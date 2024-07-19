@@ -1,9 +1,12 @@
+- [ ] Feat: View all questions for note
+- [ ] Feat: Add link to specific answer's context
+- [ ] Add command to delete all unused note revisions
+- [ ] Bugfix: Prevent converting a note revision or question into a note
 - [x] Command: Convert to note
     - [x] Adds an ID to the note and starts tracking version history for this particular note
 - [x] Add "view changes" button in each note
 - [x] Avoid adding any other frontmatter to the note revision, aside from the id
 - [x] On checking the "Reviewed" checkbox, modify the frontmatter set the reviewed property to true
     - [x] Checks for latest note revisions will use this reviewed property
-- [ ] Add command to delete all unused note revisions
-- [ ] Bug: When converting a note with a note revision that was one day before today, it will fail to create a new note. The note revision to create has a note of today
+- [x] Bug: When converting a note with a note revision that was one day before today, it will fail to create a new note. The note revision to create has a note of today
 - [x] Fix the diff to render links properly. (Pehraps use a background instead of text-color)
