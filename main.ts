@@ -1,3 +1,4 @@
+import { QUESTIONS_VIEW, QuestionsView } from './src/views/qns-view';
 import { DIFF_VIEW_TYPE, DiffMarkdownView } from './src/views/markdown-view';
 import { App, Editor, ItemView, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, View, WorkspaceLeaf } from 'obsidian';
 import { convertToNote, handleNoteChange } from "src/utils/note";
@@ -62,7 +63,12 @@ export default class MyPlugin extends Plugin {
 
 		this.registerView(
 			DIFF_VIEW_TYPE,
-			(leaf) => new DiffMarkdownView(leaf, this.app)
+			(leaf) => new DiffMarkdownView(leaf)
+		)
+
+		this.registerView(
+			QUESTIONS_VIEW,
+			(leaf) => new QuestionsView(leaf)
 		)
 
 		this.addCommand({
@@ -100,6 +106,10 @@ export default class MyPlugin extends Plugin {
 			id: "test",
 			name: "test",
 			callback: async () => {
+				const leaf = await this.app.workspace.getLeaf(true)
+				await leaf.setViewState({ type: QUESTIONS_VIEW, active: true })
+				this.app.workspace.setActiveLeaf(leaf)
+				// this.app.workspace.revealLeaf(leaf)
 				// new QuestionAnswerModal(this.app,).open()
 				// const file = this.app.workspace.getActiveFile();
 				// if (!file) return

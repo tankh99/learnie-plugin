@@ -72,9 +72,8 @@ export class DiffMarkdownView extends ItemView {
     app: App;
     file: TFile | undefined = undefined;
 
-    constructor(leaf: WorkspaceLeaf, app: App, file?: TFile) {
+    constructor(leaf: WorkspaceLeaf, file?: TFile) {
         super(leaf)
-        this.app = app;
         this.file = file;
     }
 

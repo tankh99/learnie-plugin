@@ -4,7 +4,7 @@ import { DiffModal } from "../modals/diff-modal";
 import * as diff from 'diff';
 import { NOTE_FOLDER_PATH, noteIsChanged, readNoteId } from "src/utils/note";
 import { getLatestNoteRevision } from "src/utils/noteRevisions";
-import { DIFF_VIEW_TYPE } from "src/components/markdown-view";
+import { DIFF_VIEW_TYPE } from "src/views/markdown-view";
 
 export const VIEW_TYPE = "changed-notes-view"
 
