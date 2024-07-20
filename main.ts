@@ -58,7 +58,7 @@ export default class MyPlugin extends Plugin {
 
 		this.registerView(
 			VIEW_TYPE,
-			(leaf) => new ChangedNotesView(leaf, this.app)
+			(leaf) => new ChangedNotesView(leaf)
 		);
 
 		this.registerView(

@@ -9,11 +9,9 @@ import { DIFF_VIEW_TYPE } from "src/views/markdown-view";
 export const VIEW_TYPE = "changed-notes-view"
 
 export class ChangedNotesView extends ItemView {
-    private appInstance: App;
 
-    constructor(leaf: WorkspaceLeaf, app: App) {
+    constructor(leaf: WorkspaceLeaf) {
         super(leaf);
-        this.appInstance = app;
     }
 
     getViewType(): string {
@@ -29,7 +27,7 @@ export class ChangedNotesView extends ItemView {
         this.contentEl.empty();
         const filesModifiedToday: TFile[] = [];
 
-        const files = this.appInstance.vault.getFiles().filter(file => !file.path.startsWith(NOTE_FOLDER_PATH));
+        const files = this.app.vault.getFiles().filter(file => !file.path.startsWith(NOTE_FOLDER_PATH));
 
         for (const file of files) {
             const noteId = await readNoteId(this.app.vault, file);
@@ -56,13 +54,13 @@ export class ChangedNotesView extends ItemView {
 
 
   private async showFileDiff(file: TFile) {
-    const noteId = await readNoteId(this.appInstance.vault, file)
+    const noteId = await readNoteId(this.app.vault, file)
     if (!noteId) {
         new Notice(`No note ID found in note ${noteId}`);
         return
     }
 
-    const latestNoteRevision = await getLatestNoteRevision(this.appInstance.vault, noteId);
+    const latestNoteRevision = await getLatestNoteRevision(this.app.vault, noteId);
 
     if (!latestNoteRevision) {
         new Notice(`No note revision found for today.`);
