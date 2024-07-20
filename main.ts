@@ -1,4 +1,4 @@
-import { DIFF_VIEW_TYPE, DiffMarkdownView } from './src/components/markdown-view';
+import { DIFF_VIEW_TYPE, DiffMarkdownView } from './src/views/markdown-view';
 import { App, Editor, ItemView, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, View, WorkspaceLeaf } from 'obsidian';
 import { convertToNote, handleNoteChange } from "src/utils/note";
 import { ChangedNotesView, VIEW_TYPE } from 'src/views/changed-notes-view';
