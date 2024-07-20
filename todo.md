@@ -2,6 +2,7 @@
 - [ ] Feat: Add link to specific answer's context
 - [ ] Add command to delete all unused note revisions
 - [ ] Bugfix: Prevent converting a note revision or question into a note
+- [ ] Bugfix: Link to note revision in note is outdated
 - [x] Command: Convert to note
     - [x] Adds an ID to the note and starts tracking version history for this particular note
 - [x] Add "view changes" button in each note

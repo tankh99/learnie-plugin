@@ -1,5 +1,5 @@
 import React, { StrictMode, useEffect, useRef } from "react"
-import { App, Component, ItemView, MarkdownRenderer, Notice, TFile, WorkspaceLeaf } from 'obsidian';
+import { App, Component, ItemView, MarkdownRenderer, Notice, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import { createRoot, Root } from "react-dom/client";
 import { convertPathToObsidianLink } from "src/utils/obsidian-utils";
 import { getLatestNoteRevision } from "src/utils/noteRevisions";
@@ -32,16 +32,6 @@ export const ReactMarkdownView = ({ app, markdown, srcPath, component, revisionF
         }
     }, [markdown])
 
-    // Overrides default link behavior with Obsidian's linking logic instead
-    const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-        const target = event.target;
-        // if (target.tagName === "A" && target.dataset.href) {
-        //     event.preventDefault();
-        //     const href = target.getAttribute("href");
-        //     app.workspace.openLinkText(href, srcPath);
-        // }
-    }
-
     const handleReviewed = (event: any) => {
         const target = event.target;
         const newFrontmatter = {
@@ -70,69 +60,93 @@ export const ReactMarkdownView = ({ app, markdown, srcPath, component, revisionF
     )
 }
 
-export const EXAMPLE_VIEW_TYPE = "react-view"
-export class ExampleView extends ItemView {
+export const DIFF_VIEW_TYPE = "md-diff-view"
+
+export type DiffMarkdownState = {
+    file: TFile
+}
+
+export class DiffMarkdownView extends ItemView {
 
     root: Root | null = null
     app: App;
+    file: TFile | undefined = undefined;
 
-    constructor(leaf: WorkspaceLeaf, app: App) {
+    constructor(leaf: WorkspaceLeaf, app: App, file?: TFile) {
         super(leaf)
         this.app = app;
+        this.file = file;
     }
 
     getViewType(): string {
-        return EXAMPLE_VIEW_TYPE
-    }
-    getDisplayText(): string {
-        return "Example View"
+        return DIFF_VIEW_TYPE
     }
 
+    getDisplayText(): string {
+        return "Diff View"
+    }
+    
+    async setState(state: DiffMarkdownState, result: ViewStateResult) {
+        if (state.file) {
+            this.file = state.file;
+        }
+        await this.renderView();
+        return super.setState(state, result);
+    }
 
     async onOpen() {
-        this.root = createRoot(this.containerEl.children[1])
-        const file = this.app.workspace.getActiveFile();
-        if (!file) {
-            new Notice("No file selected");
-            return;
-        }
-
-        const noteId = await readNoteId(this.app.vault, file);
-        if (!noteId) {
-            new Notice("No note ID found in note");
-            return;
-        }
-        const revisionFile = await getLatestNoteRevision(this.app.vault, noteId);
-        if (!revisionFile) {
-            new Notice("No revision found. Is this a note?");
-            return;
-        }
-
-        let content = await this.app.vault.read(file);
-        content = ensureNewline(content)
-        let oldContent = await this.app.vault.read(revisionFile);
-        oldContent = ensureNewline(oldContent)
-
-        let diffContent = diff.createPatch(file.path, oldContent, content);
-        // diffContent = content
-        diffContent = formatDiffContent(this.app, diffContent);
-        // console.log(content);
-        const srcPath = convertPathToObsidianLink(this.app, file.path);
-
-        const noteRevisionFrontmatter = readFrontmatter(oldContent)
-        this.root.render(
-            <StrictMode>
-                <ReactMarkdownView
-                    app={this.app}
-                    srcPath={srcPath} 
-                    component={this} 
-                    markdown={diffContent}
-                    revisionFile={revisionFile}
-                    revisionFrontmatter={noteRevisionFrontmatter} />
-            </StrictMode>
-        );
-
+        if (!this.file) return;
+        await this.renderView()
     }
+
+    async renderView() {
+        try {
+            this.root = this.root ?? createRoot(this.containerEl.children[1])
+            const file = this.file ?? this.app.workspace.getActiveFile();
+            if (!file) {
+                new Notice("No file selected");
+                return;
+            }
+
+            const noteId = await readNoteId(this.app.vault, file);
+            if (!noteId) {
+                new Notice("No note ID found in note");
+                return;
+            }
+            const revisionFile = await getLatestNoteRevision(this.app.vault, noteId);
+            if (!revisionFile) {
+                new Notice("No revision found. Is this a note?");
+                return;
+            }
+
+            let content = await this.app.vault.read(file);
+            content = ensureNewline(content)
+            let oldContent = await this.app.vault.read(revisionFile);
+            oldContent = ensureNewline(oldContent)
+
+            let diffContent = diff.createPatch(file.path, oldContent, content);
+            // diffContent = content
+            diffContent = formatDiffContent(this.app, diffContent);
+            // console.log(content);
+            const srcPath = convertPathToObsidianLink(this.app, file.path);
+
+            const noteRevisionFrontmatter = readFrontmatter(oldContent)
+            this.root.render(
+                <StrictMode>
+                    <ReactMarkdownView
+                        app={this.app}
+                        srcPath={srcPath}
+                        component={this}
+                        markdown={diffContent}
+                        revisionFile={revisionFile}
+                        revisionFrontmatter={noteRevisionFrontmatter} />
+                </StrictMode>
+            );
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     async onClose() {
         this.root?.unmount()
     }

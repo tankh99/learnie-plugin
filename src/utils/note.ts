@@ -1,9 +1,9 @@
 import { FrontmatterContent } from './../../node_modules/@types/mdast/index.d';
 import { Vault, TFile, Notice } from "obsidian";
 import {v4 as uuidv4} from 'uuid'
-import { createNewFile, deleteFile, modifyFile, modifyFrontmatter, readFrontmatter } from "./file";
+import { createNewFile, deleteFile, modifyFile, modifyFrontmatter, readFileContent, readFrontmatter } from "./file";
 import { checkIfNoteRevision, createNoteRevision, generateNoteRevisionName, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
-import { endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
+import { differenceInDays, endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
 import { formatLink, formatRelativeLink } from './obsidian-utils';
 import { NoteMetadata } from 'types/types';
 
@@ -102,4 +102,16 @@ export async function addMetadataToNote(vault: Vault, file: TFile, metadata: Not
     // }
 
     modifyFrontmatter(file, metadata)
+}
+
+export async function noteIsChanged(file: TFile) {
+    const today = startOfDay(new Date());
+    const fileStats = await this.app.vault.adapter.stat(file.path);
+    const lastModified = fileStats!.mtime;
+
+    const {frontmatter} = await readFileContent(file)
+    const isReviewed = frontmatter["reviewed"]
+
+    const withinToday = differenceInDays(lastModified, today) >= 0;
+    return withinToday && !isReviewed
 }

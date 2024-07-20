@@ -1,5 +1,5 @@
-import { EXAMPLE_VIEW_TYPE, ExampleView } from './src/components/markdown-view';
-import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { DIFF_VIEW_TYPE, DiffMarkdownView } from './src/components/markdown-view';
+import { App, Editor, ItemView, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, View, WorkspaceLeaf } from 'obsidian';
 import { convertToNote, handleNoteChange } from "src/utils/note";
 import { ChangedNotesView, VIEW_TYPE } from 'src/views/changed-notes-view';
 import "./styles.css";
@@ -61,10 +61,8 @@ export default class MyPlugin extends Plugin {
 		);
 
 		this.registerView(
-			EXAMPLE_VIEW_TYPE,
-			(leaf) => {
-				return new ExampleView(leaf, this.app)
-			}
+			DIFF_VIEW_TYPE,
+			(leaf) => new DiffMarkdownView(leaf, this.app)
 		)
 
 		this.addCommand({
@@ -73,13 +71,13 @@ export default class MyPlugin extends Plugin {
 			callback: async () => {
 				// this.showMarkdownView();
 				const leaf = this.app.workspace.getLeaf(true);
-				await leaf.setViewState({ type: EXAMPLE_VIEW_TYPE, active: true });
+				await leaf.setViewState({ type: DIFF_VIEW_TYPE, active: true });
 				this.app.workspace.setActiveLeaf(leaf);
 			}
 		})
 
 		this.addCommand({
-			id: "creat-question",
+			id: "create-question",
 			name: "Create Question",
 			callback: async () => {
 				// selected text
