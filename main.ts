@@ -6,6 +6,7 @@ import { ChangedNotesView, VIEW_TYPE } from 'src/views/changed-notes-view';
 import "./styles.css";
 import { readFrontmatter } from 'src/utils/file';
 import { QuestionAnswerModal } from 'src/modals/qna-modal';
+import { addCommands } from 'src/commands';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -24,27 +25,6 @@ export default class MyPlugin extends Plugin {
 		const statusBarItemEl = this.addStatusBarItem();
 		statusBarItemEl.setText('Status Bar Text');
 
-		this.addCommand({
-			id: "review",
-			name: "Review Notes",
-			callback: () => {
-				this.activateView();
-			}
-		})
-
-		this.addCommand({
-			id: "convert-to-note",
-			name: "Convert to note",
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				const file = view.file;
-				if (!file) return new Notice("No file selected")
-				// TODO: Check that the file is NOT already
-				// 1. a note
-				// 2. a file in the history folder
-				convertToNote(this.app.vault, file)
-			}
-		
-		})
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SampleSettingTab(this.app, this));
@@ -71,58 +51,7 @@ export default class MyPlugin extends Plugin {
 			(leaf) => new QuestionsView(leaf)
 		)
 
-		this.addCommand({
-			id: "show-markdown",
-			name: "Show Markdown",
-			callback: async () => {
-				// this.showMarkdownView();
-				const leaf = this.app.workspace.getLeaf(true);
-				await leaf.setViewState({ type: DIFF_VIEW_TYPE, active: true });
-				this.app.workspace.setActiveLeaf(leaf);
-			}
-		})
-
-		this.addCommand({
-			id: "create-question",
-			name: "Create Question",
-			callback: async () => {
-				// selected text
-				const editor = this.app.workspace.getActiveViewOfType(MarkdownView)?.editor;
-				if (!editor) return;
-				const file = await this.app.workspace.getActiveFile();
-				if (!file) return;
-
-				const filecontent = await this.app.vault.read(file);
-				const frnotmatter = readFrontmatter(filecontent);
-				const noteId = frnotmatter["id"];
-
-				const selectedText = editor.getSelection();
-
-				new QuestionAnswerModal(this.app, noteId, selectedText).open()
-			}
-		})
-
-		this.addCommand({
-			id: "test",
-			name: "test",
-			callback: async () => {
-				const leaf = await this.app.workspace.getLeaf(true)
-				await leaf.setViewState({ type: QUESTIONS_VIEW, active: true })
-				this.app.workspace.setActiveLeaf(leaf)
-				// this.app.workspace.revealLeaf(leaf)
-				// new QuestionAnswerModal(this.app,).open()
-				// const file = this.app.workspace.getActiveFile();
-				// if (!file) return
-				// const content = await this.app.vault.read(file)
-				// const frontmatter = readFrontmatter(content);
-				// const noteId = frontmatter["id"]
-				// console.log(frontmatter, noteId)
-				// await addQuestion(noteId, "What is the capital of France?", "Paris")
-
-				// const questionse = await getQuestions(noteId)
-				// console.log("questions", questionse)
-			}
-		})
+		addCommands(this)
 
 		this.loadStyles()
 	}
