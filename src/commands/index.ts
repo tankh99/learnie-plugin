@@ -1,12 +1,12 @@
 import {Editor, MarkdownView, Notice, Plugin} from 'obsidian'
 import { convertToNote, deleteAllUnusedNoteRevisionFiles } from '../utils/note';
 import { CHANGED_NOTES_VIEW_TYPE } from '../views/changed-notes-view';
-import { readFrontmatter } from 'src/utils/file';
+import { getFile, readFrontmatter } from 'src/utils/file';
 import { QuestionAnswerModal } from 'src/modals/qna-modal';
 import { DIFF_VIEW_TYPE } from 'src/views/markdown-view';
 import { QUESTIONS_VIEW } from 'src/views/qns-view';
 import { deleteAllUnusedQuestionFiles, getQuestions } from 'src/utils/questions';
-import { activateChangedNotesView, activateQnsView } from 'src/views';
+import { activateChangedNotesView, activateDiffView, activateQnsView } from 'src/views';
 
 export function addCommands(plugin: Plugin) {
     plugin.addCommand({
@@ -103,12 +103,13 @@ export function addCommands(plugin: Plugin) {
         }
     })
 
+    // TODO: Convert these handler strings into global constants
     plugin.registerObsidianProtocolHandler("view-questions", (params) => {
         activateQnsView(true);
     })
 
-    // plugin.registerObsidianProtocolHandler("review-", (params) => {
-    //     activateChangedNotesView(true);
-    // })
+    plugin.registerObsidianProtocolHandler("review-note", async (params) => {
+        activateDiffView(true);
+    })
 
 }

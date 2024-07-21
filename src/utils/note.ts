@@ -73,12 +73,12 @@ export async function convertToNote(vault: Vault, file: TFile) {
         return;
     }
 
+    const formattedReviewLink = `obsidian://review-note`
     const formattedQuestionLink = `obsidian://view-questions?file=${encodeURIComponent(questionFile.path)}`
 
     const metadata: NoteMetadata = {
         id: noteId,
-        // link: formatRelativeLink(link, "View Revision")
-        // questionsLink: `obsidian://view-questions?file=${encodeURIComponent(file.path)}`
+        reviewLink: formattedReviewLink,
         questionsLink: formattedQuestionLink
     
     }
