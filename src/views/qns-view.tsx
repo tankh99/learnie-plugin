@@ -44,16 +44,16 @@ export class QuestionsView extends ItemView {
         }
 
         this.contentEl.createEl('h2', { text: 'Questions:' });
+        this.contentEl.createEl('p', { text: 'Click on a question to reveal its answer'});
         const listEl = this.contentEl.createEl('ul');
-        console.log(noteQnas);
         noteQnas.forEach(noteQna => {
             const questions = noteQna.qnas;
             const listItem = listEl.createEl('li');
-            for (const qna of questions) {
-                listItem.createEl('div', { text: `Question: ${qna.question}` });
-                listItem.createEl('div', { text: `Answer: ${qna.answer}` });
-
-            }
+            questions.forEach(qna => {
+                const detailsEl = listItem.createEl('details');
+                const summaryEl = detailsEl.createEl('summary', { text: `${qna.question}` });
+                detailsEl.createEl('div', { text: `Answer: ${qna.answer}` });
+            });
 
             // const link = listItem.createEl('a', { text: noteQna.filePath, href: '#' });
             listItem.createEl("br");
