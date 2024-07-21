@@ -6,7 +6,7 @@ import { QuestionAnswerModal } from 'src/modals/qna-modal';
 import { DIFF_VIEW_TYPE } from 'src/views/markdown-view';
 import { QUESTIONS_VIEW } from 'src/views/qns-view';
 import { deleteAllUnusedQuestionFiles, getQuestions } from 'src/utils/questions';
-import { activateChangedNotesView } from 'src/views';
+import { activateChangedNotesView, activateQnsView } from 'src/views';
 
 export function addCommands(plugin: Plugin) {
     plugin.addCommand({
@@ -84,9 +84,10 @@ export function addCommands(plugin: Plugin) {
         id: "test",
         name: "test",
         callback: async () => {
-            const leaf = await plugin.app.workspace.getLeaf(true)
-            await leaf.setViewState({ type: QUESTIONS_VIEW, active: true })
-            plugin.app.workspace.setActiveLeaf(leaf)
+            
+            // const leaf = await plugin.app.workspace.getLeaf(true)
+            // await leaf.setViewState({ type: QUESTIONS_VIEW, active: true })
+            // plugin.app.workspace.setActiveLeaf(leaf)
             // plugin.app.workspace.revealLeaf(leaf)
             // new QuestionAnswerModal(plugin.app,).open()
             // const file = plugin.app.workspace.getActiveFile();
@@ -102,5 +103,8 @@ export function addCommands(plugin: Plugin) {
         }
     })
 
+    plugin.registerObsidianProtocolHandler("view-questions", (params) => {
+        activateQnsView();
+    })
 
 }

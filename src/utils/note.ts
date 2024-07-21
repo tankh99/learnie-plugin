@@ -72,13 +72,14 @@ export async function convertToNote(vault: Vault, file: TFile) {
         console.error(`Error creating question file for ${file.name}`)
         return;
     }
-    const link = noteRevision.path
+
+    const formattedQuestionLink = `obsidian://view-questions?file=${encodeURIComponent(questionFile.path)}`
 
     const metadata: NoteMetadata = {
         id: noteId,
         // link: formatRelativeLink(link, "View Revision")
         // questionsLink: `obsidian://view-questions?file=${encodeURIComponent(file.path)}`
-        questionsLink: `[[obsidian://view-questions?path=${encodeURIComponent(questionFile.path)}]]`
+        questionsLink: formattedQuestionLink
     
     }
     await addMetadataToNote(vault, file, metadata);
