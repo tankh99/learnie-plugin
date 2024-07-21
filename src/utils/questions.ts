@@ -55,6 +55,7 @@ export async function createQuestion(noteId: string, notePath: string, question:
         ],
         // noteLink: `[[${notePath}]]`
     })
+    return createdFile;
 }
 
 export async function addQuestion(noteId: string, file:TFile, question: string, answer: string) {

@@ -6,6 +6,8 @@ import { checkIfNoteRevision, createNoteRevision, generateNoteRevisionName, getA
 import { differenceInDays, endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
 import { formatLink, formatRelativeLink } from './obsidian-utils';
 import { NoteMetadata } from 'types/types';
+import { QUESTIONS_VIEW } from 'src/views/qns-view';
+import { createQuestion } from './questions';
 
 export const idMarker = "---"
 export const NOTE_FOLDER_PATH = "_Learnie History"
@@ -64,11 +66,20 @@ export async function convertToNote(vault: Vault, file: TFile) {
         console.error(`Error creating note revision for ${file.name}`)
         return;
     }
+
+    const questionFile = await createQuestion(noteId, file.path, "", "");
+    if (!questionFile) {
+        console.error(`Error creating question file for ${file.name}`)
+        return;
+    }
     const link = noteRevision.path
 
     const metadata: NoteMetadata = {
         id: noteId,
-        link: formatRelativeLink(link, "View Revision")
+        // link: formatRelativeLink(link, "View Revision")
+        // questionsLink: `obsidian://view-questions?file=${encodeURIComponent(file.path)}`
+        questionsLink: `[[obsidian://view-questions?path=${encodeURIComponent(questionFile.path)}]]`
+    
     }
     await addMetadataToNote(vault, file, metadata);
 }
