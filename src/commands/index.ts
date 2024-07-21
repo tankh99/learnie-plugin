@@ -6,7 +6,7 @@ import { QuestionAnswerModal } from 'src/modals/qna-modal';
 import { DIFF_VIEW_TYPE } from 'src/views/markdown-view';
 import { QUESTIONS_VIEW } from 'src/views/qns-view';
 import { deleteAllUnusedQuestionFiles, getQuestions } from 'src/utils/questions';
-import { activateChangedNotesView, activateDiffView, activateQnsView } from 'src/views';
+import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
 
 
 export enum Commands {
@@ -84,7 +84,7 @@ export function addCommands(plugin: Plugin) {
         id: Commands.VIEW_QUESTIONS,
         name: "View questions",
         callback: async () => {
-            activateQnsView(true)
+            activateQuestionsView(true)
         }
     })
 
@@ -92,7 +92,7 @@ export function addCommands(plugin: Plugin) {
         id: Commands.VIEW_NOTE_QUESTIONS,
         name: "View current note's questions",
         callback: async () => {
-            activateQnsView(true)
+            activateQuestionsView(true)
         }
     })
 

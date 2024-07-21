@@ -10,7 +10,7 @@ export async function activateChangedNotesView(newLeaf = false) {
     this.app.workspace.revealLeaf(leaf);
 }
 
-export async function activateQnsView(newLeaf = false) {
+export async function activateQuestionsView(newLeaf = false) {
     const leaf = this.app.workspace.getLeaf(newLeaf);
     await leaf.setViewState({ type: QUESTIONS_VIEW, active: true });
     this.app.workspace.revealLeaf(leaf);
@@ -36,7 +36,7 @@ export function registerViews(plugin: Plugin) {
 
     // TODO: Convert these handler strings into global constants
     plugin.registerObsidianProtocolHandler(Commands.VIEW_QUESTIONS, (params) => {
-        activateQnsView(true);
+        activateQuestionsView(true);
     })
 
     plugin.registerObsidianProtocolHandler(Commands.SHOW_DIFF, async (params) => {
