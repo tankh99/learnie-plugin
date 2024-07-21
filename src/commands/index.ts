@@ -70,6 +70,16 @@ export function addCommands(plugin: Plugin) {
     })
 
     plugin.addCommand({
+        id: "view-questions",
+        name: "View questions",
+        callback: async () => {
+            const leaf = await plugin.app.workspace.getLeaf(true)
+            await leaf.setViewState({ type: QUESTIONS_VIEW, active: true })
+            plugin.app.workspace.setActiveLeaf(leaf)
+        }
+    })
+
+    plugin.addCommand({
         id: "test",
         name: "test",
         callback: async () => {
