@@ -62,7 +62,7 @@ export function addCommands(plugin: Plugin) {
     })
 
     plugin.addCommand({
-        id: "clean-fils",
+        id: "clean-files",
         name: "Clean up unused files",
         callback: async () => {
             await deleteAllUnusedQuestionFiles();
@@ -104,7 +104,11 @@ export function addCommands(plugin: Plugin) {
     })
 
     plugin.registerObsidianProtocolHandler("view-questions", (params) => {
-        activateQnsView();
+        activateQnsView(true);
     })
+
+    // plugin.registerObsidianProtocolHandler("review-", (params) => {
+    //     activateChangedNotesView(true);
+    // })
 
 }
