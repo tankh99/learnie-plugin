@@ -1,9 +1,12 @@
-import { App, ItemView, TFile, WorkspaceLeaf } from 'obsidian';
+import { App, ItemView, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import { QUESTION_FOLDER_PATH } from '../utils/questions';
 import { readFrontmatter } from '../utils/file';
 
 export const QUESTIONS_VIEW = "questions-view"
 
+export type ViewQuestionsState = {
+    filePath?: string;
+}
 export class QuestionsView extends ItemView {
 
     private file: TFile;
@@ -20,10 +23,36 @@ export class QuestionsView extends ItemView {
         return "Questions"
     }
 
+    async setState(state: ViewQuestionsState, result: ViewStateResult) {
+        console.log("state", state)
+        if (state.filePath) {
+
+            const file = await this.app.vault.getFileByPath(state.filePath);
+            if (file) {
+                this.file = file;
+            }
+        }
+        this.renderView();
+        return super.setState(state, result);
+    }
+
+
     async onOpen() {
         this.contentEl.setText("Questions View");
-        const files: TFile[] = this.app.vault.getFiles().filter(file => file.path.startsWith(QUESTION_FOLDER_PATH));
+        // this.renderView();
+        
+    }
 
+    async renderView() {
+
+        let files: TFile[] = [];
+        if (this.file) {
+            files = [this.file];
+        } else {
+            files = this.app.vault.getFiles().filter(file => file.path.startsWith(QUESTION_FOLDER_PATH));
+        }
+
+        console.log("rendeiring view", this.file)
         type QuestionAndAnswer = {
             question: string;
             answer: string;
@@ -55,7 +84,6 @@ export class QuestionsView extends ItemView {
                 detailsEl.createEl('div', { text: `Answer: ${qna.answer}` });
             });
 
-            // const link = listItem.createEl('a', { text: noteQna.filePath, href: '#' });
             listItem.createEl("br");
             // link.addEventListener('click', () => this.showQuestions(noteQna));
         });

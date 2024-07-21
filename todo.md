@@ -5,7 +5,9 @@
 - [ ] Bugfix: Prevent converting a note revision or question into a note
 - [ ] Bugfix: Link to note revision in note is outdated
 - [ ] Bugfix: Only allow question creation within a valid note
+- [ ] Bugfis: Prevent empty questions from showing up as a valid question (when creting a new note)
 - [ ] Feat: Improve delete unused files by checking
+- [ ] Feat: Allow users to modify questions and answers
     - [ ] If the note revision/question has valid frontmatter (e.g. note id, questions, etc)
 - [x] Command: Convert to note
     - [x] Adds an ID to the note and starts tracking version history for this particular note
