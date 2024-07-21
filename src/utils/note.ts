@@ -89,17 +89,6 @@ export function extractContentFromNote(content: string) {
 }
 
 export async function addMetadataToNote(vault: Vault, file: TFile, metadata: NoteMetadata) {
-
-    // const link = 
-    
-    // const metadata: NoteMetadata = {
-    //     id: noteId,
-    // }
-    // if (noteRevisionPath) {
-    //     const formattedLink = formatRelativeLink(noteRevisionPath, "View Revision")
-    //     metadata.link = formattedLink
-    // }
-
     modifyFrontmatter(file, metadata)
 }
 

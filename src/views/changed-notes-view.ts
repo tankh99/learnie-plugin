@@ -1,12 +1,10 @@
 import { differenceInDays, startOfDay } from "date-fns";
 import { App, ItemView, Notice, TFile, WorkspaceLeaf } from "obsidian";
-import { DiffModal } from "../modals/diff-modal";
-import * as diff from 'diff';
 import { NOTE_FOLDER_PATH, noteIsChanged, readNoteId } from "src/utils/note";
 import { getLatestNoteRevision } from "src/utils/noteRevisions";
 import { DIFF_VIEW_TYPE } from "src/views/markdown-view";
 
-export const VIEW_TYPE = "changed-notes-view"
+export const CHANGED_NOTES_VIEW_TYPE = "changed-notes-view"
 
 export class ChangedNotesView extends ItemView {
 
@@ -15,7 +13,7 @@ export class ChangedNotesView extends ItemView {
     }
 
     getViewType(): string {
-        return (VIEW_TYPE)
+        return (CHANGED_NOTES_VIEW_TYPE)
     }
 
     getDisplayText(): string {

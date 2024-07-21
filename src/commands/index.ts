@@ -1,18 +1,19 @@
 import {Editor, MarkdownView, Notice, Plugin} from 'obsidian'
 import { convertToNote, deleteAllUnusedNoteRevisionFiles } from '../utils/note';
-import { VIEW_TYPE } from '../views/changed-notes-view';
+import { CHANGED_NOTES_VIEW_TYPE } from '../views/changed-notes-view';
 import { readFrontmatter } from 'src/utils/file';
 import { QuestionAnswerModal } from 'src/modals/qna-modal';
 import { DIFF_VIEW_TYPE } from 'src/views/markdown-view';
 import { QUESTIONS_VIEW } from 'src/views/qns-view';
 import { deleteAllUnusedQuestionFiles, getQuestions } from 'src/utils/questions';
+import { activateChangedNotesView } from 'src/views';
 
 export function addCommands(plugin: Plugin) {
     plugin.addCommand({
         id: "review",
         name: "Review Notes",
         callback: () => {
-            activateView();
+            activateChangedNotesView();
         }
     })
 
@@ -102,10 +103,4 @@ export function addCommands(plugin: Plugin) {
     })
 
 
-}
-
-async function activateView() {
-    const leaf = this.app.workspace.getLeaf(false);
-    await leaf.setViewState({ type: VIEW_TYPE, active: true });
-    this.app.workspace.revealLeaf(leaf);
 }

@@ -2,7 +2,7 @@ import { QUESTIONS_VIEW, QuestionsView } from './src/views/qns-view';
 import { DIFF_VIEW_TYPE, DiffMarkdownView } from './src/views/markdown-view';
 import { App, Editor, ItemView, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, View, WorkspaceLeaf } from 'obsidian';
 import { convertToNote, handleNoteChange } from "src/utils/note";
-import { ChangedNotesView, VIEW_TYPE } from 'src/views/changed-notes-view';
+import { ChangedNotesView, CHANGED_NOTES_VIEW_TYPE } from 'src/views/changed-notes-view';
 import "./styles.css";
 import { readFrontmatter } from 'src/utils/file';
 import { QuestionAnswerModal } from 'src/modals/qna-modal';
@@ -37,7 +37,7 @@ export default class MyPlugin extends Plugin {
 		}))
 
 		this.registerView(
-			VIEW_TYPE,
+			CHANGED_NOTES_VIEW_TYPE,
 			(leaf) => new ChangedNotesView(leaf)
 		);
 
@@ -102,7 +102,7 @@ export default class MyPlugin extends Plugin {
 
 	async activateView() {
 		const leaf = this.app.workspace.getLeaf(false);
-		await leaf.setViewState({ type: VIEW_TYPE, active: true });
+		await leaf.setViewState({ type: CHANGED_NOTES_VIEW_TYPE, active: true });
 		this.app.workspace.revealLeaf(leaf);
 	}
 }

@@ -1,32 +1,30 @@
-import { Modal, App, MarkdownRenderer, Component } from "obsidian";
-import { DiffMarkdownView } from "src/views/markdown-view";
+import { Modal, App, MarkdownRenderer, Component, WorkspaceLeaf, TFile } from "obsidian";
+import { DIFF_VIEW_TYPE, DiffMarkdownView } from "src/components/markdown-view";
 
 export class DiffModal extends Modal {
-    private diffContent: string;
     private styleId = 'diff-modal-style';
     private component: Component;
-    private srcPath: string;
+    private leaf: WorkspaceLeaf;
+    private file: TFile;
 
-    constructor(app: App, diffContent: string, srcPath: string, component: Component) {
+    constructor(app: App, leaf: WorkspaceLeaf, file: TFile) {
         super(app);
-        this.diffContent = diffContent;
-        this.srcPath = srcPath;
-        this.component = component
+        this.leaf = leaf;
+        this.file = file;
     }
 
     onOpen() {
         const { contentEl } = this;
         contentEl.empty();
 
-        const mdView = new DiffMarkdownView(contentEl, this.diffContent, this.app, this.srcPath, this.component);
-        mdView.onload();
+        this.app.workspace.getLeaf(true).setViewState({
+            type: DIFF_VIEW_TYPE,
+            state: {
+                file: this.file
+            }
+        })
     }
 
-    private renderMarkdown(markdown: string, container: HTMLElement, sourcePath: string) {
-        const renderResult = MarkdownRenderer.render(this.app, markdown, container, sourcePath, this.component);
-        console.log(renderResult);
-        return renderResult;
-    }
 
 
     private createStyledDiff(diffText: string): string {
