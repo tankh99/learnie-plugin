@@ -8,9 +8,21 @@ import { QUESTIONS_VIEW } from 'src/views/qns-view';
 import { deleteAllUnusedQuestionFiles, getQuestions } from 'src/utils/questions';
 import { activateChangedNotesView, activateDiffView, activateQnsView } from 'src/views';
 
+
+export enum Commands {
+    REVIEW = "review-notes",
+    CONVERT_TO_NOTE = "convert-to-note",
+    SHOW_DIFF = "show-diff",
+    CREATE_QUESTION = "create-question",
+    CLEAN_FILES = "clean-files",
+    VIEW_QUESTIONS = "view-questions",
+    TEST = "test"
+
+}
+
 export function addCommands(plugin: Plugin) {
     plugin.addCommand({
-        id: "review",
+        id: Commands.REVIEW,
         name: "Review Notes",
         callback: () => {
             activateChangedNotesView();
@@ -18,7 +30,7 @@ export function addCommands(plugin: Plugin) {
     })
 
     plugin.addCommand({
-        id: "convert-to-note",
+        id: Commands.CONVERT_TO_NOTE,
         name: "Convert to note",
         callback: async () => {
             const file = await this.app.workspace.getActiveFile();
@@ -31,8 +43,8 @@ export function addCommands(plugin: Plugin) {
     })
 
     plugin.addCommand({
-        id: "show-markdown",
-        name: "Show Markdown",
+        id: Commands.SHOW_DIFF,
+        name: "Show Diff View",
         callback: async () => {
             // plugin.showMarkdownView();
             const leaf = plugin.app.workspace.getLeaf(true);
@@ -42,7 +54,7 @@ export function addCommands(plugin: Plugin) {
     })
 
     plugin.addCommand({
-        id: "create-question",
+        id: Commands.CREATE_QUESTION,
         name: "Create Question",
         callback: async () => {
             // selected text
@@ -62,7 +74,7 @@ export function addCommands(plugin: Plugin) {
     })
 
     plugin.addCommand({
-        id: "clean-files",
+        id: Commands.CLEAN_FILES,
         name: "Clean up unused files",
         callback: async () => {
             await deleteAllUnusedQuestionFiles();
@@ -71,7 +83,7 @@ export function addCommands(plugin: Plugin) {
     })
 
     plugin.addCommand({
-        id: "view-questions",
+        id: Commands.VIEW_QUESTIONS,
         name: "View questions",
         callback: async () => {
             const leaf = await plugin.app.workspace.getLeaf(true)
@@ -101,15 +113,6 @@ export function addCommands(plugin: Plugin) {
             // const questionse = await getQuestions(noteId)
             // console.log("questions", questionse)
         }
-    })
-
-    // TODO: Convert these handler strings into global constants
-    plugin.registerObsidianProtocolHandler("view-questions", (params) => {
-        activateQnsView(true);
-    })
-
-    plugin.registerObsidianProtocolHandler("review-note", async (params) => {
-        activateDiffView(true);
     })
 
 }

@@ -7,6 +7,7 @@ import "./styles.css";
 import { readFrontmatter } from 'src/utils/file';
 import { QuestionAnswerModal } from 'src/modals/qna-modal';
 import { addCommands } from 'src/commands';
+import { registerViews } from 'src/views';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -36,20 +37,7 @@ export default class MyPlugin extends Plugin {
 			handleNoteChange(this.app.vault, this.app.workspace.getActiveFile())
 		}))
 
-		this.registerView(
-			CHANGED_NOTES_VIEW_TYPE,
-			(leaf) => new ChangedNotesView(leaf)
-		);
-
-		this.registerView(
-			DIFF_VIEW_TYPE,
-			(leaf) => new DiffMarkdownView(leaf)
-		)
-
-		this.registerView(
-			QUESTIONS_VIEW,
-			(leaf) => new QuestionsView(leaf)
-		)
+		registerViews(this);
 
 		addCommands(this)
 

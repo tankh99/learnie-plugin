@@ -8,6 +8,7 @@ import { formatLink, formatRelativeLink } from './obsidian-utils';
 import { NoteMetadata } from 'types/types';
 import { QUESTIONS_VIEW } from 'src/views/qns-view';
 import { createQuestion } from './questions';
+import { Commands } from 'src/commands';
 
 export const idMarker = "---"
 export const NOTE_FOLDER_PATH = "_Learnie History"
@@ -73,8 +74,8 @@ export async function convertToNote(vault: Vault, file: TFile) {
         return;
     }
 
-    const formattedReviewLink = `obsidian://review-note`
-    const formattedQuestionLink = `obsidian://view-questions?file=${encodeURIComponent(questionFile.path)}`
+    const formattedReviewLink = `obsidian://${Commands.SHOW_DIFF}`
+    const formattedQuestionLink = `obsidian://${Commands.VIEW_QUESTIONS}?file=${encodeURIComponent(questionFile.path)}`
 
     const metadata: NoteMetadata = {
         id: noteId,
