@@ -16,6 +16,7 @@ export enum Commands {
     CREATE_QUESTION = "create-question",
     CLEAN_FILES = "clean-files",
     VIEW_QUESTIONS = "view-questions",
+    VIEW_NOTE_QUESTIONS = "view-note-question",
     TEST = "test"
 
 }
@@ -46,10 +47,7 @@ export function addCommands(plugin: Plugin) {
         id: Commands.SHOW_DIFF,
         name: "Show Diff View",
         callback: async () => {
-            // plugin.showMarkdownView();
-            const leaf = plugin.app.workspace.getLeaf(true);
-            await leaf.setViewState({ type: DIFF_VIEW_TYPE, active: true });
-            plugin.app.workspace.setActiveLeaf(leaf);
+            activateDiffView(true)
         }
     })
 
@@ -86,9 +84,15 @@ export function addCommands(plugin: Plugin) {
         id: Commands.VIEW_QUESTIONS,
         name: "View questions",
         callback: async () => {
-            const leaf = await plugin.app.workspace.getLeaf(true)
-            await leaf.setViewState({ type: QUESTIONS_VIEW, active: true })
-            plugin.app.workspace.setActiveLeaf(leaf)
+            activateQnsView(true)
+        }
+    })
+
+    plugin.addCommand({
+        id: Commands.VIEW_NOTE_QUESTIONS,
+        name: "View current note's questions",
+        callback: async () => {
+            activateQnsView(true)
         }
     })
 
