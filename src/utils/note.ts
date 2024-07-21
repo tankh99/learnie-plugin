@@ -1,8 +1,8 @@
 import { FrontmatterContent } from './../../node_modules/@types/mdast/index.d';
 import { Vault, TFile, Notice } from "obsidian";
 import {v4 as uuidv4} from 'uuid'
-import { createNewFile, deleteFile, modifyFile, modifyFrontmatter, readFileContent, readFrontmatter } from "./file";
-import { checkIfNoteRevision, createNoteRevision, generateNoteRevisionName, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
+import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFile, modifyFrontmatter, readFileContent, readFrontmatter } from "./file";
+import { checkIfNoteRevision, createNoteRevision, generateNoteRevisionName, getAllNoteRevisions as getAllNoteRevisionFiles, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
 import { differenceInDays, endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
 import { formatLink, formatRelativeLink } from './obsidian-utils';
 import { NoteMetadata } from 'types/types';
@@ -42,7 +42,6 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
     }
     // console.log(reviewed);
 }
-
 
 // Checks a note's frontmatter to see if it has been reviewed already or not
 export async function checkIfReviewed(content: string) {
@@ -114,4 +113,18 @@ export async function noteIsChanged(file: TFile) {
 
     const withinToday = differenceInDays(lastModified, today) >= 0;
     return withinToday && !isReviewed
+}
+
+export async function deleteAllUnusedNoteRevisionFiles() {
+    const noteRevisions = await getAllNoteRevisionFiles();
+    
+    // checks each question file and see if a backlink is present. If it is, we assume that it is the
+    // note referencing it and nothing else. 
+    // TODO: In future, we could check to see if the backlink itself is a valid note and has a valid note id
+    noteRevisions.forEach(async (file) => {
+        const isValid = checkIfDerivativeFileIsValid(file);
+        if (!isValid) {
+            await deleteFile(this.app.vault, file)
+        }
+    })
 }

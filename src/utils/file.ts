@@ -1,7 +1,8 @@
 import { Notice, TFile, Vault } from "obsidian"
 import {parse, stringify} from 'yaml'
 
-export async function getFile(vault: Vault, folderPath: string, filename: string) {
+export async function getFile(folderPath: string, filename: string) {
+    const vault = this.app.vault;
     const fileName = `${filename}.md`
     const filePath = `${folderPath}/${fileName}`;
     const file = vault.getFileByPath(filePath)
@@ -104,4 +105,13 @@ export async function modifyFrontmatter(file: TFile, newFrontmatter: Record<stri
     await this.app.vault.modify(file, updatedContent);
 
     console.log(`Frontmatter updated for ${file.path}`);
+}
+
+// Checks to see if a plugin-created file (e.g. Note revision or question) is valid by checking if
+// baclinks > 0
+export function checkIfDerivativeFileIsValid(file: TFile) {
+    // Note: We use any explicityly here because typings for getBacklinksForfile function is not available in TS
+    const metadataCache: any = this.app.metadataCache;
+    const backlinksDict = metadataCache.getBacklinksForFile(file).data;
+    return Object.keys(backlinksDict).length > 0
 }

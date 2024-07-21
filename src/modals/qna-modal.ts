@@ -41,8 +41,13 @@ export class QuestionAnswerModal extends Modal {
 
     async submit() {
         if (this.question && this.answer) {
-            new Notice(`Question: ${this.question}, Answer: ${this.answer}`);
-            await addQuestion(this.noteId, this.question, this.answer);
+            // new Notice(`Question: ${this.question}, Answer: ${this.answer}`);
+            const file = await this.app.workspace.getActiveFile();
+            if (!file) {
+                console.error("No active file")
+                return;
+            }
+            await addQuestion(this.noteId, file, this.question, this.answer);
             this.close();
         } else {
             new Notice('Please fill in both fields.');

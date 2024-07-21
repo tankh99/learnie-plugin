@@ -41,6 +41,12 @@ export function getNoteRevisionFileName(noteId: string) {
     return `${noteId}_${datePart}.md`;
 }
 
+export function getAllNoteRevisions() {
+    const vault: Vault = this.app.vault;
+    const files = vault.getFiles().filter(file => file.path.startsWith(NOTE_FOLDER_PATH));
+    return files;
+}
+
 export function getNoteRevisionDate(name: string) {
     // Separate the ID, and the .md extension
     const dateStr = name.split("_")[1].split(".")[0]

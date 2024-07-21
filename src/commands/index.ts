@@ -1,10 +1,11 @@
 import {Editor, MarkdownView, Notice, Plugin} from 'obsidian'
-import { convertToNote } from '../utils/note';
+import { convertToNote, deleteAllUnusedNoteRevisionFiles } from '../utils/note';
 import { VIEW_TYPE } from '../views/changed-notes-view';
 import { readFrontmatter } from 'src/utils/file';
 import { QuestionAnswerModal } from 'src/modals/qna-modal';
 import { DIFF_VIEW_TYPE } from 'src/views/markdown-view';
 import { QUESTIONS_VIEW } from 'src/views/qns-view';
+import { deleteAllUnusedQuestionFiles, getQuestions } from 'src/utils/questions';
 
 export function addCommands(plugin: Plugin) {
     plugin.addCommand({
@@ -56,6 +57,15 @@ export function addCommands(plugin: Plugin) {
             const selectedText = editor.getSelection();
 
             new QuestionAnswerModal(plugin.app, noteId, selectedText).open()
+        }
+    })
+
+    plugin.addCommand({
+        id: "clean-fils",
+        name: "Clean up unused files",
+        callback: async () => {
+            await deleteAllUnusedQuestionFiles();
+            await deleteAllUnusedNoteRevisionFiles();
         }
     })
 
