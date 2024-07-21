@@ -1,4 +1,4 @@
-import { QUESTIONS_VIEW, QuestionsView } from './src/views/qns-view';
+import { QUESTIONS_VIEW, QuestionsView } from './src/views/questions-view';
 import { DIFF_VIEW_TYPE, DiffMarkdownView } from './src/views/markdown-view';
 import { App, Editor, ItemView, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, View, WorkspaceLeaf } from 'obsidian';
 import { convertToNote, handleNoteChange } from "src/utils/note";

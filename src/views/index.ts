@@ -1,7 +1,7 @@
 import { Plugin, TFile } from "obsidian";
 import { CHANGED_NOTES_VIEW_TYPE, ChangedNotesView } from "./changed-notes-view";
 import { DIFF_VIEW_TYPE, DiffMarkdownView } from "./markdown-view";
-import { QUESTIONS_VIEW, QuestionsView } from "./qns-view";
+import { QUESTIONS_VIEW, QuestionsView } from "./questions-view";
 import { Commands } from "src/commands";
 
 export async function activateChangedNotesView(newLeaf = false) {
