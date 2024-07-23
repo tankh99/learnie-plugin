@@ -47,12 +47,12 @@ export async function createQuestion(noteId: string, notePath: string, question:
         return;
     }
 
+    const questions = []
+    if (question && answer) {
+        questions.push({ question, answer})
+    }
     await modifyFrontmatter(createdFile, {
-        questions: [
-            {
-                question, answer
-            }
-        ],
+        questions: questions,
         // noteLink: `[[${notePath}]]`
     })
     return createdFile;
