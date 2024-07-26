@@ -6,8 +6,7 @@ import { checkIfNoteRevision, createNoteRevision, generateNoteRevisionName, getA
 import { differenceInDays, endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
 import { formatLink, formatRelativeLink } from './obsidian-utils';
 import { NoteMetadata } from 'types/types';
-import { QUESTIONS_VIEW } from 'src/views/qns-view';
-import { createQuestion } from './questions';
+import { createQuestion, QUESTION_FOLDER_PATH } from './questions';
 import { Commands } from 'src/commands';
 
 export const idMarker = "---"
@@ -57,6 +56,10 @@ export async function checkIfReviewed(content: string) {
 export async function convertToNote(vault: Vault, file: TFile) {
     const noteId = uuidv4()
 
+    if (!isValidNotePath(file.path)) {
+        new Notice("This file cannot be converted to a note")
+        return;
+    }
     /** TODO: Create note history file if 
      * - not exists yet
      **/
@@ -129,4 +132,11 @@ export async function deleteAllUnusedNoteRevisionFiles() {
             await deleteFile(this.app.vault, file)
         }
     })
+}
+
+/**
+ * A valid note is any note that is not under the plugin's generated folders
+ */
+export function isValidNotePath(filePath: string) {
+    return !filePath.startsWith(NOTE_FOLDER_PATH) && !filePath.startsWith(QUESTION_FOLDER_PATH)
 }

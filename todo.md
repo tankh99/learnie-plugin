@@ -2,10 +2,10 @@
 - [x] Feat: Add toggle element for answer
 - [ ] Feat: Add link to specific answer's context
 - [x] Add command to delete all unused note revisions
-- [ ] Bugfix: Prevent converting a note revision or question into a note
+- [x] Bugfix: Prevent converting a note revision or question into a note
 - [ ] Bugfix: Link to note revision in note is outdated
 - [ ] Bugfix: Only allow question creation within a valid note
-- [ ] Bugfis: Prevent empty questions from showing up as a valid question (when creting a new note)
+- [x] Bugfis: Prevent empty questions from showing up as a valid question (when creting a new note)
 - [ ] Feat: Improve delete unused files by checking
 - [ ] Feat: Allow users to modify questions and answers
     - [ ] If the note revision/question has valid frontmatter (e.g. note id, questions, etc)
