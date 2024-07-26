@@ -1,6 +1,7 @@
-import { MetadataCache, TFile, Vault } from "obsidian";
+import { MetadataCache, Notice, TFile, Vault } from "obsidian";
 import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFrontmatter, readFileContent, readFrontmatter } from "./file";
 import { formatRelativeLink } from "./obsidian-utils";
+import { isValidNotePath } from "./note";
 
 
 export const QUESTION_FOLDER_PATH = "_Learnie_Questions"
@@ -62,6 +63,11 @@ export async function addQuestion(noteId: string, file:TFile, question: string, 
     const vault = this.app.vault;
     const filename = formatQuestionFilename(noteId)
     const questionFile = await getFile(QUESTION_FOLDER_PATH, filename)
+
+    if (!isValidNotePath(file.path)) {
+        new Notice("You cannot add questions to this file")
+        return
+    }
     if (!questionFile) {
         await createQuestion(noteId, file.path, question, answer)
         // await modifyFrontmatter(file, {"questionLink": formatRelativeLink(`${QUESTION_FOLDER_PATH}/${filename}.md`, "View Questions")})

@@ -14,7 +14,7 @@ export const NOTE_FOLDER_PATH = "_Learnie History"
 
 export async function handleNoteChange(vault: Vault, file: TFile | null) {
     if (!file) return;
-
+    if (!isValidNotePath(file.path)) return;
     const noteId = await readNoteId(vault, file);
     if (!noteId) return;
 

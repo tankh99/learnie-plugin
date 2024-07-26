@@ -3,8 +3,10 @@
 - [ ] Feat: Add link to specific answer's context
 - [x] Add command to delete all unused note revisions
 - [x] Bugfix: Prevent converting a note revision or question into a note
-- [ ] Bugfix: Link to note revision in note is outdated
-- [ ] Bugfix: Only allow question creation within a valid note
+- [x] Bugfix: Link to note revision in note is outdated
+- [x] Bugfix: Only allow question creation within a valid note
+- [ ] Bugfix: "Clean unused notes" does not have good logic. Should check instead for all valid note IDs each time
+- [ ] Bugfix: Prevent frontmatter from showing up in diff
 - [x] Bugfis: Prevent empty questions from showing up as a valid question (when creting a new note)
 - [ ] Feat: Improve delete unused files by checking
 - [ ] Feat: Allow users to modify questions and answers
