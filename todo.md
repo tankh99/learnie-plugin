@@ -5,8 +5,8 @@
 - [x] Bugfix: Prevent converting a note revision or question into a note
 - [x] Bugfix: Link to note revision in note is outdated
 - [x] Bugfix: Only allow question creation within a valid note
-- [ ] Bugfix: "Clean unused notes" does not have good logic. Should check instead for all valid note IDs each time
-- [ ] Bugfix: Prevent frontmatter from showing up in diff
+- [x] Bugfix: "Clean unused notes" does not have good logic. Should check instead for all valid note IDs each time
+- [x] Bugfix: Prevent frontmatter from showing up in diff
 - [x] Bugfis: Prevent empty questions from showing up as a valid question (when creting a new note)
 - [ ] Feat: Improve delete unused files by checking
 - [ ] Feat: Allow users to modify questions and answers

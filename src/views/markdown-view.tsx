@@ -6,7 +6,7 @@ import { getLatestNoteRevision } from "src/utils/noteRevisions";
 import * as diff from 'diff';
 import { readNoteId } from "src/utils/note";
 import { ensureNewline, formatDiffContent } from "src/utils/diff-utils";
-import { modifyFrontmatter, readFrontmatter } from "src/utils/file";
+import { modifyFrontmatter, readFileContent, readFrontmatter } from "src/utils/file";
 
 type P = {
     app: App,
@@ -118,9 +118,9 @@ export class DiffMarkdownView extends ItemView {
                 return;
             }
 
-            let content = await this.app.vault.read(file);
+            let {content} = await readFileContent(file)
             content = ensureNewline(content)
-            let oldContent = await this.app.vault.read(revisionFile);
+            let {content: oldContent} = await readFileContent(revisionFile)
             oldContent = ensureNewline(oldContent)
 
             let diffContent = diff.createPatch(file.path, oldContent, content);

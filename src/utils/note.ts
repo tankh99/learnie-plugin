@@ -30,16 +30,17 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
 
     const revisionContent = await vault.read(latestNoteRevision);
     const reviewed = await checkIfReviewed(revisionContent)
-    if (reviewed) {
-        new Notice("Note is reviewed")
-    }
     const noteRevisionDate = getNoteRevisionDate(latestNoteRevision.name);
     const today = startOfDay(new Date());
     if (isBefore(noteRevisionDate, today)) {
         new Notice("Creating a new note revision")
         await createNoteRevision(vault, noteId, file, true);
-        // Delete the old one, we no longer need it.
-        await deleteFile(vault, latestNoteRevision);
+        if (reviewed) {
+
+            new Notice("Note is reviewed")
+            // Delete the old one, we no longer need it.
+            await deleteFile(vault, latestNoteRevision);
+        }
     }
     // console.log(reviewed);
 }

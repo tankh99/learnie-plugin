@@ -97,7 +97,12 @@ export function addCommands(plugin: Plugin) {
         id: Commands.VIEW_NOTE_QUESTIONS,
         name: "View current note's questions",
         callback: async () => {
-            activateQuestionsView(true)
+            const file = plugin.app.workspace.getActiveFile();
+            if (!file) {
+                new Notice("No file selected")
+                return;
+            }
+            activateQuestionsView(true, file.path)
         }
     })
 
