@@ -5,3 +5,9 @@ export type NoteMetadata = {
     questionsLink?: string
     reviewed?: boolean;
 }
+
+export type NoteRevisionMetadata = {
+    id: string;
+    reviewed: boolean;
+    noteLink: string;
+}

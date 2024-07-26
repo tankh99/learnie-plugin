@@ -64,7 +64,7 @@ export async function addQuestion(noteId: string, file:TFile, question: string, 
     const questionFile = await getFile(QUESTION_FOLDER_PATH, filename)
     if (!questionFile) {
         await createQuestion(noteId, file.path, question, answer)
-        await modifyFrontmatter(file, {"questionLink": formatRelativeLink(`${QUESTION_FOLDER_PATH}/${filename}.md`, "View Questions")})
+        // await modifyFrontmatter(file, {"questionLink": formatRelativeLink(`${QUESTION_FOLDER_PATH}/${filename}.md`, "View Questions")})
         return;
     }
 

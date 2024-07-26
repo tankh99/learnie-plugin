@@ -3,7 +3,7 @@ import { createNewFile, modifyFile, readContentWithoutFrontmatter, readFileConte
 import { addMetadataToNote, NOTE_FOLDER_PATH } from "./note";
 import {toZonedTime} from 'date-fns-tz';
 import { getDatePart } from "./date";
-import { NoteMetadata } from "types/types";
+import { NoteMetadata, NoteRevisionMetadata } from "types/types";
 
 export async function checkIfNoteRevision(file: TFile) {
     const {frontmatter} = await readFileContent(file);
@@ -14,7 +14,8 @@ export async function checkIfNoteRevision(file: TFile) {
     return "reviewed" in frontmatter;
 }
 
-export async function createNoteRevision(vault: Vault, noteId: string, originalContent: string, isNew = true) {
+export async function createNoteRevision(vault: Vault, noteId: string, file: TFile, isNew = true) {
+    const originalContent = await vault.read(file);
     const noteRevisionName = generateNoteRevisionName(noteId)
     const originalContentWithoutFrontmatter = readContentWithoutFrontmatter(originalContent);
     const folderPath = NOTE_FOLDER_PATH
@@ -25,9 +26,10 @@ export async function createNoteRevision(vault: Vault, noteId: string, originalC
         return;
     }
     if (isNew) {
-        const metadata: NoteMetadata = {
+        const metadata: NoteRevisionMetadata = {
             id: noteId,
-            reviewed: false
+            reviewed: false,
+            noteLink: `[[${file.path}]]`
         }
         await addMetadataToNote(vault, createdFile, metadata);
         console.info("Added id to note")

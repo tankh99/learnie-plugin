@@ -24,7 +24,7 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
     const latestNoteRevision = await getLatestNoteRevision(vault, noteId);
     if (!latestNoteRevision) {
         new Notice("Creating a new note revision")
-        await createNoteRevision(vault, noteId, "", true);
+        await createNoteRevision(vault, noteId, file, true);
         return;
     }
 
@@ -37,8 +37,7 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
     const today = startOfDay(new Date());
     if (isBefore(noteRevisionDate, today)) {
         new Notice("Creating a new note revision")
-        const originalContent = await vault.read(file);
-        await createNoteRevision(vault, noteId, originalContent, true);
+        await createNoteRevision(vault, noteId, file, true);
         // Delete the old one, we no longer need it.
         await deleteFile(vault, latestNoteRevision);
     }
@@ -63,8 +62,8 @@ export async function convertToNote(vault: Vault, file: TFile) {
     /** TODO: Create note history file if 
      * - not exists yet
      **/
-    const content = await vault.read(file);
-    const noteRevision = await createNoteRevision(vault, noteId, content);
+    // const content = await vault.read(file);
+    const noteRevision = await createNoteRevision(vault, noteId, file);
 
     if (!noteRevision) {
         console.error(`Error creating note revision for ${file.name}`)
@@ -122,7 +121,7 @@ export async function noteIsChanged(file: TFile) {
 
 export async function deleteAllUnusedNoteRevisionFiles() {
     const noteRevisions = await getAllNoteRevisionFiles();
-    
+
     // checks each question file and see if a backlink is present. If it is, we assume that it is the
     // note referencing it and nothing else. 
     // TODO: In future, we could check to see if the backlink itself is a valid note and has a valid note id
