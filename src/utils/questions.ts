@@ -53,6 +53,7 @@ export async function createQuestion(noteId: string, notePath: string, question:
         questions.push({ question, answer})
     }
     await modifyFrontmatter(createdFile, {
+        id: noteId,
         questions: questions,
         // noteLink: `[[${notePath}]]`
     })

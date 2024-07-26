@@ -43,6 +43,7 @@ export function getNoteRevisionFileName(noteId: string) {
     return `${noteId}_${datePart}.md`;
 }
 
+// Get all files inside the note revisions folder
 export function getAllNoteRevisions() {
     const vault: Vault = this.app.vault;
     const files = vault.getFiles().filter(file => file.path.startsWith(NOTE_FOLDER_PATH));

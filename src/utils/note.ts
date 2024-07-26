@@ -6,7 +6,7 @@ import { checkIfNoteRevision, createNoteRevision, generateNoteRevisionName, getA
 import { differenceInDays, endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
 import { formatLink, formatRelativeLink } from './obsidian-utils';
 import { NoteMetadata } from 'types/types';
-import { createQuestion, QUESTION_FOLDER_PATH } from './questions';
+import { createQuestion, getAllQuestionFiles, QUESTION_FOLDER_PATH } from './questions';
 import { Commands } from 'src/commands';
 
 export const idMarker = "---"
@@ -88,11 +88,11 @@ export async function convertToNote(vault: Vault, file: TFile) {
     await addMetadataToNote(vault, file, metadata);
 }
 
-export async function readNoteId(vault: Vault, file: TFile) {
+export async function readNoteId(vault: Vault, file: TFile): Promise<string | null> {
     const fileContent = await vault.read(file)
     const frontmatter = readFrontmatter(fileContent);
 
-    return frontmatter["id"];
+    return frontmatter ? frontmatter["id"] : null;
 }
 
 export function extractContentFromNote(content: string) {
@@ -119,18 +119,53 @@ export async function noteIsChanged(file: TFile) {
     return withinToday && !isReviewed
 }
 
+/**
+ * Function: 
+ * 1. Scrape all IDs from every file in the vault and separate them into 2 arrays: one to store note ids, another to store generated note ids
+ * 2. Get the set difference and delete all note revisions/questions with IDs that don't belog on the noteIds array
+ * 
+ */
 export async function deleteAllUnusedNoteRevisionFiles() {
-    const noteRevisions = await getAllNoteRevisionFiles();
+    const vault: Vault = this.app.vault;
+    const files = await vault.getMarkdownFiles();
+    
+    const noteIds: string[] = []
+    const generatedFiles: TFile[] = [];
+    const filesToDelete = [];
 
-    // checks each question file and see if a backlink is present. If it is, we assume that it is the
-    // note referencing it and nothing else. 
-    // TODO: In future, we could check to see if the backlink itself is a valid note and has a valid note id
-    noteRevisions.forEach(async (file) => {
-        const isValid = checkIfDerivativeFileIsValid(file);
-        if (!isValid) {
-            await deleteFile(this.app.vault, file)
+    for (const file of files) {
+        
+        if (isValidNotePath(file.path)) {
+            const id = await readNoteId(vault, file);
+            if (!id) continue;
+            noteIds.push(id);
+        } else {
+            const id = await readNoteId(vault, file);
+            // If we cannot read the Id of tehe generated note, it means the generated file is not valid
+            if (!id) {
+                filesToDelete.push(file)
+            } else {
+                generatedFiles.push(file);
+            }
         }
-    })
+    }
+
+    
+    
+
+    for (const file of generatedFiles) {
+        const generatedFileId = await readNoteId(vault, file);
+        console.log
+        if (!generatedFileId) continue;
+        if (!noteIds.some(noteId => noteId === generatedFileId)) {
+            filesToDelete.push(file)
+        }
+    }
+
+    for (const file of filesToDelete) {
+        console.log("deleting", file.path)
+        await vault.delete(file);
+    }
 }
 
 /**

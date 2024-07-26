@@ -24,7 +24,6 @@ export class QuestionsView extends ItemView {
     }
 
     async setState(state: ViewQuestionsState, result: ViewStateResult) {
-        console.log("state", state)
         if (state.filePath) {
 
             const file = await this.app.vault.getFileByPath(state.filePath);
