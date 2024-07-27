@@ -1,13 +1,8 @@
-import { QUESTIONS_VIEW, QuestionsView } from './src/views/questions-view';
-import { DIFF_VIEW_TYPE, DiffMarkdownView } from './src/views/markdown-view';
-import { App, Editor, ItemView, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, View, WorkspaceLeaf } from 'obsidian';
-import { convertToNote, handleNoteChange } from "src/utils/note";
-import { ChangedNotesView, CHANGED_NOTES_VIEW_TYPE } from 'src/views/changed-notes-view';
-import "./styles.css";
-import { readFrontmatter } from 'src/utils/file';
-import { QuestionAnswerModal } from 'src/modals/qna-modal';
+import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { addCommands } from 'src/commands';
+import { handleNoteChange } from "src/utils/note";
 import { registerViews } from 'src/views';
+import "./styles.css";
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -75,32 +70,32 @@ export default class MyPlugin extends Plugin {
 
 
 
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+// class SampleSettingTab extends PluginSettingTab {
+// 	plugin: MyPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
+// 	constructor(app: App, plugin: MyPlugin) {
+// 		super(app, plugin);
+// 		this.plugin = plugin;
+// 	}
 
-	display(): void {
-		const {containerEl} = this;
+// 	display(): void {
+// 		const {containerEl} = this;
 
-		containerEl.empty();
+// 		containerEl.empty();
 
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
+// 		new Setting(containerEl)
+// 			.setName('Setting #1')
+// 			.setDesc('It\'s a secret')
+// 			.addText(text => text
+// 				.setPlaceholder('Enter your secret')
+// 				.setValue(this.plugin.settings.mySetting)
+// 				.onChange(async (value) => {
+// 					this.plugin.settings.mySetting = value;
+// 					await this.plugin.saveSettings();
+// 				}));
 
-		new Setting(containerEl)
-				.setName("Test")
-				.setDesc("Test only")
-	}
-}
+// 		new Setting(containerEl)
+// 				.setName("Test")
+// 				.setDesc("Test only")
+// 	}
+// }

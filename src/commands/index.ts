@@ -1,12 +1,8 @@
-import {Editor, MarkdownView, Notice, Plugin} from 'obsidian'
-import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles } from '../utils/note';
-import { CHANGED_NOTES_VIEW_TYPE } from '../views/changed-notes-view';
-import { getFile, readFrontmatter } from 'src/utils/file';
+import { MarkdownView, Notice, Plugin } from 'obsidian';
 import { QuestionAnswerModal } from 'src/modals/qna-modal';
-import { DIFF_VIEW_TYPE } from 'src/views/markdown-view';
-import { QUESTIONS_VIEW } from 'src/views/qns-view';
-import { deleteAllUnusedQuestionFiles, getQuestions } from 'src/utils/questions';
+import { readFrontmatter } from 'src/utils/file';
 import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
+import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles } from '../utils/note';
 
 
 export enum Commands {
@@ -47,7 +43,7 @@ export function addCommands(plugin: Plugin) {
         id: Commands.SHOW_DIFF,
         name: "Show Diff View",
         callback: async () => {
-            activateDiffView(true)
+            activateDiffView(false)
         }
     })
 

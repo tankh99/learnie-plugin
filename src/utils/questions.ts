@@ -1,6 +1,5 @@
-import { MetadataCache, Notice, TFile, Vault } from "obsidian";
-import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFrontmatter, QUESTION_FOLDER_PATH, readFileContent, readFrontmatter } from "./file";
-import { formatRelativeLink } from "./obsidian-utils";
+import { Notice, TFile, Vault } from "obsidian";
+import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFrontmatter, QUESTION_FOLDER_PATH, readFrontmatter } from "./file";
 import { isValidNotePath } from "./note";
 
 

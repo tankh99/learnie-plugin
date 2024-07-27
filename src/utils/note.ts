@@ -1,14 +1,11 @@
-import { FrontmatterContent } from './../../node_modules/@types/mdast/index.d';
-import { Vault, TFile, Notice } from "obsidian";
-import {v4 as uuidv4} from 'uuid'
-import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFile, modifyFrontmatter, NOTE_FOLDER_PATH, readFileContent, readFrontmatter } from "./file";
-import { checkIfNoteRevision, createNoteRevision, generateNoteRevisionName, getAllNoteRevisions as getAllNoteRevisionFiles, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
-import { differenceInDays, endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
-import { formatLink, formatRelativeLink } from './obsidian-utils';
-import { NoteMetadata } from 'types/types';
-import { createQuestion, getAllQuestionFiles } from './questions';
-import { QUESTION_FOLDER_PATH } from "./file";
+import { differenceInDays, isBefore, startOfDay } from "date-fns";
+import { Notice, TFile, Vault } from "obsidian";
 import { Commands } from 'src/commands';
+import { NoteMetadata } from 'types/types';
+import { v4 as uuidv4 } from 'uuid';
+import { deleteFile, modifyFrontmatter, NOTE_FOLDER_PATH, QUESTION_FOLDER_PATH, readFileContent, readFrontmatter } from "./file";
+import { checkIfNoteRevision, createNoteRevision, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
+import { createQuestion } from './questions';
 
 export const idMarker = "---"
 export async function handleNoteChange(vault: Vault, file: TFile | null) {

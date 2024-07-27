@@ -1,10 +1,8 @@
 import { Notice, TFile, Vault } from "obsidian";
-import { createNewFile, modifyFile, readContentWithoutFrontmatter, readFileContent, readFrontmatter } from "./file";
-import { addMetadataToNote } from "./note";
-import { NOTE_FOLDER_PATH } from './file';
-import {toZonedTime} from 'date-fns-tz';
+import { NoteRevisionMetadata } from "types/types";
 import { getDatePart } from "./date";
-import { NoteMetadata, NoteRevisionMetadata } from "types/types";
+import { createNewFile, NOTE_FOLDER_PATH, readContentWithoutFrontmatter, readFileContent, readFrontmatter } from "./file";
+import { addMetadataToNote } from "./note";
 
 export async function checkIfNoteRevision(file: TFile) {
     const {frontmatter} = await readFileContent(file);

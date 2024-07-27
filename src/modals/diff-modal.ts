@@ -1,5 +1,5 @@
-import { Modal, App, MarkdownRenderer, Component, WorkspaceLeaf, TFile } from "obsidian";
-import { DIFF_VIEW_TYPE, DiffMarkdownView } from "src/components/markdown-view";
+import { App, Component, Modal, TFile, WorkspaceLeaf } from "obsidian";
+import { DIFF_VIEW_TYPE } from "src/views/markdown-view";
 
 export class DiffModal extends Modal {
     private styleId = 'diff-modal-style';

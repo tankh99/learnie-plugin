@@ -1,4 +1,4 @@
-import { App, ItemView, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
+import { ItemView, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import { QUESTION_FOLDER_PATH } from "src/utils/file";
 import { readFrontmatter } from '../utils/file';
 
@@ -79,7 +79,7 @@ export class QuestionsView extends ItemView {
             const listItem = listEl.createEl('li');
             questions.forEach(qna => {
                 const detailsEl = listItem.createEl('details');
-                const summaryEl = detailsEl.createEl('summary', { text: `${qna.question}` });
+                detailsEl.createEl('summary', { text: `${qna.question}` });
                 detailsEl.createEl('div', { text: `Answer: ${qna.answer}` });
             });
 
