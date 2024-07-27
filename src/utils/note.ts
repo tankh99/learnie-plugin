@@ -32,7 +32,9 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
     const reviewed = await checkIfReviewed(revisionContent)
     const noteRevisionDate = getNoteRevisionDate(latestNoteRevision.name);
     const today = startOfDay(new Date());
-    if (isBefore(noteRevisionDate, today)) {
+
+    const canCreateNewRevision = isBefore(noteRevisionDate, today) && reviewed;
+    if (canCreateNewRevision) {
         new Notice("Creating a new note revision")
         await createNoteRevision(vault, noteId, file, true);
         if (reviewed) {

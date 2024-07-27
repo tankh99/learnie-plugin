@@ -64,9 +64,9 @@ export async function getLatestNoteRevision(vault: Vault, noteId: string) {
         const fileContent = await vault.read(file);
         // console.log(fileContent)
         const frontmatter = readFrontmatter(fileContent);
-        const result = frontmatter["id"] === noteId 
-            && "reviewed" in frontmatter 
-            && frontmatter["reviewed"] === false;
+        const result = frontmatter["id"] === noteId;
+            // && "reviewed" in frontmatter 
+            // && frontmatter["reviewed"] === false;
         return result ? file : null;
     }));
 

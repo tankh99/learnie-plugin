@@ -1,4 +1,4 @@
-import React, { StrictMode, useEffect, useRef } from "react"
+import  { StrictMode, useEffect, useRef } from "react"
 import { App, Component, ItemView, MarkdownRenderer, Notice, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import { createRoot, Root } from "react-dom/client";
 import { convertPathToObsidianLink } from "src/utils/obsidian-utils";
@@ -19,7 +19,7 @@ type P = {
 
 export const ReactMarkdownView = ({ app, markdown, srcPath, component, revisionFile, revisionFrontmatter }: P) => {
     const markdownRef = useRef<HTMLDivElement | null>(null);
-
+    const revisionFilePath = convertPathToObsidianLink(app, revisionFile.path);
     useEffect(() => {
         if (markdownRef.current) {
             MarkdownRenderer.render(app, markdown, markdownRef.current, srcPath, component)
@@ -45,8 +45,10 @@ export const ReactMarkdownView = ({ app, markdown, srcPath, component, revisionF
         <div style={{ userSelect: "text" }}>
             <div ref={markdownRef}></div>
             {/* <Markdown>{markdown}</Markdown> */}
-            <div>
-                <a href={srcPath}>Original File</a>
+            <hr/>
+            <h4>Revision Controls</h4>
+            <div style={{display: "flex", alignItems: "center", columnGap: "4px"}}>
+                {/* <a href={srcPath}>Original File</a> */}
                 <div style={{ display: "flex", alignItems: "center", }}>
                     <input id="learnie-reviewed"
                         onChange={handleReviewed}
@@ -55,6 +57,8 @@ export const ReactMarkdownView = ({ app, markdown, srcPath, component, revisionF
                         Reviewed
                     </p>
                 </div>
+                <p> | </p>
+                <a href={revisionFilePath}>Link to note reovision</a>
             </div>
         </div>
     )
