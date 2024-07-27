@@ -1,6 +1,6 @@
 import { differenceInDays, startOfDay } from "date-fns";
 import { App, ItemView, Notice, TFile, WorkspaceLeaf } from "obsidian";
-import { NOTE_FOLDER_PATH, noteIsChanged, readNoteId } from "src/utils/note";
+import { isValidNotePath, NOTE_FOLDER_PATH, noteIsChanged, readNoteId } from "src/utils/note";
 import { getLatestNoteRevision } from "src/utils/noteRevisions";
 import { DIFF_VIEW_TYPE } from "src/views/markdown-view";
 
@@ -25,7 +25,7 @@ export class ChangedNotesView extends ItemView {
         this.contentEl.empty();
         const filesModifiedToday: TFile[] = [];
 
-        const files = this.app.vault.getFiles().filter(file => !file.path.startsWith(NOTE_FOLDER_PATH));
+        const files = this.app.vault.getFiles().filter(file => isValidNotePath(file.path));
 
         for (const file of files) {
             const noteId = await readNoteId(this.app.vault, file);
