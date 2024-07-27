@@ -43,6 +43,4 @@ Mark note revisions as reviewed to keep track of your progress and ensure no cha
 
 ---
 
-Learnie makes it easy to see what has changed in your notes, streamlining your study reviews and helping you learn more effectively.
-
 **Note**: Learnie is in early development and may have some instabilities. Regular updates will be provided to improve functionality and user experience.
