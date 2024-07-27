@@ -108,7 +108,7 @@ export async function modifyFrontmatter(file: TFile, newFrontmatter: Record<stri
     // Write the updated content back to the file
     await this.app.vault.modify(file, updatedContent);
 
-    console.log(`Frontmatter updated for ${file.path}`);
+    // console.log(`Frontmatter updated for ${file.path}`);
 }
 
 // Checks to see if a plugin-created file (e.g. Note revision or question) is valid by checking if

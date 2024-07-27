@@ -51,7 +51,6 @@ export class QuestionsView extends ItemView {
             files = this.app.vault.getFiles().filter(file => file.path.startsWith(QUESTION_FOLDER_PATH));
         }
 
-        console.log("rendeiring view", this.file)
         type QuestionAndAnswer = {
             question: string;
             answer: string;

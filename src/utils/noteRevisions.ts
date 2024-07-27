@@ -7,7 +7,7 @@ import { addMetadataToNote } from "./note";
 export async function checkIfNoteRevision(file: TFile) {
     const {frontmatter} = await readFileContent(file);
     if (!frontmatter) {
-        console.log("No frontmatter found")
+        // console.log("No frontmatter found")
         return false;
     }
     return "reviewed" in frontmatter;

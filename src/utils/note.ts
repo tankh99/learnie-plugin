@@ -154,7 +154,6 @@ export async function deleteAllUnusedNoteRevisionFiles() {
 
     for (const file of generatedFiles) {
         const generatedFileId = await readNoteId(vault, file);
-        console.log
         if (!generatedFileId) continue;
         if (!noteIds.some(noteId => noteId === generatedFileId)) {
             filesToDelete.push(file)
@@ -162,7 +161,6 @@ export async function deleteAllUnusedNoteRevisionFiles() {
     }
 
     for (const file of filesToDelete) {
-        console.log("deleting", file.path)
         await vault.delete(file);
     }
 }
