@@ -21,17 +21,13 @@ export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
 
 	async onload() {
-		await this.loadSettings();
+		// await this.loadSettings();
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status Bar Text');
-
+		// const statusBarItemEl = this.addStatusBarItem();
+		// statusBarItemEl.setText('Status Bar Text');
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
-
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+		// this.addSettingTab(new SampleSettingTab(this.app, this));
 
 		this.registerEvent(this.app.vault.on("modify", () => {
 			handleNoteChange(this.app.vault, this.app.workspace.getActiveFile())
@@ -48,21 +44,9 @@ export default class MyPlugin extends Plugin {
 		const style = document.createElement("style")
 
 		style.id = "learnie-tailwind"
-		// console.log(tailwindCss)
 		// style.textContent = tailwindCss
 		document.head.appendChild(style);
 	}
-
-	// async showMarkdownView() {
-	// 	const containerEl = this.addRootElement();
-	// 	const file = this.app.workspace.getActiveFile();
-	// 	if (!file) return;
-
-	// 	const content = await this.app.vault.read(file);
-	// 	const mdView = new DiffMarkdownView(containerEl, content, this.app, file.path, this);
-	// 	this.registerView("md-view", mdView);
-	// }
-
 
 	addRootElement() {
 		const rootEl = document.body.createDiv();
@@ -86,12 +70,6 @@ export default class MyPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-	}
-
-	async activateView() {
-		const leaf = this.app.workspace.getLeaf(false);
-		await leaf.setViewState({ type: CHANGED_NOTES_VIEW_TYPE, active: true });
-		this.app.workspace.revealLeaf(leaf);
 	}
 }
 
