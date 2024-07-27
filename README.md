@@ -1,106 +1,48 @@
+# Learnie: Enhance Your Learning with Active Recall and Spaced Repetition
 
-## Adding tailwind
-1. Install the necessary packages
-2. `npx tailwindcss init`
-3. Create a css file with the standard tailwind imports
-4. `npx tailwindcss -i path/to/globals.css -o ./output.css`
-5. Copy the output.css into a string and put it into a variable called tailwindCss in a file named `styles.ts`
-6. Export the style string and put it inside a style tag which will be appended on plugin load
+## Introduction
 
+Learnie is an Obsidian plugin designed to help students and lifelong learners remember and learn more effectively. By incorporating contemporary learning techniques like active recall and spaced repetition, Learnie transforms your Obsidian vault into a powerful learning tool.
 
-# Obsidian Sample Plugin
+## Key Features
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+### 1. Convert Files to Notes for Tracking
 
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
+Easily convert any file into a note by typing the command "Convert to note". This process updates the frontmatter of the file to include a unique note ID and links to additional resources.
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+### 2. Track Changes with the Diff View
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+Each tracked note is assigned an ID and includes links to view the differences between the current note and the last modified version. This feature allows you to see what has changed in your notes over time, helping you keep track of your revisions and edits effortlessly.
 
-## First time developing plugins?
+### 3. Create and Review Questions
 
-Quick starting guide for new plugin devs:
+Create review questions directly within your notes. Select text to automatically use it as an answer, streamlining the question creation process. This feature uses the flashcard strategy and helps you prepare for exams by regularly reviewing the questions you've created.
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+### 4. Daily Review
 
-## Releasing new releases
+View all notes that were changed in a day, facilitating regular review sessions and helping you stay on top of your learning material.
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+### 5. Review Marking
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+Mark note revisions as reviewed to keep track of your progress and ensure no changes slip through the cracks.
 
-## Adding your plugin to the community plugin list
+## Perfect for
 
-- Check https://github.com/obsidianmd/obsidian-releases/blob/master/plugin-review.md
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+- Students overwhelmed by large amounts of content to memorize
+- Obsidian users looking to enhance their note-taking and learning process
+- Anyone who believes in the power of accumulated learning over cramming
 
-## How to use
+## How It Works
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+1. Convert your existing files into tracked notes using the "Convert to note" command.
+2. Make edits to your notes as usual.
+3. Use the provided links to view diffs and track your changes over time.
+4. Create questions for active recall by selecting text and using the question creation command.
+5. Review your daily changes to reinforce your learning.
+6. Mark revisions as reviewed to maintain your learning progress.
 
-## Manually installing the plugin
+---
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+Learnie makes it easy to see what has changed in your notes, streamlining your study reviews and helping you learn more effectively.
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
-
-## API Documentation
-
-See https://github.com/obsidianmd/obsidian-api
+**Note**: Learnie is in early development and may have some instabilities. Regular updates will be provided to improve functionality and user experience.
