@@ -1,6 +1,10 @@
 import { Notice, TFile, Vault } from "obsidian"
 import {parse, stringify} from 'yaml'
 
+export const BASE_FOLDER_PATH = "_learnie";
+export const NOTE_FOLDER_PATH = `${BASE_FOLDER_PATH}/Note Revisions`;
+export const QUESTION_FOLDER_PATH = `${BASE_FOLDER_PATH}/Questions`;
+
 export async function getFile(folderPath: string, filename: string) {
     const vault = this.app.vault;
     const fileName = `${filename}.md`
@@ -115,3 +119,4 @@ export function checkIfDerivativeFileIsValid(file: TFile) {
     const backlinksDict = metadataCache.getBacklinksForFile(file).data;
     return Object.keys(backlinksDict).length > 0
 }
+

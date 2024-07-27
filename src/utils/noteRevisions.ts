@@ -1,6 +1,7 @@
 import { Notice, TFile, Vault } from "obsidian";
 import { createNewFile, modifyFile, readContentWithoutFrontmatter, readFileContent, readFrontmatter } from "./file";
-import { addMetadataToNote, NOTE_FOLDER_PATH } from "./note";
+import { addMetadataToNote } from "./note";
+import { NOTE_FOLDER_PATH } from './file';
 import {toZonedTime} from 'date-fns-tz';
 import { getDatePart } from "./date";
 import { NoteMetadata, NoteRevisionMetadata } from "types/types";

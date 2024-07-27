@@ -1,6 +1,7 @@
 import { differenceInDays, startOfDay } from "date-fns";
 import { App, ItemView, Notice, TFile, WorkspaceLeaf } from "obsidian";
-import { isValidNotePath, NOTE_FOLDER_PATH, noteIsChanged, readNoteId } from "src/utils/note";
+import { isValidNotePath, noteIsChanged, readNoteId } from "src/utils/note";
+import { NOTE_FOLDER_PATH } from 'src/utils/file';
 import { getLatestNoteRevision } from "src/utils/noteRevisions";
 import { DIFF_VIEW_TYPE } from "src/views/markdown-view";
 

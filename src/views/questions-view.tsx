@@ -1,5 +1,5 @@
 import { App, ItemView, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
-import { QUESTION_FOLDER_PATH } from '../utils/questions';
+import { QUESTION_FOLDER_PATH } from "src/utils/file";
 import { readFrontmatter } from '../utils/file';
 
 export const QUESTIONS_VIEW = "questions-view"

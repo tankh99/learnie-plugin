@@ -1,17 +1,16 @@
 import { FrontmatterContent } from './../../node_modules/@types/mdast/index.d';
 import { Vault, TFile, Notice } from "obsidian";
 import {v4 as uuidv4} from 'uuid'
-import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFile, modifyFrontmatter, readFileContent, readFrontmatter } from "./file";
+import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFile, modifyFrontmatter, NOTE_FOLDER_PATH, readFileContent, readFrontmatter } from "./file";
 import { checkIfNoteRevision, createNoteRevision, generateNoteRevisionName, getAllNoteRevisions as getAllNoteRevisionFiles, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
 import { differenceInDays, endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
 import { formatLink, formatRelativeLink } from './obsidian-utils';
 import { NoteMetadata } from 'types/types';
-import { createQuestion, getAllQuestionFiles, QUESTION_FOLDER_PATH } from './questions';
+import { createQuestion, getAllQuestionFiles } from './questions';
+import { QUESTION_FOLDER_PATH } from "./file";
 import { Commands } from 'src/commands';
 
 export const idMarker = "---"
-export const NOTE_FOLDER_PATH = "_Learnie History"
-
 export async function handleNoteChange(vault: Vault, file: TFile | null) {
     if (!file) return;
     if (!isValidNotePath(file.path)) return;

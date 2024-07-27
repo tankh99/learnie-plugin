@@ -1,10 +1,8 @@
 import { MetadataCache, Notice, TFile, Vault } from "obsidian";
-import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFrontmatter, readFileContent, readFrontmatter } from "./file";
+import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFrontmatter, QUESTION_FOLDER_PATH, readFileContent, readFrontmatter } from "./file";
 import { formatRelativeLink } from "./obsidian-utils";
 import { isValidNotePath } from "./note";
 
-
-export const QUESTION_FOLDER_PATH = "_Learnie_Questions"
 
 export function formatQuestionFilename(noteId: string) {
     return `${noteId}_question`
