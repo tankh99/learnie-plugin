@@ -1,4 +1,4 @@
-import { Notice, TFile, Vault } from "obsidian"
+import { App, Notice, TFile, Vault } from "obsidian"
 import {parse, stringify} from 'yaml'
 
 export const BASE_FOLDER_PATH = "_learnie";
@@ -45,7 +45,7 @@ export async function modifyFile(vault: Vault, file: TFile, content: string) {
 
 export async function deleteFile(vault: Vault, file: TFile) {
     try {
-        await vault.delete(file)
+        await vault.trash(file, true)
         new Notice(`File deleted: ${file.name}`)
     } catch (err) {
         console.error(err);

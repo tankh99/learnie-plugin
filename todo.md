@@ -1,6 +1,13 @@
+- [ ] Feat: Notify users every day at a specific time review their notes
+- [ ] Refactor: Remove all default code
+- [ ] Feat: Allow users to modify questions and answers
+    - [ ] If the note revision/question has valid frontmatter (e.g. note id, questions, etc)
+- [x] Bugfix: When checking the review button in the diff view, it seems that it there's an error when creating file...
+    - [ ] This was because the function getLatestNoteRevision only got the latest noteREvision that was today AND wasn't reviwed yet. 
+- [x] Refactor: Remove link to original file in diff view
+- [ ] Feat: Add link to specific answer's context
 - [x] Feat: View all questions for note
 - [x] Feat: Add toggle element for answer
-- [ ] Feat: Add link to specific answer's context
 - [x] Add command to delete all unused note revisions
 - [x] Bugfix: Prevent converting a note revision or question into a note
 - [x] Bugfix: Link to note revision in note is outdated
@@ -8,9 +15,8 @@
 - [x] Bugfix: "Clean unused notes" does not have good logic. Should check instead for all valid note IDs each time
 - [x] Bugfix: Prevent frontmatter from showing up in diff
 - [x] Bugfis: Prevent empty questions from showing up as a valid question (when creting a new note)
-- [ ] Feat: Improve delete unused files by checking
-- [ ] Feat: Allow users to modify questions and answers
-    - [ ] If the note revision/question has valid frontmatter (e.g. note id, questions, etc)
+- [x] Feat: Improve delete unused files by checking
+
 - [x] Command: Convert to note
     - [x] Adds an ID to the note and starts tracking version history for this particular note
 - [x] Add "view changes" button in each note

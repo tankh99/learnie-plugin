@@ -4,16 +4,16 @@ import { handleNoteChange } from "src/utils/note";
 import { registerViews } from 'src/views';
 import "./styles.css";
 
-interface MyPluginSettings {
+interface LearnieSettings {
 	mySetting: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: LearnieSettings = {
 	mySetting: 'default'
 }
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class Learnie extends Plugin {
+	settings: LearnieSettings;
 
 	async onload() {
 		// await this.loadSettings();
@@ -31,32 +31,10 @@ export default class MyPlugin extends Plugin {
 		registerViews(this);
 
 		addCommands(this)
-
-		this.loadStyles()
 	}
 
-	loadStyles() {
-		const style = document.createElement("style")
-
-		style.id = "learnie-tailwind"
-		// style.textContent = tailwindCss
-		document.head.appendChild(style);
-	}
-
-	addRootElement() {
-		const rootEl = document.body.createDiv();
-		rootEl.style.position = 'fixed';
-		rootEl.style.top = '50%';
-		rootEl.style.left = '50%';
-		rootEl.style.transform = 'translate(-50%, -50%)';
-		rootEl.style.backgroundColor = 'white';
-		rootEl.style.padding = '1rem';
-		rootEl.style.zIndex = '1000';
-		return rootEl;
-	}
 
 	onunload() {
-		document.getElementById("learnie-tailwind")?.remove()
 	}
 
 	async loadSettings() {

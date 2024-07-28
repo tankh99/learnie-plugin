@@ -161,7 +161,7 @@ export async function deleteAllUnusedNoteRevisionFiles() {
     }
 
     for (const file of filesToDelete) {
-        await vault.delete(file);
+        await deleteFile(vault, file);
     }
 }
 
