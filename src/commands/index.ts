@@ -91,27 +91,4 @@ export function addCommands(plugin: Plugin) {
         }
     })
 
-    plugin.addCommand({
-        id: "test",
-        name: "test",
-        callback: async () => {
-            
-            // const leaf = await plugin.app.workspace.getLeaf(true)
-            // await leaf.setViewState({ type: QUESTIONS_VIEW, active: true })
-            // plugin.app.workspace.setActiveLeaf(leaf)
-            // plugin.app.workspace.revealLeaf(leaf)
-            // new QuestionAnswerModal(plugin.app,).open()
-            // const file = plugin.app.workspace.getActiveFile();
-            // if (!file) return
-            // const content = await plugin.app.vault.read(file)
-            // const frontmatter = readFrontmatter(content);
-            // const noteId = frontmatter["id"]
-            // console.log(frontmatter, noteId)
-            // await addQuestion(noteId, "What is the capital of France?", "Paris")
-
-            // const questionse = await getQuestions(noteId)
-            // console.log("questions", questionse)
-        }
-    })
-
 }
