@@ -79,26 +79,15 @@ export function addCommands(plugin: Plugin) {
     plugin.addCommand({
         id: Commands.VIEW_QUESTIONS,
         name: "View questions",
-        callback: async () => {
+        checkCallback: (checking) => {
             const file = plugin.app.workspace.getActiveFile();
-            if (!file) {
-                new Notice("No file selected")
-                return;
+            if (file) {
+                if (!checking) {
+                    activateQuestionsView(true, file.path)
+                }
+                return true;
             }
-            activateQuestionsView(true, file.path)
-        }
-    })
-
-    plugin.addCommand({
-        id: Commands.VIEW_NOTE_QUESTIONS,
-        name: "View current note's questions",
-        callback: async () => {
-            const file = plugin.app.workspace.getActiveFile();
-            if (!file) {
-                new Notice("No file selected")
-                return;
-            }
-            activateQuestionsView(true, file.path)
+            return false;
         }
     })
 
