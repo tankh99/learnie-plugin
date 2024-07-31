@@ -20,7 +20,7 @@ export enum Commands {
 export function addCommands(plugin: Plugin) {
     plugin.addCommand({
         id: Commands.REVIEW,
-        name: "Review Notes",
+        name: "Review notes",
         callback: () => {
             activateChangedNotesView();
         }
@@ -41,7 +41,7 @@ export function addCommands(plugin: Plugin) {
 
     plugin.addCommand({
         id: Commands.SHOW_DIFF,
-        name: "Show Diff View",
+        name: "Show diff view",
         callback: async () => {
             activateDiffView(false)
         }
@@ -49,7 +49,7 @@ export function addCommands(plugin: Plugin) {
 
     plugin.addCommand({
         id: Commands.CREATE_QUESTION,
-        name: "Create Question",
+        name: "Create question",
         callback: async () => {
             // selected text
             const editor = plugin.app.workspace.getActiveViewOfType(MarkdownView)?.editor;

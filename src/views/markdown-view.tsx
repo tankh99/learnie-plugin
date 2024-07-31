@@ -46,7 +46,7 @@ export const ReactMarkdownView = ({ app, markdown, srcPath, component, revisionF
             <div ref={markdownRef}></div>
             {/* <Markdown>{markdown}</Markdown> */}
             <hr/>
-            <h4>Revision Controls</h4>
+            <h4>Revision controls</h4>
             <div style={{display: "flex", alignItems: "center", columnGap: "4px"}}>
                 {/* <a href={srcPath}>Original File</a> */}
                 <div style={{ display: "flex", alignItems: "center", }}>
@@ -86,7 +86,7 @@ export class DiffMarkdownView extends ItemView {
     }
 
     getDisplayText(): string {
-        return "Diff View"
+        return "Diff view"
     }
     
     async setState(state: DiffMarkdownState, result: ViewStateResult) {

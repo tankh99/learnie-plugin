@@ -37,8 +37,7 @@ export class QuestionsView extends ItemView {
 
 
     async onOpen() {
-        this.contentEl.setText("Questions View");
-        // this.renderView();
+        this.contentEl.setText("Questions view");
         
     }
 

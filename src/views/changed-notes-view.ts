@@ -16,7 +16,7 @@ export class ChangedNotesView extends ItemView {
     }
 
     getDisplayText(): string {
-        return "Changed Notes";
+        return "Changed notes";
     }
 
 

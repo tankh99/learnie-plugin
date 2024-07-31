@@ -15,7 +15,7 @@ export class QuestionAnswerModal extends Modal {
     onOpen() {
         const { contentEl } = this;
 
-        contentEl.createEl('h2', { text: 'Enter Question and Answer' });
+        contentEl.createEl('h2', { text: 'Enter question and answer' });
 
         new Setting(contentEl)
             .setName('Question')
