@@ -2,7 +2,8 @@ import { MarkdownView, Notice, Plugin } from 'obsidian';
 import { QuestionAnswerModal } from 'src/modals/qna-modal';
 import { readFrontmatter } from 'src/utils/file';
 import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
-import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles } from '../utils/note';
+import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles, isValidNotePath, readNoteId } from '../utils/note';
+import { getLatestNoteRevision } from 'src/utils/noteRevisions';
 
 
 export enum Commands {
@@ -29,41 +30,58 @@ export function addCommands(plugin: Plugin) {
     plugin.addCommand({
         id: Commands.CONVERT_TO_NOTE,
         name: "Convert to note",
-        callback: async () => {
-            const file = await this.app.workspace.getActiveFile();
-            if (!file) return new Notice("No file selected")
-            // TODO: Check that the file is NOT already
-            // 1. a note
-            // 2. a file in the history folder
-            convertToNote(plugin.app.vault, file)
+        checkCallback: (checking) => {
+            const file = this.app.workspace.getActiveFile();
+            const validNotePath = isValidNotePath(file.path);
+            if (file && validNotePath) {
+                if (!checking) {
+                    convertToNote(plugin.app.vault, file)
+                }
+                return true;
+            }
+            return false
+            
+            
         }
     })
 
     plugin.addCommand({
         id: Commands.SHOW_DIFF,
         name: "Show diff view",
-        callback: async () => {
-            activateDiffView(false)
+        checkCallback: (checking) => {
+            const file = plugin.app.workspace.getActiveFile();
+            if (!file) return false;
+            readNoteId(plugin.app.vault, file)
+            .then((noteId) => {
+                if (!noteId) return false;
+                getLatestNoteRevision(plugin.app.vault, noteId)
+                .then((latestNoteRevision) => {
+                    if (!latestNoteRevision) return false;
+                    if (!checking) {
+                        activateDiffView(true, file)
+                    }
+                    return true;
+                })
+            })
         }
     })
 
     plugin.addCommand({
         id: Commands.CREATE_QUESTION,
         name: "Create question",
-        callback: async () => {
-            // selected text
+        checkCallback: (checking) => {
             const editor = plugin.app.workspace.getActiveViewOfType(MarkdownView)?.editor;
-            if (!editor) return;
-            const file = await plugin.app.workspace.getActiveFile();
-            if (!file) return;
-
-            const filecontent = await plugin.app.vault.read(file);
-            const frnotmatter = readFrontmatter(filecontent);
-            const noteId = frnotmatter["id"];
-
-            const selectedText = editor.getSelection();
-
-            new QuestionAnswerModal(plugin.app, noteId, selectedText).open()
+            const file = plugin.app.workspace.getActiveFile();
+            if (!editor || !file) return false;
+            readNoteId(plugin.app.vault, file)
+            .then((noteId) => {
+                if (!noteId) return false;
+                if (!checking) {
+                    const selectedText = editor.getSelection();
+                    new QuestionAnswerModal(plugin.app, noteId, selectedText).open()
+                }
+                return true;
+            });
         }
     })
 
@@ -81,13 +99,11 @@ export function addCommands(plugin: Plugin) {
         name: "View questions",
         checkCallback: (checking) => {
             const file = plugin.app.workspace.getActiveFile();
-            if (file) {
-                if (!checking) {
-                    activateQuestionsView(true, file.path)
-                }
-                return true;
+            if (!file) return false;
+            if (!checking) {
+                activateQuestionsView(true, file.path)
             }
-            return false;
+            return true;
         }
     })
 

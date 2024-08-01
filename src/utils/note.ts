@@ -166,7 +166,7 @@ export async function deleteAllUnusedNoteRevisionFiles() {
 }
 
 /**
- * A valid note is any note that is not under the plugin's generated folders
+ * A valid note is any note that is not under the plugin's generated folders, e.g. revisions and questions
  */
 export function isValidNotePath(filePath: string) {
     return !filePath.startsWith(NOTE_FOLDER_PATH) && !filePath.startsWith(QUESTION_FOLDER_PATH)

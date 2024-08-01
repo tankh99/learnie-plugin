@@ -17,53 +17,19 @@ export class DiffModal extends Modal {
         const { contentEl } = this;
         contentEl.empty();
 
-        this.app.workspace.getLeaf(true).setViewState({
+        this.leaf.setViewState({
             type: DIFF_VIEW_TYPE,
             state: {
                 file: this.file
             }
         })
+        // this.app.workspace.getLeaf(true).setViewState({
+        //     type: DIFF_VIEW_TYPE,
+        //     state: {
+        //         file: this.file
+        //     }
+        // })
     }
-
-
-
-    private createStyledDiff(diffText: string): string {
-        const diffLines = diffText.split('\n');
-        let result = '';
-
-        diffLines.forEach(line => {
-
-            if (line.startsWith('#')) {
-                return; // Ignore title lines
-            }
-            if (line.startsWith('+')) {
-                result += `<div class="diff-line diff-insert">${line}</div>`;
-            } else if (line.startsWith('-')) {
-                result += `<div class="diff-line diff-delete">${line}</div>`;
-            } else {
-                result += `<div class="diff-line">${line}</div>`;
-            }
-        });
-
-        return result;
-    }
-
-
-    private addStyles() {
-        const style = document.createElement('style');
-
-        style.id = this.styleId;
-        style.textContent = `
-            .diff-insert {
-                color: green;
-            }
-            .diff-delete {
-                color: red;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
 
     private removeStyles() {
         const existingStyle = document.getElementById(this.styleId);
