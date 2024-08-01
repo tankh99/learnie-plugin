@@ -1,5 +1,4 @@
-import { differenceInDays, isBefore, startOfDay } from "date-fns";
-import { Notice, TFile, Vault } from "obsidian";
+import { moment, Notice, TFile, Vault } from "obsidian";
 import { Commands } from 'src/commands';
 import { NoteMetadata } from 'types/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,9 +26,9 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
     const revisionContent = await vault.read(latestNoteRevision);
     const reviewed = await checkIfReviewed(revisionContent)
     const noteRevisionDate = getNoteRevisionDate(latestNoteRevision.name);
-    const today = startOfDay(new Date());
+    const today = moment().startOf("day");
 
-    const canCreateNewRevision = isBefore(noteRevisionDate, today) && reviewed;
+    const canCreateNewRevision = moment(noteRevisionDate).isBefore(today) && reviewed;
     if (canCreateNewRevision) {
         new Notice("Creating a new note revision")
         await createNoteRevision(vault, noteId, file, true);
@@ -107,14 +106,14 @@ export async function addMetadataToNote(vault: Vault, file: TFile, metadata: Not
 }
 
 export async function noteIsChanged(file: TFile) {
-    const today = startOfDay(new Date());
+    const today = moment().startOf("D")
     const fileStats = await this.app.vault.adapter.stat(file.path);
-    const lastModified = fileStats!.mtime;
+    const lastModified = moment(fileStats!.mtime);
 
     const {frontmatter} = await readFileContent(file)
     const isReviewed = frontmatter["reviewed"]
 
-    const withinToday = differenceInDays(lastModified, today) >= 0;
+    const withinToday = lastModified.diff(today, "days") >= 0;
     return withinToday && !isReviewed
 }
 

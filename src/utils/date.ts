@@ -1,6 +1,6 @@
-import { format } from "date-fns";
+import {moment} from 'obsidian'
 
 export function getDatePart(date: Date) {
-    const formattedDate = format(date, "yyyy-MM-dd");
+    const formattedDate = moment(date).format("yyyy-MM-dd");
     return formattedDate
 }
