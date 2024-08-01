@@ -1,4 +1,4 @@
-import { MarkdownView, Notice, Plugin } from 'obsidian';
+import { MarkdownView, Notice, Plugin, moment } from 'obsidian';
 import { QuestionAnswerModal } from 'src/modals/qna-modal';
 import { readFrontmatter } from 'src/utils/file';
 import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
@@ -32,16 +32,14 @@ export function addCommands(plugin: Plugin) {
         name: "Convert to note",
         checkCallback: (checking) => {
             const file = this.app.workspace.getActiveFile();
+            if (!file) return false;
             const validNotePath = isValidNotePath(file.path);
-            if (file && validNotePath) {
-                if (!checking) {
-                    convertToNote(plugin.app.vault, file)
-                }
-                return true;
+            if (!validNotePath) return false;
+
+            if (!checking) {
+                convertToNote(plugin.app.vault, file)
             }
-            return false
-            
-            
+            return true;
         }
     })
 
