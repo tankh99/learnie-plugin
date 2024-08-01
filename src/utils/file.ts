@@ -1,4 +1,4 @@
-import { App, FrontMatterCache, Notice, TFile, Vault, parseYaml, stringifyYaml } from "obsidian"
+import { App, FrontMatterCache, Notice, TFile, Vault, parseYaml, stringifyYaml, FileManager } from "obsidian"
 
 export const BASE_FOLDER_PATH = "_learnie";
 export const NOTE_FOLDER_PATH = `${BASE_FOLDER_PATH}/Note Revisions`;
@@ -86,25 +86,11 @@ export async function readFileContent(file: TFile): Promise<FileContent> {
 
 
 export async function modifyFrontmatter(file: TFile, newFrontmatter: Record<string, any>) {
-    const { frontmatter: existingFrontmatter, content: contentWithoutFrontmatter } = await readFileContent(file);
-
-    // Merge the existing frontmatter with the new frontmatter
-
-    const updatedFrontmatter = {
-        ...existingFrontmatter,
-        ...newFrontmatter
-    };
-
-    // Convert the updated frontmatter to YAML
-    const updatedFrontmatterYAML = stringifyYaml(updatedFrontmatter);
-
-    // Construct the new file content with the updated frontmatter
-    const updatedContent = `---\n${updatedFrontmatterYAML}---\n\n${contentWithoutFrontmatter}`;
-
-    // Write the updated content back to the file
-    await this.app.vault.modify(file, updatedContent);
-
-    // console.log(`Frontmatter updated for ${file.path}`);
+    const app: App = this.app;
+    await app.fileManager.processFrontMatter(file, (frontmatter) => {
+        console.log(frontmatter, newFrontmatter);
+        Object.assign(frontmatter, newFrontmatter);
+    })
 }
 
 // Checks to see if a plugin-created file (e.g. Note revision or question) is valid by checking if
