@@ -1,9 +1,9 @@
 import { moment, Notice, TFile, Vault } from "obsidian";
 import { Commands } from 'src/commands';
-import { NoteMetadata } from 'types/types';
+import { NoteMetadata } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
 import { deleteFile, modifyFrontmatter, NOTE_FOLDER_PATH, QUESTION_FOLDER_PATH, readFileContent, readFrontmatter } from "./file";
-import { checkIfNoteRevision, createNoteRevision, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
+import { createNoteRevision, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
 import { createQuestion } from './questions';
 
 export const idMarker = "---"

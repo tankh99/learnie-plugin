@@ -1,4 +1,4 @@
-import { App, FrontMatterCache, Notice, TFile, Vault, parseYaml, stringifyYaml, FileManager } from "obsidian"
+import { App, FrontMatterCache, Notice, TFile, Vault } from "obsidian"
 
 export const BASE_FOLDER_PATH = "_learnie";
 export const NOTE_FOLDER_PATH = `${BASE_FOLDER_PATH}/Note Revisions`;
