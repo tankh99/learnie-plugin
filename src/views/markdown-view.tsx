@@ -58,7 +58,7 @@ export const ReactMarkdownView = ({ app, markdown, srcPath, component, revisionF
                     </p>
                 </div>
                 <p> | </p>
-                <a href={revisionFilePath}>Link to note reovision</a>
+                <a href={revisionFilePath}>Link to note revision</a>
             </div>
         </div>
     )
