@@ -1,5 +1,4 @@
-import { App, Notice, TFile, Vault } from "obsidian"
-import {parse, stringify} from 'yaml'
+import { App, Notice, TFile, Vault, parseYaml, stringifyYaml } from "obsidian"
 
 export const BASE_FOLDER_PATH = "_learnie";
 export const NOTE_FOLDER_PATH = `${BASE_FOLDER_PATH}/Note Revisions`;
@@ -58,7 +57,7 @@ const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
 export function readFrontmatter(fileContent: string): Record<string, any> {
     const match = fileContent.match(frontmatterRegex);
     if (match) {
-        const frontmatter = parse(match[1])
+        const frontmatter = parseYaml(match[1])
         return frontmatter
     }
     return {}
@@ -100,7 +99,7 @@ export async function modifyFrontmatter(file: TFile, newFrontmatter: Record<stri
     };
 
     // Convert the updated frontmatter to YAML
-    const updatedFrontmatterYAML = stringify(updatedFrontmatter);
+    const updatedFrontmatterYAML = stringifyYaml(updatedFrontmatter);
 
     // Construct the new file content with the updated frontmatter
     const updatedContent = `---\n${updatedFrontmatterYAML}---\n\n${contentWithoutFrontmatter}`;
