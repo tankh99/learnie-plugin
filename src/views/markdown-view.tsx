@@ -133,7 +133,11 @@ export class DiffMarkdownView extends ItemView {
             // console.log(content);
             const srcPath = convertPathToObsidianLink(this.app, file.path);
 
-            const noteRevisionFrontmatter = readFrontmatter(oldContent)
+            const noteRevisionFrontmatter = readFrontmatter(revisionFile)
+            if (!noteRevisionFrontmatter) {
+                new Notice("No frontmatter found in note revision")
+                return;
+            }
             this.root.render(
                 <StrictMode>
                     <ReactMarkdownView

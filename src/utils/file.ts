@@ -1,4 +1,4 @@
-import { App, Notice, TFile, Vault, parseYaml, stringifyYaml } from "obsidian"
+import { App, FrontMatterCache, Notice, TFile, Vault, parseYaml, stringifyYaml } from "obsidian"
 
 export const BASE_FOLDER_PATH = "_learnie";
 export const NOTE_FOLDER_PATH = `${BASE_FOLDER_PATH}/Note Revisions`;
@@ -54,13 +54,10 @@ export async function deleteFile(vault: Vault, file: TFile) {
 
 const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
 
-export function readFrontmatter(fileContent: string): Record<string, any> {
-    const match = fileContent.match(frontmatterRegex);
-    if (match) {
-        const frontmatter = parseYaml(match[1])
-        return frontmatter
-    }
-    return {}
+export function readFrontmatter(file: TFile): FrontMatterCache | undefined {
+    const app: App = this.app;
+    const frontmatter = app.metadataCache.getFileCache(file)?.frontmatter;
+    return frontmatter;
 }
 
 export function readContentWithoutFrontmatter(fileContent: string) {
@@ -75,13 +72,13 @@ export function readContentWithoutFrontmatter(fileContent: string) {
 } 
 
 type FileContent = {
-    frontmatter: Record<string, any>;
+    frontmatter: FrontMatterCache | undefined;
     content: string;
 }
 
 export async function readFileContent(file: TFile): Promise<FileContent> {
     const fileContent = await this.app.vault.read(file);
-    const frontmatter = readFrontmatter(fileContent);
+    const frontmatter = readFrontmatter(file);
     const content = readContentWithoutFrontmatter(fileContent);
 
     return { frontmatter, content, };

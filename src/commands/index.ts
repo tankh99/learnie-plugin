@@ -1,6 +1,5 @@
 import { MarkdownView, Notice, Plugin, moment } from 'obsidian';
 import { QuestionAnswerModal } from 'src/modals/qna-modal';
-import { readFrontmatter } from 'src/utils/file';
 import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
 import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles, isValidNotePath, readNoteId } from '../utils/note';
 import { getLatestNoteRevision } from 'src/utils/noteRevisions';

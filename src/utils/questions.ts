@@ -31,7 +31,7 @@ export async function getQuestions(noteId: string) {
 
     const questionContent = await vault.read(questionFile)
     const frontmatter = readFrontmatter(questionContent)
-    return frontmatter["questions"]
+    return frontmatter ? frontmatter["questions"] : []
 
 }
 
@@ -74,7 +74,7 @@ export async function addQuestion(noteId: string, file:TFile, question: string, 
 
     const questionContent = await vault.read(questionFile)
     const frontmatter = readFrontmatter(questionContent)
-    const questions = frontmatter["questions"] ?? []
+    const questions = frontmatter ? frontmatter["questions"] : [];
     questions.push({ question, answer })
     await modifyFrontmatter(questionFile, { questions })
 }

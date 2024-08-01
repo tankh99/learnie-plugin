@@ -7,32 +7,45 @@ import { checkIfNoteRevision, createNoteRevision, getLatestNoteRevision, getNote
 import { createQuestion } from './questions';
 
 export const idMarker = "---"
+
+/**
+ * On editing of a note, it checks to see if it needs to create  a new note revision given that the previous note 
+ * revision 
+ * 1. Doesn't exist OR
+ * 2. Is already reviewed and it wasn't created today
+ */
 export async function handleNoteChange(vault: Vault, file: TFile | null) {
     if (!file) return;
     if (!isValidNotePath(file.path)) return;
     const noteId = await readNoteId(vault, file);
     if (!noteId) return;
 
-    const isNoteRevision = await checkIfNoteRevision(file);
-    if (isNoteRevision) return;
+    const isValidNote = isValidNotePath(file.path);
+    if (!isValidNote) return;
 
     const latestNoteRevision = await getLatestNoteRevision(vault, noteId);
+    // Creates a new note revision is there isn't any to begin with (this shouldn't normally occur)
     if (!latestNoteRevision) {
         new Notice("Creating a new note revision")
         await createNoteRevision(vault, noteId, file, true);
         return;
     }
 
-    const revisionContent = await vault.read(latestNoteRevision);
-    const reviewed = await checkIfReviewed(revisionContent)
+    const revisionFrontmatter = readFrontmatter(latestNoteRevision);
+    if (!revisionFrontmatter) {
+        console.error(`Error reading frontmatter for ${latestNoteRevision.name}`)
+        return;
+    }
+    const isReviewed = revisionFrontmatter["reviewed"] == true;
     const noteRevisionDate = getNoteRevisionDate(latestNoteRevision.name);
     const today = moment().startOf("day");
 
-    const canCreateNewRevision = moment(noteRevisionDate).isBefore(today) && reviewed;
+    const canCreateNewRevision = moment(noteRevisionDate).isBefore(today) && isReviewed;
+    // Handle creation of new note revision and deletion of old one (if it's already reviewed)
     if (canCreateNewRevision) {
         new Notice("Creating a new note revision")
         await createNoteRevision(vault, noteId, file, true);
-        if (reviewed) {
+        if (isReviewed) {
 
             new Notice("Note is reviewed")
             // Delete the old one, we no longer need it.
@@ -42,12 +55,6 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
     // console.log(reviewed);
 }
 
-// Checks a note's frontmatter to see if it has been reviewed already or not
-export async function checkIfReviewed(content: string) {
-    const frontmatter = readFrontmatter(content);
-
-    return frontmatter["reviewed"] ?? false
-}
 // Converts a non-note file into a note. 
 // For pre-existing notes it shouldn't do anything
 export async function convertToNote(vault: Vault, file: TFile) {
@@ -87,8 +94,7 @@ export async function convertToNote(vault: Vault, file: TFile) {
 }
 
 export async function readNoteId(vault: Vault, file: TFile): Promise<string | null> {
-    const fileContent = await vault.read(file)
-    const frontmatter = readFrontmatter(fileContent);
+    const frontmatter = readFrontmatter(file);
 
     return frontmatter ? frontmatter["id"] : null;
 }

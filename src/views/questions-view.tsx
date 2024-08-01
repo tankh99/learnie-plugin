@@ -62,11 +62,12 @@ export class QuestionsView extends ItemView {
 
         const noteQnas: NoteQnas[] = []
         for (const file of files) {
-            const filecontent = await this.app.vault.cachedRead(file);
-            const frontmatter = readFrontmatter(filecontent);
-            const qns = frontmatter["questions"];
+
+            const frontmatter = readFrontmatter(file);
+            if (!frontmatter) continue;
+            const questions = frontmatter["questions"];
             const noteId = frontmatter["id"];
-            noteQnas.push({ qnas: qns, noteId: noteId, filePath: file.path });
+            noteQnas.push({ qnas: questions, noteId: noteId, filePath: file.path });
         }
 
         this.contentEl.createEl('h2', { text: 'Questions:' });
