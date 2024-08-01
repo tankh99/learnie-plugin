@@ -48,18 +48,20 @@ export function addCommands(plugin: Plugin) {
         checkCallback: (checking) => {
             const file = plugin.app.workspace.getActiveFile();
             if (!file) return false;
-            readNoteId(plugin.app.vault, file)
-            .then((noteId) => {
-                if (!noteId) return false;
-                getLatestNoteRevision(plugin.app.vault, noteId)
-                .then((latestNoteRevision) => {
-                    if (!latestNoteRevision) return false;
-                    if (!checking) {
+
+            if (!checking) {
+                readNoteId(plugin.app.vault, file)
+                .then((noteId) => {
+                    if (!noteId) return false;
+                    getLatestNoteRevision(plugin.app.vault, noteId)
+                    .then((latestNoteRevision) => {
+                        if (!latestNoteRevision) return false;
                         activateDiffView(true, file)
-                    }
-                    return true;
+                        return true;
+                    })
                 })
-            })
+            }
+            return true;
         }
     })
 
@@ -69,16 +71,17 @@ export function addCommands(plugin: Plugin) {
         checkCallback: (checking) => {
             const editor = plugin.app.workspace.getActiveViewOfType(MarkdownView)?.editor;
             const file = plugin.app.workspace.getActiveFile();
+
             if (!editor || !file) return false;
-            readNoteId(plugin.app.vault, file)
-            .then((noteId) => {
-                if (!noteId) return false;
-                if (!checking) {
+            if (!checking) {
+                readNoteId(plugin.app.vault, file)
+                .then((noteId) => {
+                    if (!noteId) return false;
                     const selectedText = editor.getSelection();
                     new QuestionAnswerModal(plugin.app, noteId, selectedText).open()
-                }
-                return true;
-            });
+                });
+            }
+            return true;
         }
     })
 
