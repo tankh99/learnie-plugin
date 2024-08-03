@@ -70,7 +70,7 @@ export type DiffMarkdownState = {
     file: TFile
 }
 
-export class DiffMarkdownView extends ItemView {
+export class DiffView extends ItemView {
 
     root: Root | null = null
     app: App;

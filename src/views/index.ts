@@ -1,6 +1,6 @@
 import { Plugin, TFile } from "obsidian";
 import { CHANGED_NOTES_VIEW_TYPE, ChangedNotesView } from "./changed-notes-view";
-import { DIFF_VIEW_TYPE, DiffMarkdownView } from "./markdown-view";
+import { DIFF_VIEW_TYPE, DiffMarkdownView } from "./diff-view";
 import { QUESTIONS_VIEW, QuestionsView } from "./questions-view";
 import { Commands } from "src/commands";
 
