@@ -88,7 +88,6 @@ export async function readFileContent(file: TFile): Promise<FileContent> {
 export async function modifyFrontmatter(file: TFile, newFrontmatter: Record<string, any>) {
     const app: App = this.app;
     await app.fileManager.processFrontMatter(file, (frontmatter) => {
-        console.log(frontmatter, newFrontmatter);
         Object.assign(frontmatter, newFrontmatter);
     })
 }
