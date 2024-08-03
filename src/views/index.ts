@@ -1,6 +1,6 @@
 import { Plugin, TFile } from "obsidian";
 import { CHANGED_NOTES_VIEW_TYPE, ChangedNotesView } from "./changed-notes-view";
-import { DIFF_VIEW_TYPE, DiffMarkdownView } from "./diff-view";
+import { DIFF_VIEW_TYPE, DiffView } from "./diff-view";
 import { QUESTIONS_VIEW, QuestionsView } from "./questions-view";
 import { Commands } from "src/commands";
 
@@ -33,7 +33,7 @@ export async function activateDiffView(newLeaf = false, file?: TFile) {
 export function registerViews(plugin: Plugin) {
     plugin.registerView(CHANGED_NOTES_VIEW_TYPE, (leaf) => new ChangedNotesView(leaf));
     plugin.registerView(QUESTIONS_VIEW, (leaf) => new QuestionsView(leaf));
-    plugin.registerView(DIFF_VIEW_TYPE, (leaf) => new DiffMarkdownView(leaf));
+    plugin.registerView(DIFF_VIEW_TYPE, (leaf) => new DiffView(leaf));
     
 
     // TODO: Convert these handler strings into global constants

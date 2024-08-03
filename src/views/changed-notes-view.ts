@@ -1,7 +1,7 @@
 import { ItemView, Notice, TFile, WorkspaceLeaf } from "obsidian";
 import { isValidNotePath, noteIsChanged, readNoteId } from "src/utils/note";
 import { getLatestNoteRevision } from "src/utils/noteRevisions";
-import { DIFF_VIEW_TYPE } from "src/views/markdown-view";
+import { DIFF_VIEW_TYPE } from "src/views/diff-view";
 
 export const CHANGED_NOTES_VIEW_TYPE = "changed-notes-view"
 
