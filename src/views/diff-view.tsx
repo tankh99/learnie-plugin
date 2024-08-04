@@ -17,20 +17,8 @@ type P = {
     revisionFrontmatter: Record<string, any>;
 }
 
-export const ReactMarkdownView = ({ app, markdown, srcPath, component, revisionFile, revisionFrontmatter }: P) => {
-    const markdownRef = useRef<HTMLDivElement | null>(null);
+export const ReactMarkdownView = ({ app, markdown, revisionFile, revisionFrontmatter }: P) => {
     const revisionFilePath = convertPathToObsidianLink(app, revisionFile.path);
-    useEffect(() => {
-        if (markdownRef.current) {
-            MarkdownRenderer.render(app, markdown, markdownRef.current, srcPath, component)
-
-            // markdownRef.current.addEventListener("click", handleLinkClick)
-        }
-
-        return () => {
-            markdownRef.current = null;
-        }
-    }, [markdown])
 
     const handleReviewed = (event: any) => {
         const target = event.target;
@@ -43,8 +31,7 @@ export const ReactMarkdownView = ({ app, markdown, srcPath, component, revisionF
 
     return (
         <div style={{ userSelect: "text" }}>
-            <div ref={markdownRef}></div>
-            {/* <Markdown>{markdown}</Markdown> */}
+            <div dangerouslySetInnerHTML={{__html: markdown}}></div>
             <hr/>
             <h4>Revision controls</h4>
             <div style={{display: "flex", alignItems: "center", columnGap: "4px"}}>
@@ -129,7 +116,8 @@ export class DiffView extends ItemView {
 
             let diffContent = diff.createPatch(file.path, oldContent, content);
             // diffContent = content
-            diffContent = formatDiffContent(this.app, diffContent);
+            
+            diffContent = await formatDiffContent(this.app, diffContent);
             // console.log(content);
             const srcPath = convertPathToObsidianLink(this.app, file.path);
 
