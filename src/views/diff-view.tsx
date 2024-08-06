@@ -7,6 +7,8 @@ import * as diff from 'diff';
 import { readNoteId } from "src/utils/note";
 import { ensureNewline, formatDiffContent } from "src/utils/diff-utils";
 import { modifyFrontmatter, readFileContent, readFrontmatter } from "src/utils/file";
+import { marked } from "marked";
+import {sanitize} from "dompurify";
 
 type P = {
     app: App,
@@ -114,11 +116,27 @@ export class DiffView extends ItemView {
             let {content: oldContent} = await readFileContent(revisionFile)
             oldContent = ensureNewline(oldContent)
 
+            const tokenizer = {
+                codespan(src: any) {
+                    const latexMatch = src.match(/^\$+([^$\n]+?)\$+/);
+                    if (latexMatch) {
+                        const result: any = {
+                            type: 'codespan',
+                            raw: latexMatch[0],
+                            text: latexMatch[1].trim()
+                        };
+                        return result;
+                    }
+
+                    // return false to use original codespan tokenizer
+                    return false;
+                },
+            };
+            marked.use({tokenizer})
+            content = sanitize(await marked(content))
+
             let diffContent = diff.createPatch(file.path, oldContent, content);
-            // diffContent = content
-            
             diffContent = await formatDiffContent(this.app, diffContent);
-            // console.log(content);
             const srcPath = convertPathToObsidianLink(this.app, file.path);
 
             const noteRevisionFrontmatter = readFrontmatter(revisionFile)
@@ -126,6 +144,7 @@ export class DiffView extends ItemView {
                 new Notice("No frontmatter found in note revision")
                 return;
             }
+
             this.root.render(
                 <StrictMode>
                     <ReactMarkdownView

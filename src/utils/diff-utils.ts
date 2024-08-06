@@ -18,47 +18,57 @@ export async function getDiff(text1: string, text2: string) {
  * Formats the diff content provided to id and tags each insertion/deletion with appropriate classes
  * All markdown content is formatted at the same time
  * Then we sanitise the html before returning
+ * Process: html -> format classes -> remove noise characters -> sanitise
  * @param app 
- * @param content content, mix of HTML and markdown
+ * @param content HTML content only. (Any markdown should be convert to HTML prior)
  * @returns Sanitised html
  */
 export async function formatDiffContent(app: App, content: string) {
     content = transformLinks(app, content);
-    const diffLines = content.split('\n');
-    let result = '';
-    
-    const indexTitle = diffLines[0].split(" ");
+    const lines = content.split("\n")
+    const diffStartIndex = lines.findIndex(line => line.startsWith('@@')) + 5;
+
+    content = lines.slice(diffStartIndex).join("\n");
+    const parser = new DOMParser()
+    const indexTitle = lines[0].split(" ");
     // Example Format: Index: file name.md
-    const fileName = indexTitle.slice(1, diffLines.length).join(" ");
+    const fileName = indexTitle.slice(1).join(" ");
 
     const title = fileName.split(".").slice(0, fileName.split(".").length - 1).join(".");
 
-    result += `<h2>${title}</h2>`
-    for (let line of diffLines) {
-        // Ignore all metadata from diff and the id header
-        if (line.trim().startsWith('#') 
-            || line.trim().startsWith("@@") 
-            || line.trim().startsWith('===')
-            || line.trim().startsWith("Index:")
-            || line.trim().startsWith("--")
-            || line.trim().startsWith("++")){
-            continue;
-        }
-        
-        if (line.startsWith('+')) {
-            line = line.slice(1, line.length)
-            line = await marked(line);
-            result += `<div class="diff-line diff-insert">${line}</div>`;
-        } else if (line.startsWith('-')) {
-            line = line.slice(1, line.length)
-            line = await marked(line);
-            result += `<div class="diff-line diff-delete">${line}</div>`;
-        } else if (!line.startsWith('+') && !line.startsWith('-')) {
-            line = await marked(line);
-            result += `<div class="diff-line">${line}</div>`;
+    // WE add content like this instead of using html.prepend because otherwise, we'd see stray "+" and "-" characters
+    content = `<h2>${title}</h2>\n${content}`
+    const doc = parser.parseFromString(content, "text/html");
+
+    function processNode(node: Node) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            const element = node as Element;
+
+            Array.from(element.childNodes).forEach(processNode);
+
+            // Check if this element or its first child text node starts with '+' or '-'
+            const firstTextNode = Array.from(element.childNodes).find(
+                child => child.nodeType === Node.TEXT_NODE && child.textContent?.trim()
+            ) as Text | undefined;
+
+            if (firstTextNode) {
+                const text = firstTextNode.textContent || '';
+                if (text.trim().startsWith('+') || text.trim().startsWith('-')) {
+                    const className = text.trim().startsWith('+') 
+                        ? 'diff-insert' 
+                        : text.startsWith('-')
+                            ? 'diff-delete'
+                            : ''
+                    element.setAttribute('class', (element.getAttribute('class') || '') + ' ' + className);
+                }
+            }
         }
     }
 
-    const clean = DOMPurify.sanitize(result);
+    processNode(doc.body);
+
+    
+    const newHtml = doc.body.innerHTML.replace(/^[+-]/gm, '')
+    const clean = DOMPurify.sanitize(newHtml);
     return clean;
 }
