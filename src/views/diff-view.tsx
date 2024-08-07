@@ -19,7 +19,7 @@ type P = {
     revisionFrontmatter: Record<string, any>;
 }
 
-export const ReactMarkdownView = ({ app, markdown, revisionFile, revisionFrontmatter }: P) => {
+export const ReactMarkdownView = ({ app, markdown, srcPath, revisionFile, revisionFrontmatter }: P) => {
     const revisionFilePath = convertPathToObsidianLink(app, revisionFile.path);
 
     const handleReviewed = (event: any) => {
@@ -48,6 +48,8 @@ export const ReactMarkdownView = ({ app, markdown, revisionFile, revisionFrontma
                 </div>
                 <p> | </p>
                 <a href={revisionFilePath}>Link to note revision</a>
+                <p> | </p>
+                <a href={srcPath}>Link to source file</a>
             </div>
         </div>
     )
