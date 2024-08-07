@@ -1,6 +1,7 @@
 import { ItemView, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import { QUESTION_FOLDER_PATH } from "src/utils/file";
 import { readFrontmatter } from '../utils/file';
+import { marked } from 'marked';
 
 export const QUESTIONS_VIEW = "questions-view"
 
@@ -72,19 +73,21 @@ export class QuestionsView extends ItemView {
 
         this.contentEl.createEl('h2', { text: 'Questions:' });
         this.contentEl.createEl('p', { text: 'Click on a question to reveal its answer'});
-        const listEl = this.contentEl.createEl('ul');
-        noteQnas.forEach(noteQna => {
-            const questions = noteQna.qnas;
+        const listEl = this.contentEl.createEl('ol');
+        for (const noteQna of noteQnas) {
+            const qnas = noteQna.qnas;
             const listItem = listEl.createEl('li');
-            questions.forEach(qna => {
+            for (const qna of qnas) {
                 const detailsEl = listItem.createEl('details');
-                detailsEl.createEl('summary', { text: `${qna.question}` });
-                detailsEl.createEl('div', { text: `Answer: ${qna.answer}` });
-            });
 
+                detailsEl.createEl('summary', { text: `${qna.question}` });
+
+                const ans = await marked(qna.answer)
+                const answerelem = detailsEl.createEl('div');
+                answerelem.innerHTML = ans
+            }
             listItem.createEl("br");
-            // link.addEventListener('click', () => this.showQuestions(noteQna));
-        });
+        }
     }
 
     async onClose() {
