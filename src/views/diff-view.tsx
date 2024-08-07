@@ -133,10 +133,11 @@ export class DiffView extends ItemView {
                 },
             };
             marked.use({tokenizer})
-            content = sanitize(await marked(content))
+            content = sanitize((content))
+            oldContent = sanitize((oldContent))
 
-            let diffContent = diff.createPatch(file.path, oldContent, content);
-            diffContent = await formatDiffContent(this.app, diffContent);
+            const changes = diff.diffLines(oldContent, content);
+            const diffContent = await formatDiffContent(changes);
             const srcPath = convertPathToObsidianLink(this.app, file.path);
 
             const noteRevisionFrontmatter = readFrontmatter(revisionFile)
