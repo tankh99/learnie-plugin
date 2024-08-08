@@ -45,6 +45,10 @@ Mark note revisions as reviewed to keep track of your progress and ensure no cha
 
 **Note**: Learnie is in early development and may have some instabilities. Regular updates will be provided to improve functionality and user experience.
 
+## Issues / Suggestions
+
+Please report any issues encountered or feature suggestions as a GitHub issue. For issues, include the context as well as screenshots (if applicable) so that it's easier to reproduce the error 
+
 ## Planned Enhancements
 - [ ] Fix bug where text is deleted after being idle on an active note for a some time
 - [ ] Allow users to modify questions
