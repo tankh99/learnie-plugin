@@ -5,7 +5,7 @@ import { createNewFile, NOTE_FOLDER_PATH, readContentWithoutFrontmatter, readFil
 import { addMetadataToNote } from "./note";
 
 export async function checkIfNoteRevision(file: TFile) {
-    const {frontmatter} = await readFileContent(file);
+    const frontmatter = await readFrontmatter(file);
     if (!frontmatter) {
         // console.log("No frontmatter found")
         return false;
@@ -31,7 +31,6 @@ export async function createNoteRevision(vault: Vault, noteId: string, file: TFi
             noteLink: `[[${file.path}]]`
         }
         await addMetadataToNote(vault, createdFile, metadata);
-        console.info("Added id to note")
         return createdFile
     }
     return null;

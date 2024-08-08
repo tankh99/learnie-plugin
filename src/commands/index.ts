@@ -1,5 +1,5 @@
 import { MarkdownView, Notice, Plugin, moment } from 'obsidian';
-import { QuestionAnswerModal } from 'src/modals/qna-modal';
+import { CreateQuestionAnswerModal } from 'src/modals/create-qna-modal';
 import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
 import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles, isValidNotePath, readNoteId } from '../utils/note';
 import { getLatestNoteRevision } from 'src/utils/noteRevisions';
@@ -78,7 +78,7 @@ export function addCommands(plugin: Plugin) {
                 .then((noteId) => {
                     if (!noteId) return false;
                     const selectedText = editor.getSelection();
-                    new QuestionAnswerModal(plugin.app, noteId, selectedText).open()
+                    new CreateQuestionAnswerModal(plugin.app, noteId, selectedText).open()
                 });
             }
             return true;

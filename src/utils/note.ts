@@ -116,7 +116,7 @@ export async function noteIsChanged(file: TFile) {
     const fileStats = await this.app.vault.adapter.stat(file.path);
     const lastModified = moment(fileStats!.mtime);
 
-    const {frontmatter} = await readFileContent(file)
+    const frontmatter = await readFrontmatter(file)
     const isReviewed = frontmatter["reviewed"]
 
     const withinToday = lastModified.diff(today, "days") >= 0;

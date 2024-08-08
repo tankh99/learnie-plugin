@@ -1,7 +1,7 @@
 import { Modal, App, Setting, Notice } from "obsidian";
 import { addQuestion } from "src/utils/questions";
 
-export class QuestionAnswerModal extends Modal {
+export class CreateQuestionAnswerModal extends Modal {
     question: string;
     answer: string;
     noteId: string;

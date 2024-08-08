@@ -32,16 +32,6 @@ export async function createNewFile(vault: Vault, folderPath: string, filename: 
     return file;
 }
 
-export async function modifyFile(vault: Vault, file: TFile, content: string) {
-    try {
-        await vault.modify(file, content)
-        console.info(`File modified: ${file.name}`)
-    } catch (err) {
-        console.error(err);
-    }
-
-}
-
 export async function deleteFile(vault: Vault, file: TFile) {
     try {
         await vault.trash(file, true)
@@ -54,10 +44,10 @@ export async function deleteFile(vault: Vault, file: TFile) {
 
 const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
 
-export function readFrontmatter(file: TFile): FrontMatterCache | undefined {
+export function readFrontmatter(file: TFile): FrontMatterCache {
     const app: App = this.app;
     const frontmatter = app.metadataCache.getFileCache(file)?.frontmatter;
-    return frontmatter;
+    return frontmatter ?? {};
 }
 
 export function readContentWithoutFrontmatter(fileContent: string) {
