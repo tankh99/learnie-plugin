@@ -44,3 +44,8 @@ Mark note revisions as reviewed to keep track of your progress and ensure no cha
 ---
 
 **Note**: Learnie is in early development and may have some instabilities. Regular updates will be provided to improve functionality and user experience.
+
+## Planned Enhancements
+- [ ] Fix bug where text is deleted after being idle on an active note for a some time
+- [ ] Allow users to modify questions
+- [ ] Add daily notification which reminds users to review their notes at a certain time
