@@ -36,10 +36,18 @@ Mark note revisions as reviewed to keep track of your progress and ensure no cha
 
 1. Convert your existing files into tracked notes using the "Convert to note" command.
 2. Make edits to your notes as usual.
-3. Use the provided links to view diffs and track your changes over time.
+3. At the end of the day, use the "Review notes" command to view all notes changed within the day. OR Use the provided links to view individual file diffs.
+    1. Check on the Reviewed checkbox so that Learnie knows to replace the note revision when you update the note tomorrow
 4. Create questions for active recall by selecting text and using the question creation command.
 5. Review your daily changes to reinforce your learning.
 6. Mark revisions as reviewed to maintain your learning progress.
+
+## Commands
+1. Convert to note - Converts a file into a note, and edits are tracked
+2. Review notes - View list of all notes that were changed within the day OR has not yet been reviewed (This means that only notes in the past nad haven't yet been reviewed will show up in this list)
+3. View questions - Views a list of all created questions for the active file
+4. Create question - Creates a new question. highlighted text will automatically be used as the answer of the question pair
+5. Clean up unused files - This removes all note revisions and files that are not used by any notes (This should not be needed)
 
 ---
 
