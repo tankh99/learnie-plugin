@@ -11,3 +11,8 @@ export type NoteRevisionMetadata = {
     reviewed: boolean;
     noteLink: string;
 }
+
+export type QuestionAnswerPair = {
+    question: string;
+    answer: string;
+}

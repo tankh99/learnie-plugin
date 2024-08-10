@@ -2,6 +2,7 @@ import { ItemView, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import { QUESTION_FOLDER_PATH } from "src/utils/file";
 import { readFrontmatter } from '../utils/file';
 import { marked } from 'marked';
+import { QuestionAnswerPair } from 'src/types/types';
 
 export const QUESTIONS_VIEW = "questions-view"
 
@@ -51,12 +52,8 @@ export class QuestionsView extends ItemView {
             files = this.app.vault.getFiles().filter(file => file.path.startsWith(QUESTION_FOLDER_PATH));
         }
 
-        type QuestionAndAnswer = {
-            question: string;
-            answer: string;
-        }
         type NoteQnas = {
-            qnas: QuestionAndAnswer[];
+            qnas: QuestionAnswerPair[];
             noteId: string;
             filePath: string;
         }
