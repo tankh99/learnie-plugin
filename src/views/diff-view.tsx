@@ -12,6 +12,7 @@ import {sanitize} from "dompurify";
 
 type P = {
     app: App,
+    title: string;
     markdown: string;
     srcPath: string;
     component: Component,
@@ -19,7 +20,7 @@ type P = {
     revisionFrontmatter: Record<string, any>;
 }
 
-export const ReactMarkdownView = ({ app, markdown, srcPath, revisionFile, revisionFrontmatter }: P) => {
+export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile, revisionFrontmatter }: P) => {
     const revisionFilePath = convertPathToObsidianLink(app, revisionFile.path);
 
     const handleReviewed = (event: any) => {
@@ -33,6 +34,7 @@ export const ReactMarkdownView = ({ app, markdown, srcPath, revisionFile, revisi
 
     return (
         <div style={{ userSelect: "text" }}>
+            <h2>{title}</h2>
             <div dangerouslySetInnerHTML={{__html: markdown}}></div>
             <hr/>
             <h4>Revision controls</h4>
@@ -151,6 +153,7 @@ export class DiffView extends ItemView {
             this.root.render(
                 <StrictMode>
                     <ReactMarkdownView
+                        title={file.basename}
                         app={this.app}
                         srcPath={srcPath}
                         component={this}
