@@ -1,11 +1,13 @@
 - [ ] Feat: Notify users every day at a specific time review their notes
-- [ ] Refactor: Remove all default code
-- [ ] Feat: Allow users to modify questions and answers
+- [ ] Feat: Add link to specific answer's context
+- [ ] Feat: Support image rendering in diff views
+- [ ] Implement easier navigation when reviewing notes (Single view or multiple views with nav buttons?)
+- [x] Feat: Allow users to modify questions and answers
     - [ ] If the note revision/question has valid frontmatter (e.g. note id, questions, etc)
+- [x] Refactor: Remove all default code
 - [x] Bugfix: When checking the review button in the diff view, it seems that it there's an error when creating file...
     - [ ] This was because the function getLatestNoteRevision only got the latest noteREvision that was today AND wasn't reviwed yet. 
 - [x] Refactor: Remove link to original file in diff view
-- [ ] Feat: Add link to specific answer's context
 - [x] Feat: View all questions for note
 - [x] Feat: Add toggle element for answer
 - [x] Add command to delete all unused note revisions
