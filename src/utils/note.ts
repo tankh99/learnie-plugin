@@ -1,10 +1,11 @@
 import { moment, Notice, TFile, Vault } from "obsidian";
 import { Commands } from 'src/commands';
-import { NoteMetadata } from '../types/types';
+import { NoteMetadata, NoteRevisionMetadata } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
 import { deleteFile, modifyFrontmatter, NOTE_FOLDER_PATH, QUESTION_FOLDER_PATH, readFileContent, readFrontmatter } from "./file";
 import { createNoteRevision, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
 import { createQuestion } from './questions';
+import { formatDate } from "./date";
 
 export const idMarker = "---"
 
@@ -87,8 +88,7 @@ export async function convertToNote(vault: Vault, file: TFile) {
     const metadata: NoteMetadata = {
         id: noteId,
         reviewLink: formattedReviewLink,
-        questionsLink: formattedQuestionLink
-    
+        questionsLink: formattedQuestionLink,
     }
     await addMetadataToNote(vault, file, metadata);
 }
@@ -111,10 +111,14 @@ export async function addMetadataToNote(vault: Vault, file: TFile, metadata: Not
     modifyFrontmatter(file, metadata)
 }
 
+export async function addMetadataToNoteRevision(file: TFile, metadata: NoteRevisionMetadata) {
+    modifyFrontmatter(file, metadata)
+}
+
 export async function noteIsChanged(file: TFile) {
     const today = moment().startOf("D")
     const fileStats = await this.app.vault.adapter.stat(file.path);
-    const lastModified = moment(fileStats!.mtime);
+    const lastModified = moment(fileStats.mtime);
 
     const frontmatter = await readFrontmatter(file)
     const isReviewed = frontmatter["reviewed"]

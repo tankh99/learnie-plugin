@@ -1,8 +1,8 @@
 import { Notice, TFile, Vault } from "obsidian";
-import { NoteRevisionMetadata } from "types/types";
+import { NoteRevisionMetadata } from "../types/types";
 import { getDatePart } from "./date";
 import { createNewFile, NOTE_FOLDER_PATH, readContentWithoutFrontmatter, readFileContent, readFrontmatter } from "./file";
-import { addMetadataToNote } from "./note";
+import { addMetadataToNoteRevision } from "./note";
 
 export async function checkIfNoteRevision(file: TFile) {
     const frontmatter = await readFrontmatter(file);
@@ -28,9 +28,10 @@ export async function createNoteRevision(vault: Vault, noteId: string, file: TFi
         const metadata: NoteRevisionMetadata = {
             id: noteId,
             reviewed: false,
-            noteLink: `[[${file.path}]]`
+            noteLink: `[[${file.path}]]`,
         }
-        await addMetadataToNote(vault, createdFile, metadata);
+
+        await addMetadataToNoteRevision(createdFile, metadata);
         return createdFile
     }
     return null;

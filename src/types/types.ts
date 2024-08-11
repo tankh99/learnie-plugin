@@ -10,6 +10,7 @@ export type NoteRevisionMetadata = {
     id: string;
     reviewed: boolean;
     noteLink: string;
+    // lastModified: string; // Date format: 6th Aug 2024, 6:30pm
 }
 
 export type QuestionAnswerPair = {
