@@ -4,6 +4,7 @@ import { handleNoteChange } from "src/utils/note";
 import { registerViews } from 'src/views';
 import "./styles.css";
 import { registerRibbonIcons } from 'src/ribbon-icons';
+import { scheduleDailyNotification } from 'src/utils/notifications';
 
 interface LearnieSettings {
 	mySetting: string;
@@ -34,6 +35,8 @@ export default class Learnie extends Plugin {
 		addCommands(this)
 
 		registerRibbonIcons(this)
+
+		scheduleDailyNotification({hours: 16, minutes: 0})
 	}
 
 
