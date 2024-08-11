@@ -29,7 +29,7 @@ export async function activateDiffView(newLeaf = false, file?: TFile) {
     this.app.workspace.revealLeaf(leaf);
 }
 
-export async function activateQuestionListView(newLeaf = false, file?: TFile) {
+export async function activateModifyQuestionsView(newLeaf = false, file?: TFile) {
     const leaf = this.app.workspace.getLeaf(newLeaf);
     await leaf.setViewState({
         type: QUESTIONS_LIST_VIEW, state: {
