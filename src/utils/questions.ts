@@ -33,6 +33,7 @@ export async function getQuestions(noteId: string) {
 
 }
 
+// Overrides any pre-existing questions array in thr frontmatter
 export async function createQuestion(noteId: string, notePath: string, question: string, answer: string) {
     const vault = this.app.vault;
 
@@ -56,7 +57,6 @@ export async function createQuestion(noteId: string, notePath: string, question:
 }
 
 export async function addQuestion(noteId: string, file:TFile, question: string, answer: string) {
-    const vault = this.app.vault;
     const filename = formatQuestionFilename(noteId)
     const questionFile = await getFile(QUESTION_FOLDER_PATH, filename)
 
@@ -70,8 +70,7 @@ export async function addQuestion(noteId: string, file:TFile, question: string, 
         return;
     }
 
-    const questionContent = await vault.read(questionFile)
-    const frontmatter = readFrontmatter(questionContent)
+    const frontmatter = readFrontmatter(questionFile)
     const questions = frontmatter["questions"] ?? [];
     questions.push({ question, answer })
     await modifyFrontmatter(questionFile, { questions })
