@@ -2,7 +2,6 @@ import { Plugin, TFile } from "obsidian";
 import { CHANGED_NOTES_VIEW_TYPE, ChangedNotesView } from "./changed-notes-view";
 import { DIFF_VIEW_TYPE, DiffView } from "./diff-view";
 import { QUESTIONS_VIEW, QuestionsView } from "./questions-view";
-import QuestionsListView, { QUESTIONS_LIST_VIEW } from "../modals/qna-list";
 import { Commands } from "src/commands";
 
 export async function activateChangedNotesView(newLeaf = false) {
@@ -29,24 +28,11 @@ export async function activateDiffView(newLeaf = false, file?: TFile) {
     this.app.workspace.revealLeaf(leaf);
 }
 
-export async function activateModifyQuestionsView(newLeaf = false, file?: TFile) {
-    const leaf = this.app.workspace.getLeaf(newLeaf);
-    await leaf.setViewState({
-        type: QUESTIONS_LIST_VIEW, state: {
-            file: file
-        }, active: true
-    });
-    this.app.workspace.revealLeaf(leaf);
-}
-
-
-
 export function registerViews(plugin: Plugin) {
     plugin.registerView(CHANGED_NOTES_VIEW_TYPE, (leaf) => new ChangedNotesView(leaf));
     plugin.registerView(QUESTIONS_VIEW, (leaf) => new QuestionsView(leaf));
     plugin.registerView(DIFF_VIEW_TYPE, (leaf) => new DiffView(leaf));
-    plugin.registerView(QUESTIONS_LIST_VIEW, (leaf) => new QuestionsListView(leaf));
-    
+    // plugin.registerView(QUESTIONS_LIST_VIEW, (leaf) => new QuestionsListView(leaf));
 
     plugin.registerObsidianProtocolHandler(Commands.VIEW_QUESTIONS, (params) => {
         activateQuestionsView(true, params.file);

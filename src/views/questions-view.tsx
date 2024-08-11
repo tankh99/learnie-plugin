@@ -9,6 +9,10 @@ export const QUESTIONS_VIEW = "questions-view"
 export type ViewQuestionsState = {
     filePath?: string;
 }
+
+/**
+ * This shows the view for ALL questions, or just the active file's questions
+ */
 export class QuestionsView extends ItemView {
 
     private file: TFile;
