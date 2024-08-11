@@ -16,6 +16,7 @@ export enum Commands {
     CLEAN_FILES = "clean-files",
     VIEW_QUESTIONS = "view-questions",
     VIEW_NOTE_QUESTIONS = "view-note-question",
+    UPDATE_QUESTIONS = "update-questions",
     TEST = "test"
 
 }
@@ -113,6 +114,23 @@ export function addCommands(plugin: Plugin) {
                     activateQuestionsView(true, questionFile.path)
                 }
             })
+            return true;
+        }
+    })
+
+    plugin.addCommand({
+        id: Commands.UPDATE_QUESTIONS,
+        name: "Update questions",
+        checkCallback: (checking) => {
+            const file = this.app.workspace.getActiveFile();
+            if (!file) return false;
+            
+            const noteId = readFrontmatter(file)?.id;
+            if (!noteId) return false;
+
+            if (!checking) {
+                new UpdateQuestionAnswerModal(this.app, noteId).open();
+            }
             return true;
         }
     })

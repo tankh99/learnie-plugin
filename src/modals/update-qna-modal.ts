@@ -31,8 +31,10 @@ export class UpdateQuestionAnswerModal extends Modal {
         this.questions.forEach((qna, index) => {
             const qnaContainer = contentEl.createEl('div', { cls: 'qna-container' });
             new Setting(qnaContainer)
+                .setName(`Question: ${qna.question}`)
+            new Setting(qnaContainer)
                 .setName("Question")
-                .addText(text => text.setValue(qna.question).onChange(value => {
+                .addTextArea(text => text.setValue(qna.question).onChange(value => {
                     qna.question = value
                 }))
             new Setting(qnaContainer)
@@ -51,7 +53,7 @@ export class UpdateQuestionAnswerModal extends Modal {
             .addButton(btn => btn
                 .setIcon("trash")
                 .setTooltip("Delete")
-                .onClick(() => this.deleteQuestion(qna.id))
+                .onClick(() => this.deleteQuestion(index))
             );
 
         // Add a horizontal rule to separate Q&A pairs
@@ -73,16 +75,16 @@ export class UpdateQuestionAnswerModal extends Modal {
         this.newQuestion = qa.question;
         this.newAnswer = qa.answer;
         this.display();
-        new Notice("Successfully updated question")
+        new Notice("Updated successfully")
     }
 
     async deleteQuestion(id: number) {
-        // await deleteQuestion(this.noteId, id); // tODO:
-        // this.questions = this.questions.filter(q => q.id !== id);
-        // this.questions = this.questions.filter(q => q !== this.currentQuestion);
+        this.questions.splice(id, 1)
         this.display();
+        new Notice("Deleted successfully")
     }
 
+    // CURRENTLY UNUSED.
     async submitQuestion() {
         if (this.newQuestion && this.newAnswer) {
             const file = await this.app.workspace.getActiveFile();
