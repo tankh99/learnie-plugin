@@ -1,23 +1,35 @@
-import { setSeconds, setMinutes, setHours, isBefore, addDays, differenceInMilliseconds, addSeconds } from "date-fns";
-import { Notice } from "obsidian";
+import { Notice, moment } from "obsidian";
 
 type NotificationTime = {
     hours: number;
     minutes: number;
 }
 
+
+let notificationTimeoutId: number | null = null;
 // This schedules a daily notification at the specified time
 export function scheduleDailyNotification(notificationTime: NotificationTime) {
-    const now = new Date();
-    let nextNotificationTime = setSeconds(setMinutes(setHours(now, notificationTime.hours), notificationTime.minutes), 0);
 
-    if (isBefore(nextNotificationTime, now)) {
-        nextNotificationTime = addDays(nextNotificationTime, 1);
+    if (notificationTimeoutId) {
+        window.clearTimeout(notificationTimeoutId);
+        notificationTimeoutId = null;
+    }
+    const now = moment();
+    const nextNotificationTime = moment().set({
+        hour: notificationTime.hours,
+        minute: notificationTime.minutes,
+        second: 0,
+        millisecond: 0
+    });
+    
+    // If the current time is after today's notification time, schedule for tomorrow
+    if (nextNotificationTime.isBefore(now)) {
+        nextNotificationTime.add(1, 'day');
     }
 
-    const timeUntilNextNotification = differenceInMilliseconds(nextNotificationTime, now);
+    const timeUntilNextNotification = nextNotificationTime.diff(now);
 
-    setTimeout(() => {
+    notificationTimeoutId = window.setTimeout(() => {
         showNotification();
         scheduleDailyNotification(notificationTime); // Schedule the next notification
     }, timeUntilNextNotification);

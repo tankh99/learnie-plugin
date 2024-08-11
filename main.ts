@@ -1,4 +1,4 @@
-import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { addCommands } from 'src/commands';
 import { handleNoteChange } from "src/utils/note";
 import { registerViews } from 'src/views';
@@ -6,18 +6,22 @@ import "./styles.css";
 import { registerRibbonIcons } from 'src/ribbon-icons';
 import { scheduleDailyNotification } from 'src/utils/notifications';
 
-interface LearnieSettings {
-	mySetting: string;
+type LearnieSettings = {
+	enableNotification: boolean;	
+	notificationTime: string;
 }
 
 const DEFAULT_SETTINGS: LearnieSettings = {
-	mySetting: 'default'
+	enableNotification: false,
+	notificationTime: "20:00",
 }
 
 export default class Learnie extends Plugin {
 	settings: LearnieSettings;
 
 	async onload() {
+
+		await this.loadSettings();
 		// await this.loadSettings();
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		// const statusBarItemEl = this.addStatusBarItem();
@@ -36,8 +40,26 @@ export default class Learnie extends Plugin {
 
 		registerRibbonIcons(this)
 
-		scheduleDailyNotification({hours: 16, minutes: 0})
+		this.addSettingTab(new LearnieSettingTab(this.app, this));
+
+		if (this.settings.enableNotification) {
+			this.scheduleNotification()
+		}
+
+		// Code to clear all scheduled notifictions
+		// let id = window.setTimeout(function() {}, 0);
+
+		// while (id--) {
+		// 	console.log(id)
+		// 	window.clearTimeout(id); // will do nothing if no timeout with id is present
+		// }
 	}
+
+
+    scheduleNotification() {
+        const [hours, minutes] = this.settings.notificationTime.split(':').map(Number);
+        scheduleDailyNotification({ hours, minutes });
+    }
 
 
 	onunload() {
@@ -54,32 +76,71 @@ export default class Learnie extends Plugin {
 
 
 
-// class SampleSettingTab extends PluginSettingTab {
-// 	plugin: Learnie;
+class LearnieSettingTab extends PluginSettingTab {
+	plugin: Learnie;
+	noticeTimeout: any;
 
-// 	constructor(app: App, plugin: Learnie) {
-// 		super(app, plugin);
-// 		this.plugin = plugin;
-// 	}
+	constructor(app: App, plugin: Learnie) {
+		super(app, plugin);
+		this.plugin = plugin;
+		this.noticeTimeout = null;
+	}
 
-// 	display(): void {
-// 		const {containerEl} = this;
+	display(): void {
+		const {containerEl} = this;
 
-// 		containerEl.empty();
+		containerEl.empty();
 
-// 		new Setting(containerEl)
-// 			.setName('Setting #1')
-// 			.setDesc('It\'s a secret')
-// 			.addText(text => text
-// 				.setPlaceholder('Enter your secret')
-// 				.setValue(this.plugin.settings.mySetting)
-// 				.onChange(async (value) => {
-// 					this.plugin.settings.mySetting = value;
-// 					await this.plugin.saveSettings();
-// 				}));
+		containerEl.createEl("h2", {text: "Notification settings"})
 
-// 		new Setting(containerEl)
-// 				.setName("Test")
-// 				.setDesc("Test only")
-// 	}
-// }
+		new Setting(containerEl)
+			.setName('Enable notification')
+			.setDesc('Turn daily notifications on or off')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.enableNotification)
+				.onChange(async (value) => {
+					this.plugin.settings.enableNotification = value;
+					await this.plugin.saveSettings();
+					this.display()
+					if (value) {
+						console.log("oo", value)
+						this.plugin.scheduleNotification()
+					}
+				})
+			)
+
+		if (this.plugin.settings.enableNotification) {
+			// Notification Time Setting
+			new Setting(containerEl)
+				.setName('Notification Time')
+				.setDesc('Set the 24hr time for daily notifications (HH:MM format).')
+				.addText(text => text
+					.setPlaceholder('Enter time')
+					.setValue(this.plugin.settings.notificationTime)
+					.onChange(async (value) => {
+						this.plugin.settings.notificationTime = value;
+						// Regex for validating "HH:MM" format, allowing 24-hour times
+                        const timeFormatRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+						if (this.noticeTimeout) {
+							clearTimeout(this.noticeTimeout)
+						}
+						this.noticeTimeout = setTimeout(() => {
+							if (!timeFormatRegex.test(value)) {
+								// Debounce logic to prevent notice-spamming
+								this.noticeTimeout = null;
+								new Notice("Invalid time format. Please use HH:MM format (24-hour).");
+							} else {
+								this.plugin.saveSettings()
+								.then(() => {
+									if (this.plugin.settings.enableNotification) {
+										this.plugin.scheduleNotification();
+										this.noticeTimeout = null;
+									}
+								})
+							}
+						}, 500);
+					}));
+		}
+
+	}
+}
