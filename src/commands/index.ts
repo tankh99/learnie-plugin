@@ -1,8 +1,11 @@
 import { MarkdownView, Notice, Plugin, moment } from 'obsidian';
 import { CreateQuestionAnswerModal } from 'src/modals/create-qna-modal';
-import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
+import { activateChangedNotesView, activateDiffView, activateModifyQuestionsView, activateQuestionsView } from 'src/views';
 import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles, isValidNotePath, readNoteId } from '../utils/note';
 import { getLatestNoteRevision } from 'src/utils/noteRevisions';
+import { UpdateQuestionAnswerModal } from 'src/modals/update-qna-modal';
+import { readFrontmatter } from 'src/utils/file';
+import { getQuestionFile } from 'src/utils/questions';
 
 
 export enum Commands {
@@ -100,9 +103,16 @@ export function addCommands(plugin: Plugin) {
         checkCallback: (checking) => {
             const file = plugin.app.workspace.getActiveFile();
             if (!file) return false;
-            if (!checking) {
-                activateQuestionsView(true, file.path)
-            }
+
+            const noteId = readFrontmatter(file)?.id;
+            if (!noteId) return false;
+
+            getQuestionFile(noteId)
+            .then(questionFile => {
+                if (!checking) {      
+                    activateQuestionsView(true, questionFile.path)
+                }
+            })
             return true;
         }
     })
