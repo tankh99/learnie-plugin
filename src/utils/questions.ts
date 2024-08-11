@@ -22,16 +22,14 @@ export async function getQuestionFile(noteId: string) {
 }
 
 export async function getQuestions(noteId: string) {
-    const vault = this.app.vault;
     const questionFile = await getQuestionFile(noteId)
     if (!questionFile) {
         console.error(`Question file not found for note: ${noteId}`)
         return null;
     }
 
-    const questionContent = await vault.read(questionFile)
-    const frontmatter = readFrontmatter(questionContent)
-    return frontmatter ? frontmatter["questions"] : []
+    const frontmatter = readFrontmatter(questionFile)
+    return frontmatter["questions"] ?? []
 
 }
 
