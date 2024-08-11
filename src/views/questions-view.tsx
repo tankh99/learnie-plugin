@@ -63,7 +63,7 @@ export class QuestionsView extends ItemView {
 
             const frontmatter = readFrontmatter(file);
             if (!frontmatter) continue;
-            const questions = frontmatter["questions"];
+            const questions = frontmatter["questions"] ?? [];
             const noteId = frontmatter["id"];
             noteQnas.push({ qnas: questions, noteId: noteId, filePath: file.path });
         }
