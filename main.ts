@@ -3,6 +3,7 @@ import { addCommands } from 'src/commands';
 import { handleNoteChange } from "src/utils/note";
 import { registerViews } from 'src/views';
 import "./styles.css";
+import { registerRibbonIcons } from 'src/ribbon-icons';
 
 interface LearnieSettings {
 	mySetting: string;
@@ -31,6 +32,8 @@ export default class Learnie extends Plugin {
 		registerViews(this);
 
 		addCommands(this)
+
+		registerRibbonIcons(this)
 	}
 
 
@@ -49,9 +52,9 @@ export default class Learnie extends Plugin {
 
 
 // class SampleSettingTab extends PluginSettingTab {
-// 	plugin: MyPlugin;
+// 	plugin: Learnie;
 
-// 	constructor(app: App, plugin: MyPlugin) {
+// 	constructor(app: App, plugin: Learnie) {
 // 		super(app, plugin);
 // 		this.plugin = plugin;
 // 	}
