@@ -1,7 +1,6 @@
 import { ItemView, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import { QUESTION_FOLDER_PATH } from "src/utils/file";
 import { readFrontmatter } from '../utils/file';
-import { marked } from 'marked';
 import { QuestionAnswerPair } from 'src/types/types';
 import { renderMarkdown } from 'src/utils/md-utils';
 

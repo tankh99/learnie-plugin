@@ -1,5 +1,4 @@
-import { App, Component, MarkdownRenderer } from "obsidian";
-import { convertPathToObsidianLink } from "./obsidian-utils";
+import { Component, MarkdownRenderer } from "obsidian";
 
 export async function renderMarkdown(markdown: string, srcPath: string, component: Component) {
     // return marked(markdown, {renderer: getMdRenderer()});

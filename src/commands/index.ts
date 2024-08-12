@@ -1,6 +1,6 @@
-import { MarkdownView, Notice, Plugin, moment } from 'obsidian';
+import { MarkdownView, Plugin } from 'obsidian';
 import { CreateQuestionAnswerModal } from 'src/modals/create-qna-modal';
-import { activateChangedNotesView, activateDiffView, activateModifyQuestionsView, activateQuestionsView } from 'src/views';
+import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
 import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles, isValidNotePath, readNoteId } from '../utils/note';
 import { getLatestNoteRevision } from 'src/utils/noteRevisions';
 import { UpdateQuestionAnswerModal } from 'src/modals/update-qna-modal';

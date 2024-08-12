@@ -1,14 +1,13 @@
-import  { StrictMode, useEffect, useRef } from "react"
-import { App, Component, ItemView, MarkdownRenderer, Notice, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
+import { StrictMode } from "react";
+import { App, Component, ItemView, Notice, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import { createRoot, Root } from "react-dom/client";
 import { convertPathToObsidianLink } from "src/utils/obsidian-utils";
 import { getLatestNoteRevision } from "src/utils/noteRevisions";
 import * as diff from 'diff';
 import { readNoteId } from "src/utils/note";
-import { ensureNewline, formatDiffContent } from "src/utils/diff-utils";
+import { formatDiffContent } from "src/utils/diff-utils";
 import { modifyFrontmatter, readFileContent, readFrontmatter } from "src/utils/file";
-import { marked } from "marked";
-import {sanitize} from "dompurify";
+import { sanitize } from "dompurify";
 
 type P = {
     app: App,
@@ -22,7 +21,6 @@ type P = {
 
 export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile, revisionFrontmatter, component }: P) => {
     const revisionFilePath = convertPathToObsidianLink(app, revisionFile.path);
-    const markdownContainerRef = useRef<HTMLDivElement>(null);
 
     const handleReviewed = (event: any) => {
         const target = event.target;

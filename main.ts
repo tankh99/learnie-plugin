@@ -22,14 +22,8 @@ export default class Learnie extends Plugin {
 	async onload() {
 
 		await this.loadSettings();
-		// await this.loadSettings();
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		// const statusBarItemEl = this.addStatusBarItem();
-		// statusBarItemEl.setText('Status Bar Text');
-
-		// This adds a settings tab so the user can configure various aspects of the plugin
-		// this.addSettingTab(new SampleSettingTab(this.app, this));
-
+		
+		// This sets the tokenizer globally for all marked import 
 		this.registerEvent(this.app.vault.on("modify", () => {
 			handleNoteChange(this.app.vault, this.app.workspace.getActiveFile())
 		}))
@@ -103,7 +97,6 @@ class LearnieSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 					this.display()
 					if (value) {
-						console.log("oo", value)
 						this.plugin.scheduleNotification()
 					}
 				})
