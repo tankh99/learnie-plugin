@@ -3,6 +3,7 @@ import { QUESTION_FOLDER_PATH } from "src/utils/file";
 import { readFrontmatter } from '../utils/file';
 import { marked } from 'marked';
 import { QuestionAnswerPair } from 'src/types/types';
+import { renderMarkdown } from 'src/utils/md-utils';
 
 export const QUESTIONS_VIEW = "questions-view"
 
@@ -83,7 +84,7 @@ export class QuestionsView extends ItemView {
 
                 detailsEl.createEl('summary', { text: `${qna.question}` });
 
-                const ans = await marked(qna.answer)
+                const ans = await renderMarkdown(qna.answer, noteQna.filePath, this);
                 const answerelem = detailsEl.createEl('div');
                 answerelem.innerHTML = ans
             }

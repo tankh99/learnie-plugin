@@ -5,3 +5,8 @@
 .diff-delete {
     background: rgb(79, 0, 0);
 }
+
+.diff-delete:has(img), .diff-insert:has(img) {
+    display: flex;
+    padding: 8px;
+}

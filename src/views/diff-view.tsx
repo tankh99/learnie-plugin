@@ -20,8 +20,9 @@ type P = {
     revisionFrontmatter: Record<string, any>;
 }
 
-export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile, revisionFrontmatter }: P) => {
+export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile, revisionFrontmatter, component }: P) => {
     const revisionFilePath = convertPathToObsidianLink(app, revisionFile.path);
+    const markdownContainerRef = useRef<HTMLDivElement>(null);
 
     const handleReviewed = (event: any) => {
         const target = event.target;
@@ -35,6 +36,7 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
     return (
         <div style={{ userSelect: "text" }}>
             <h2>{title}</h2>
+            {/* Note: We use setHTML instead of renderMarkdown because latex disappears after being put through renderMarkdown more than once */}
             <div dangerouslySetInnerHTML={{__html: markdown}}></div>
             <hr/>
             <h4>Revision controls</h4>
@@ -116,32 +118,13 @@ export class DiffView extends ItemView {
             }
 
             let {content} = await readFileContent(file)
-            content = ensureNewline(content)
             let {content: oldContent} = await readFileContent(revisionFile)
-            oldContent = ensureNewline(oldContent)
 
-            const tokenizer = {
-                codespan(src: any) {
-                    const latexMatch = src.match(/^\$+([^$\n]+?)\$+/);
-                    if (latexMatch) {
-                        const result: any = {
-                            type: 'codespan',
-                            raw: latexMatch[0],
-                            text: latexMatch[1].trim()
-                        };
-                        return result;
-                    }
-
-                    // return false to use original codespan tokenizer
-                    return false;
-                },
-            };
-            marked.use({tokenizer})
             content = sanitize((content))
             oldContent = sanitize((oldContent))
 
             const changes = diff.diffLines(oldContent, content);
-            const diffContent = await formatDiffContent(changes);
+            const diffContent = await formatDiffContent(changes, file.path, this);
             const srcPath = convertPathToObsidianLink(this.app, file.path);
 
             const noteRevisionFrontmatter = readFrontmatter(revisionFile)
