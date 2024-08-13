@@ -43,6 +43,7 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
                 <div style={{ display: "flex", alignItems: "center", }}>
                     <input id="learnie-reviewed"
                         onChange={handleReviewed}
+                        checked={revisionFrontmatter.reviewed}
                         type="checkbox" />
                     <p style={{ paddingLeft: "2px" }}>
                         Reviewed

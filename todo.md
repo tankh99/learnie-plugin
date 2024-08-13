@@ -1,10 +1,10 @@
 - [ ] Feat: Notify users every day at a specific time review their notes
 - [x] Feat: Support image rendering in diff views
 - [ ] Feat: Implement easier navigation when reviewing notes (Single view or multiple views with nav buttons?)
-- [ ] Feat: Add a button to auto-create a new note
+- [x] Feat: Add a button to auto-create a new note
 - [ ] Feat: Add support for codespan rendering
-- [ ] Bugfix: Prevent empty questions from being shown
-- [ ] Bugfix: Check the reviewed checkbox if the note is already reviewed
+- [x] Bugfix: Prevent empty questions from being shown
+- [x] Bugfix: Check the reviewed checkbox if the note is already reviewed
 - [ ] Feat: Add command to review random questions (by default: we will show only 10 questions at a time)
     - [ ] Allow users to include/exclude which notes to include in this quiz review
 - [ ] Feat (v2): Add questions with context. Allow these context questions to have multiple questions tagged to them
