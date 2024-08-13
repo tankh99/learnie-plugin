@@ -58,6 +58,14 @@ Mark note revisions as reviewed to keep track of your progress and ensure no cha
 Please report any issues encountered or feature suggestions as a GitHub issue. For issues, include the context as well as screenshots (if applicable) so that it's easier to reproduce the error 
 
 ## Planned Enhancements
-- [ ] Fix bug where text is deleted after being idle on an active note for a some time
-- [ ] Allow users to modify questions
-- [ ] Add daily notification which reminds users to review their notes at a certain time
+- [ ] Review Questions: Opens a view with 10 random questions that have not yet been reviewed today
+- [ ] Easier navigation between changed notes
+
+## (Really) Future Enhancements
+- [ ] Create questions with context
+	- [ ] Users can create multiple questions for the same context
+
+## Completed features
+- [x] Fix bug where text is deleted after being idle on an active note for a some time
+- [x] Allow users to modify questions
+- [x] Add daily notification which reminds users to review their notes at a certain time
