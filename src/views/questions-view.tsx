@@ -77,6 +77,7 @@ export class QuestionsView extends ItemView {
         const listEl = this.contentEl.createEl('ol');
         for (const noteQna of noteQnas) {
             const qnas = noteQna.qnas;
+            if (qnas.length == 0) break;
             const listItem = listEl.createEl('li');
             for (const qna of qnas) {
                 const detailsEl = listItem.createEl('details');
