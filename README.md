@@ -1,12 +1,10 @@
 # Learnie: Enhance Your Learning with Active Recall and Spaced Repetition
 
-**Note**: Learnie is in early development and may have some instabilities. Regular updates will be provided to improve functionality and user experience.
-
-**Issues/Suggestions**: Please report any issues encountered or feature suggestions as a GitHub issue. For issues, include the context as well as screenshots (if applicable) so that it's easier to reproduce the error 
-
 ## Introduction
 
 Learnie is an Obsidian plugin designed to help students and lifelong learners remember and learn more effectively. By incorporating contemporary learning techniques like active recall and spaced repetition, Learnie transforms your Obsidian vault into a powerful learning tool.
+
+**Issues/Suggestions**: Please report any issues encountered or feature suggestions as a GitHub issue. For issues, include the context as well as screenshots (if applicable) so that it's easier to reproduce the error 
 
 ## Key Features
 
@@ -67,3 +65,7 @@ Mark note revisions as reviewed to keep track of your progress and ensure no cha
 - [x] Fix bug where text is deleted after being idle on an active note for a some time
 - [x] Allow users to modify questions
 - [x] Add daily notification which reminds users to review their notes at a certain time
+
+
+**Note**: Learnie is in early development and may have some instabilities. Regular updates will be provided to improve functionality and user experience.
+
