@@ -4,6 +4,16 @@ export const BASE_FOLDER_PATH = "_learnie";
 export const NOTE_FOLDER_PATH = `${BASE_FOLDER_PATH}/Note Revisions`;
 export const QUESTION_FOLDER_PATH = `${BASE_FOLDER_PATH}/Questions`;
 
+export async function getUniqueFileName(baseName: string, extension: string) {
+    let increment = 0;
+    let fileName = `${baseName}.${extension}`;
+    while (await this.app.vault.adapter.exists(fileName)) {
+        increment++;
+        fileName = `${baseName}_${increment > 0 ? increment : ''}.${extension}`;
+    }
+    return fileName.split(".").slice(0, -1).join(".");
+}
+
 export async function getFile(folderPath: string, filename: string) {
     const vault = this.app.vault;
     const fileName = `${filename}.md`
@@ -26,7 +36,7 @@ export async function createNewFile(vault: Vault, folderPath: string, filename: 
         new Notice(`File created: ${file.name}`)
     } catch (err) {
         console.error(err);
-        new Notice(`Error creating file: ${err}`)
+        new Notice(`${err}`)
         
     }
     return file;

@@ -1,9 +1,15 @@
 - [ ] Feat: Notify users every day at a specific time review their notes
-- [ ] Feat: Add link to specific answer's context
-- [ ] Feat: Support image rendering in diff views
-- [ ] Implement easier navigation when reviewing notes (Single view or multiple views with nav buttons?)
+- [x] Feat: Support image rendering in diff views
+- [ ] Feat: Implement easier navigation when reviewing notes (Single view or multiple views with nav buttons?)
+- [ ] Feat: Add a button to auto-create a new note
+- [ ] Feat: Add support for codespan rendering
+- [ ] Bugfix: Prevent empty questions from being shown
+- [ ] Bugfix: Check the reviewed checkbox if the note is already reviewed
+- [ ] Feat: Add command to review random questions (by default: we will show only 10 questions at a time)
+    - [ ] Allow users to include/exclude which notes to include in this quiz review
+- [ ] Feat (v2): Add questions with context. Allow these context questions to have multiple questions tagged to them
 - [x] Feat: Allow users to modify questions and answers
-    - [ ] If the note revision/question has valid frontmatter (e.g. note id, questions, etc)
+    - [x] If the note revision/question has valid frontmatter (e.g. note id, questions, etc)
 - [x] Refactor: Remove all default code
 - [x] Bugfix: When checking the review button in the diff view, it seems that it there's an error when creating file...
     - [ ] This was because the function getLatestNoteRevision only got the latest noteREvision that was today AND wasn't reviwed yet. 
