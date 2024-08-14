@@ -37,13 +37,13 @@ export default class Learnie extends Plugin {
 			this.scheduleNotification()
 		}
 
-		// Code to clear all scheduled notifictions
-		// let id = window.setTimeout(function() {}, 0);
+		// Code to clear all scheduled notifictions except 1
+		let id = window.setTimeout(function() {}, 0);
 
-		// while (id--) {
-		// 	console.log(id)
-		// 	window.clearTimeout(id); // will do nothing if no timeout with id is present
-		// }
+		while (id > 1) {
+			window.clearTimeout(id); // will do nothing if no timeout with id is present
+			id -= 1
+		}
 	}
 
 
