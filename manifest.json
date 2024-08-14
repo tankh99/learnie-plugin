@@ -1,7 +1,7 @@
 {
 	"id": "learnie",
 	"name": "Learnie",
-	"version": "1.1.6",
+	"version": "1.1.7",
 	"minAppVersion": "0.15.0",
 	"description": "Enhance your learning with active recall and spaced repetition. Track changes, create review questions, and streamline your study process for more effective, long-lasting learning.",
 	"author": "tankh99",
