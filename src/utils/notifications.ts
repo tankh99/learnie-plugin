@@ -1,4 +1,5 @@
 import { Notice, moment } from "obsidian";
+import { activateChangedNotesView } from "src/views";
 
 type NotificationTime = {
     hours: number;
@@ -37,4 +38,5 @@ export function scheduleDailyNotification(notificationTime: NotificationTime) {
 
 function showNotification() {
     new Notice("Time to review your notes!");
+    activateChangedNotesView();
 }
