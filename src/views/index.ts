@@ -2,6 +2,7 @@ import { Plugin, TFile } from "obsidian";
 import { CHANGED_NOTES_VIEW_TYPE, ChangedNotesView } from "./changed-notes-view";
 import { DIFF_VIEW_TYPE, DiffView } from "./diff-view";
 import { QUESTIONS_VIEW, QuestionsView } from "./questions-view";
+import { QUIZ_VIEW_TYPE, QuizView } from "./quiz-view";
 import { Commands } from "src/commands";
 
 export async function activateChangedNotesView(newLeaf = false) {
@@ -28,10 +29,21 @@ export async function activateDiffView(newLeaf = false, file?: TFile) {
     this.app.workspace.revealLeaf(leaf);
 }
 
+export async function activateQuizView(newLeaf = false) {
+    const leaf = this.app.workspace.getLeaf(newLeaf);
+    await leaf.setViewState({
+        type: QUIZ_VIEW_TYPE, state: {
+
+        }, active: true
+    });
+    this.app.workspace.revealLeaf(leaf);
+}
+
 export function registerViews(plugin: Plugin) {
     plugin.registerView(CHANGED_NOTES_VIEW_TYPE, (leaf) => new ChangedNotesView(leaf));
     plugin.registerView(QUESTIONS_VIEW, (leaf) => new QuestionsView(leaf));
     plugin.registerView(DIFF_VIEW_TYPE, (leaf) => new DiffView(leaf));
+    plugin.registerView(QUIZ_VIEW_TYPE, (leaf) => new QuizView(leaf));
     // plugin.registerView(QUESTIONS_LIST_VIEW, (leaf) => new QuestionsListView(leaf));
 
     plugin.registerObsidianProtocolHandler(Commands.VIEW_QUESTIONS, (params) => {
