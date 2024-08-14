@@ -17,3 +17,9 @@ export type QuestionAnswerPair = {
     question: string;
     answer: string;
 }
+
+export type LearnieSettings = {
+	enableNotification: boolean;
+	notificationTime: string;
+    numQuizQuestions: number;
+};

@@ -5,15 +5,12 @@ import { registerViews } from 'src/views';
 import "./styles.css";
 import { registerRibbonIcons } from 'src/ribbon-icons';
 import { scheduleDailyNotification } from 'src/utils/notifications';
-
-type LearnieSettings = {
-	enableNotification: boolean;	
-	notificationTime: string;
-}
+import { LearnieSettings } from 'src/types/types';
 
 const DEFAULT_SETTINGS: LearnieSettings = {
 	enableNotification: false,
 	notificationTime: "20:00",
+	numQuizQuestions: 10,
 }
 
 export default class Learnie extends Plugin {
@@ -28,7 +25,7 @@ export default class Learnie extends Plugin {
 			handleNoteChange(this.app.vault, this.app.workspace.getActiveFile())
 		}))
 
-		registerViews(this);
+		registerViews(this, this.settings);
 
 		addCommands(this)
 
@@ -86,6 +83,31 @@ class LearnieSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		containerEl.createEl("h2", {text: "Notification settings"})
+
+		new Setting(containerEl)
+			.setName('No. of quiz questions to show')
+			.setDesc('Sets the maximum number of questions to show per quiz')
+			.addText(text => text
+				.setPlaceholder("Enter a number")
+				.setValue(this.plugin.settings.numQuizQuestions.toString())
+				.onChange(async (value) => {
+					this.plugin.settings.numQuizQuestions = Number(value);
+					if (this.noticeTimeout) {
+						clearTimeout(this.noticeTimeout)
+					}
+
+					// Input debounce code
+					this.noticeTimeout = setTimeout(() => {
+						this.plugin.saveSettings()
+						.then(() => {
+							if (this.plugin.settings.numQuizQuestions) {
+								this.noticeTimeout = null;
+							}
+						})
+						this.plugin.saveSettings();
+					}, 500);
+				})
+			)
 
 		new Setting(containerEl)
 			.setName('Enable notification')
