@@ -4,7 +4,7 @@ import { handleNoteChange } from "src/utils/note";
 import { registerViews } from 'src/views';
 import "./styles.css";
 import { registerRibbonIcons } from 'src/ribbon-icons';
-import { scheduleDailyNotification } from 'src/utils/notifications';
+import { notificationTimeoutId, scheduleDailyNotification } from 'src/utils/notifications';
 import { LearnieSettings } from 'src/types/types';
 
 const DEFAULT_SETTINGS: LearnieSettings = {
@@ -33,16 +33,12 @@ export default class Learnie extends Plugin {
 
 		this.addSettingTab(new LearnieSettingTab(this.app, this));
 
-		if (this.settings.enableNotification) {
+
+		this.clearNotifications()
+
+		const shouldScheduleNotification = this.settings.enableNotification && !notificationTimeoutId
+		if (shouldScheduleNotification ) {
 			this.scheduleNotification()
-		}
-
-		// Code to clear all scheduled notifictions except 1
-		let id = window.setTimeout(function() {}, 0);
-
-		while (id > 1) {
-			window.clearTimeout(id); // will do nothing if no timeout with id is present
-			id -= 1
 		}
 	}
 
@@ -54,6 +50,19 @@ export default class Learnie extends Plugin {
 
 
 	onunload() {
+		
+	}
+
+	// Cleanup method to clear all excess notifications.
+	// Note: To be run BEFORE scheduling notifications
+	clearNotifications() {
+		// Code to clear all scheduled notifictions except 1
+		let id = window.setTimeout(function() {}, 0);
+
+		while (id >= 0) {
+			window.clearTimeout(id); // will do nothing if no timeout with id is present
+			id -= 1
+		}
 	}
 
 	async loadSettings() {

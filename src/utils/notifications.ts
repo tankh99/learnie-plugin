@@ -7,7 +7,7 @@ type NotificationTime = {
 }
 
 
-let notificationTimeoutId: number | null = null;
+export let notificationTimeoutId: number | null = null;
 // This schedules a daily notification at the specified time
 export function scheduleDailyNotification(notificationTime: NotificationTime) {
 
