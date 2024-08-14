@@ -69,7 +69,7 @@ export class QuizView extends ItemView {
             const questionLink = convertPathToObsidianLink(this.app, srcNote.path)
             const questionEl = detailsEl.createEl("summary", {text: `${qna.question}`})
             const questionLinkEl = questionEl.createEl("a", {attr: {href: questionLink, style: "margin-left: 0.5rem"}})
-            questionLinkEl.textContent = `(From: ${srcNote.name})`
+            questionLinkEl.textContent = `${srcNote.basename}`
             
             const ans = await renderMarkdown(qna.answer, qna.questionFile.path, this);
             const answerelem = detailsEl.createEl('div');
