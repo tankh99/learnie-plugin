@@ -141,7 +141,7 @@ export async function noteIsChanged(file: TFile) {
     const isReviewed = frontmatter["reviewed"]
 
     const withinToday = lastModified.diff(today, "hours") > 0;
-    return withinToday && !isReviewed
+    return withinToday || !isReviewed
 }
 
 /**
