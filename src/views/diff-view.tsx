@@ -32,10 +32,6 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
     return (
         <div style={{ userSelect: "text" }}>
             <h2>{title}</h2>
-            {/* Note: We use setHTML instead of renderMarkdown because latex disappears after being put through renderMarkdown more than once */}
-            <div dangerouslySetInnerHTML={{__html: markdown}}></div>
-            <hr/>
-            <h4>Revision controls</h4>
             <div style={{display: "flex", alignItems: "center", columnGap: "4px"}}>
                 {/* <a href={srcPath}>Original File</a> */}
                 <div style={{ display: "flex", alignItems: "center", }}>
@@ -63,6 +59,9 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
                     leaf?.openFile(revisionFile)
                 }}>Link to note revision</a>
             </div>
+            <hr/>
+            {/* Note: We use setHTML instead of renderMarkdown because latex disappears after being put through renderMarkdown more than once */}
+            <div dangerouslySetInnerHTML={{__html: markdown}}></div>
         </div>
     )
 }
