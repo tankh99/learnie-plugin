@@ -40,7 +40,17 @@ export class ChangedNotesView extends ItemView {
             return;
         }
 
+        filesModifiedToday.sort((a, b) => {
+            const aFile = this.app.vault.getFileByPath(a.path);
+            const bFile = this.app.vault.getFileByPath(b.path);
+            if (!aFile || !bFile) return 0;
+            const aModified = aFile.stat.mtime ?? 0;
+            const bModified = bFile.stat.mtime ?? 0;
+            return bModified - aModified
+        })
+
         this.contentEl.createEl('h2', { text: 'Notes modified today:' });
+        this.contentEl.createEl("i", { text: "Notes sorted by most recently modified"})
         const listEl = this.contentEl.createEl('ul');
         filesModifiedToday.forEach(file => {
           const listItem = listEl.createEl('li');

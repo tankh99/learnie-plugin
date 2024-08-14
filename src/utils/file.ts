@@ -14,6 +14,12 @@ export async function getUniqueFileName(baseName: string, extension: string) {
     return fileName.split(".").slice(0, -1).join(".");
 }
 
+/**
+ * Gets a file by a specific folder path and file name. Mostly used to get generated files like revisions and questions
+ * @param folderPath Folder path, e.g. NOTE_FOLDER_PATH
+ * @param filename file name to get
+ * @returns 
+ */
 export async function getFile(folderPath: string, filename: string) {
     const vault = this.app.vault;
     const fileName = `${filename}.md`
