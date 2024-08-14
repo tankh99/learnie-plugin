@@ -31,6 +31,12 @@ export class QuestionsView extends ItemView {
         return "Questions"
     }
 
+    override getState(): ViewQuestionsState {
+        return {
+            filePath: this.file?.path
+        }
+    }
+
     async setState(state: ViewQuestionsState, result: ViewStateResult) {
         if (state.filePath) {
             const file = await this.app.vault.getFileByPath(state.filePath);
@@ -44,7 +50,6 @@ export class QuestionsView extends ItemView {
 
 
     async onOpen() {
-        this.contentEl.setText("Questions view");
         
     }
 
@@ -88,8 +93,10 @@ export class QuestionsView extends ItemView {
                 attr: { 
                     href: `${convertPathToObsidianLink(this.app, originalNote.path)}`,
                 } });
-            headerLinkEl.createEl("h2", {text: originalNote?.basename});
-            const listEl = this.contentEl.createEl('ol');
+            headerLinkEl.createEl("h4", {text: originalNote?.basename});
+            const listEl = this.contentEl.createEl("ol", {attr: {
+                style: "display:flex; flex-direction:column; gap: 0.5rem"
+            }})
             
             for (const qna of qnas) {
                 const listItem = listEl.createEl('li');
