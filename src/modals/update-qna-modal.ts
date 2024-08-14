@@ -70,7 +70,6 @@ export class UpdateQuestionAnswerModal extends Modal {
     }
 
     editQuestion(qa: QuestionAnswerPair) {
-        console.log(qa)
         this.currentQuestion = qa;
         this.newQuestion = qa.question;
         this.newAnswer = qa.answer;
