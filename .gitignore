@@ -12,6 +12,9 @@ node_modules
 # They should be uploaded to GitHub releases instead.
 main.js
 
+# Same with the generated css file
+main.css
+
 # Exclude sourcemaps
 *.map
 
