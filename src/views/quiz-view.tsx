@@ -15,11 +15,10 @@ export class QuizView extends ItemView {
 
     // Default questions to render
     numQuestions = 10;
-    constructor(leaf: WorkspaceLeaf, numQuestions?: number) {
+    constructor(leaf: WorkspaceLeaf) {
         super(leaf)
-        if (numQuestions) {
-            this.numQuestions = numQuestions;
-        }
+        this.numQuestions = this.app.
+
     }
 
     getViewType(): string {

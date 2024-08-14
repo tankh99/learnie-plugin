@@ -30,6 +30,7 @@ export async function activateDiffView(newLeaf = false, file?: TFile) {
 }
 
 export async function activateQuizView(newLeaf = false) {
+
     const leaf = this.app.workspace.getLeaf(newLeaf);
     await leaf.setViewState({
         type: QUIZ_VIEW_TYPE, state: {
