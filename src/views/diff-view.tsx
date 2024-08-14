@@ -1,5 +1,5 @@
-import { StrictMode } from "react";
-import { App, Component, ItemView, Notice, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
+import { StrictMode, useEffect, useRef } from "react";
+import { App, Component, ItemView, MarkdownRenderer, Notice, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import { createRoot, Root } from "react-dom/client";
 import { convertPathToObsidianLink } from "src/utils/obsidian-utils";
 import { getLatestNoteRevision } from "src/utils/noteRevisions";
@@ -20,8 +20,6 @@ type P = {
 }
 
 export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile, revisionFrontmatter, component }: P) => {
-    const revisionFilePath = convertPathToObsidianLink(app, revisionFile.path);
-
     const handleReviewed = (event: any) => {
         const target = event.target;
         const newFrontmatter = {
@@ -50,9 +48,20 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
                     </p>
                 </div>
                 <p> | </p>
-                <a href={revisionFilePath}>Link to note revision</a>
+                <a onClick={() => {
+                    const leaf = app.workspace.getMostRecentLeaf()
+                    const file = app.vault.getFileByPath(srcPath);
+                    if (!file) {
+                        new Notice(`Unable to open file with path ${srcPath}`)
+                        return;
+                    }
+                    leaf?.openFile(file)
+                }}>Link to source file</a>
                 <p> | </p>
-                <a href={srcPath}>Link to source file</a>
+                <a onClick={() => {
+                    const leaf = app.workspace.getMostRecentLeaf()
+                    leaf?.openFile(revisionFile)
+                }}>Link to note revision</a>
             </div>
         </div>
     )
@@ -61,7 +70,7 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
 export const DIFF_VIEW_TYPE = "md-diff-view"
 
 export type DiffMarkdownState = {
-    file: TFile
+    file: TFile | undefined;
 }
 
 export class DiffView extends ItemView {
@@ -83,6 +92,13 @@ export class DiffView extends ItemView {
         return "Diff view"
     }
     
+    // This enables this.file to remain in memory even after navigating aray
+    override getState(): DiffMarkdownState {
+        return {
+            file: this.file,
+        };
+    }
+
     async setState(state: DiffMarkdownState, result: ViewStateResult) {
         if (state.file) {
             this.file = state.file;
@@ -92,7 +108,9 @@ export class DiffView extends ItemView {
     }
 
     async onOpen() {
-        if (!this.file) return;
+        if (!this.file) {
+            return;
+        }
         await this.renderView()
     }
 
@@ -124,7 +142,6 @@ export class DiffView extends ItemView {
 
             const changes = diff.diffLines(oldContent, content);
             const diffContent = await formatDiffContent(changes, file.path, this);
-            const srcPath = convertPathToObsidianLink(this.app, file.path);
 
             const noteRevisionFrontmatter = readFrontmatter(revisionFile)
             if (!noteRevisionFrontmatter) {
@@ -137,7 +154,7 @@ export class DiffView extends ItemView {
                     <ReactMarkdownView
                         title={file.basename}
                         app={this.app}
-                        srcPath={srcPath}
+                        srcPath={file.path}
                         component={this}
                         markdown={diffContent}
                         revisionFile={revisionFile}
@@ -151,5 +168,6 @@ export class DiffView extends ItemView {
 
     async onClose() {
         this.root?.unmount()
+        this.root = null;
     }
 }
