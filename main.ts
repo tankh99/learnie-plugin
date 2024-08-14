@@ -100,11 +100,8 @@ class LearnieSettingTab extends PluginSettingTab {
 					this.noticeTimeout = setTimeout(() => {
 						this.plugin.saveSettings()
 						.then(() => {
-							if (this.plugin.settings.numQuizQuestions) {
-								this.noticeTimeout = null;
-							}
+							new Notice(`Successfully set number of quiz questions to ${value}`)
 						})
-						this.plugin.saveSettings();
 					}, 500);
 				})
 			)
@@ -150,6 +147,7 @@ class LearnieSettingTab extends PluginSettingTab {
 									if (this.plugin.settings.enableNotification) {
 										this.plugin.scheduleNotification();
 										this.noticeTimeout = null;
+										new Notice(`Successfully set notification time to ${value}`)
 									}
 								})
 							}
