@@ -1,4 +1,6 @@
 - [ ] Feat: Notify users every day at a specific time review their notes
+- [x] Feat: View all questions for all notes
+- [ ] Feat: Sort changed notes by date modified. Consider replacing the "Reviewed" checkbox with a dateModified field instead.
 - [ ] Feat: Implement easier navigation when reviewing notes (Single view or multiple views with nav buttons?)
 - [ ] Feat: Add support for codespan rendering
 - [ ] Feat: Add command to review random questions (by default: we will show only 10 questions at a time)

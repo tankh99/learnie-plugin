@@ -1,4 +1,4 @@
-import { moment, Notice, TFile, Vault } from "obsidian";
+import { App, moment, Notice, TFile, Vault } from "obsidian";
 import { Commands } from 'src/commands';
 import { NoteMetadata, NoteRevisionMetadata } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,6 +8,23 @@ import { createQuestion } from './questions';
 import { formatDate } from "./date";
 
 export const idMarker = "---"
+
+export async function getAllNotes() {
+    const app: App = this.app;
+    const files = await app.vault.getMarkdownFiles();
+    return files.filter(file => isValidNotePath(file.path));
+}
+
+export async function getNoteByNoteId(noteId: string) {
+    const notes = await getAllNotes()
+    for (const file of notes) {
+        const frontmatter = readFrontmatter(file);
+        if (frontmatter && frontmatter["id"] == noteId) {
+            return file;
+        }
+    }
+    return null;
+}
 
 /**
  * On editing of a note, it checks to see if it needs to create  a new note revision given that the previous note 

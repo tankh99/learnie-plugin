@@ -1,8 +1,10 @@
-import { ItemView, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
-import { QUESTION_FOLDER_PATH } from "src/utils/file";
+import { ItemView, Notice, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
+import { getFile, QUESTION_FOLDER_PATH } from "src/utils/file";
 import { readFrontmatter } from '../utils/file';
 import { QuestionAnswerPair } from 'src/types/types';
 import { renderMarkdown } from 'src/utils/md-utils';
+import { getNoteByNoteId } from 'src/utils/note';
+import { convertPathToObsidianLink } from 'src/utils/obsidian-utils';
 
 export const QUESTIONS_VIEW = "questions-view"
 
@@ -31,7 +33,6 @@ export class QuestionsView extends ItemView {
 
     async setState(state: ViewQuestionsState, result: ViewStateResult) {
         if (state.filePath) {
-
             const file = await this.app.vault.getFileByPath(state.filePath);
             if (file) {
                 this.file = file;
@@ -74,12 +75,24 @@ export class QuestionsView extends ItemView {
 
         this.contentEl.createEl('h2', { text: 'Questions:' });
         this.contentEl.createEl('p', { text: 'Click on a question to reveal its answer'});
-        const listEl = this.contentEl.createEl('ol');
         for (const noteQna of noteQnas) {
+            const originalNote = await getNoteByNoteId(noteQna.noteId);
+            
             const qnas = noteQna.qnas;
-            if (qnas.length == 0) break;
-            const listItem = listEl.createEl('li');
+            if (qnas.length == 0) continue;
+            if (!originalNote)  {
+                new Notice(`Unable to find note with id: ${noteQna.noteId}`);
+                continue;
+            }
+            const headerLinkEl = this.contentEl.createEl("a", { 
+                attr: { 
+                    href: `${convertPathToObsidianLink(this.app, originalNote.path)}`,
+                } });
+            headerLinkEl.createEl("h2", {text: originalNote?.basename});
+            const listEl = this.contentEl.createEl('ol');
+            
             for (const qna of qnas) {
+                const listItem = listEl.createEl('li');
                 const detailsEl = listItem.createEl('details');
 
                 detailsEl.createEl('summary', { text: `${qna.question}` });
@@ -88,7 +101,7 @@ export class QuestionsView extends ItemView {
                 const answerelem = detailsEl.createEl('div');
                 answerelem.innerHTML = ans
             }
-            listItem.createEl("br");
+            listEl.createEl("br");
         }
     }
 

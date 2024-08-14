@@ -10,7 +10,7 @@ export async function activateChangedNotesView(newLeaf = false) {
     this.app.workspace.revealLeaf(leaf);
 }
 
-export async function activateQuestionsView(newLeaf = false, filePath: string) {
+export async function activateQuestionsView(newLeaf = false, filePath?: string) {
     const leaf = this.app.workspace.getLeaf(newLeaf);
     await leaf.setViewState({ type: QUESTIONS_VIEW, active: true, state: {
         filePath,
