@@ -37,9 +37,25 @@ export async function createNoteRevision(vault: Vault, noteId: string, file: TFi
     return null;
 }
 
+/**
+ * Generates a note revision file name given an id
+ * @param noteId 
+ * @returns 
+ */
 export function getNoteRevisionFileName(noteId: string) {
     const datePart = getDatePart(new Date())
     return `${noteId}_${datePart}.md`;
+}
+
+/**
+ * Gets the first note revision file that contains a note Id
+ * @param noteId 
+ */
+export function getNoteRevisionByNoteId(noteId: string) {
+    const vault: Vault = this.app.vault;
+    const files = vault.getFiles().filter(file => file.path.startsWith(NOTE_FOLDER_PATH));
+    const matches = files.filter(file => file.path.includes(noteId))[0];
+    return matches;
 }
 
 // Get all files inside the note revisions folder

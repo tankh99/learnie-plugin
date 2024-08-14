@@ -3,7 +3,7 @@ import { Commands } from 'src/commands';
 import { NoteMetadata, NoteRevisionMetadata } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
 import { deleteFile, modifyFrontmatter, NOTE_FOLDER_PATH, QUESTION_FOLDER_PATH, readFileContent, readFrontmatter } from "./file";
-import { createNoteRevision, getLatestNoteRevision, getNoteRevisionDate } from "./noteRevisions";
+import { createNoteRevision, getLatestNoteRevision, getNoteRevisionByNoteId, getNoteRevisionDate } from "./noteRevisions";
 import { createQuestion } from './questions';
 import { formatDate } from "./date";
 
@@ -132,13 +132,25 @@ export async function addMetadataToNoteRevision(file: TFile, metadata: NoteRevis
     modifyFrontmatter(file, metadata)
 }
 
+/**
+ * checks if a file is considered changed by checking
+ * 1. If the file itself has been modified today
+ * 2. If the note revision associated with the file has not yet been reviewed
+ * @param file 
+ * @returns 
+ */
 export async function noteIsChanged(file: TFile) {
     const today = moment().startOf("D")
     const fileStats = await this.app.vault.adapter.stat(file.path);
     const lastModified = moment(fileStats.mtime);
 
-    const frontmatter = await readFrontmatter(file)
-    const isReviewed = frontmatter["reviewed"]
+    const frontmatter = readFrontmatter(file)
+    const noteId = frontmatter["id"]
+    const noteRevisionFile = getNoteRevisionByNoteId(noteId)
+
+    const noteRevisionFrontmatter = await readFrontmatter(noteRevisionFile)
+    
+    const isReviewed = noteRevisionFrontmatter["reviewed"]
 
     const withinToday = lastModified.diff(today, "hours") > 0;
     return withinToday || !isReviewed
