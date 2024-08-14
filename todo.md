@@ -1,10 +1,10 @@
 - [ ] Feat: Notify users every day at a specific time review their notes
 - [x] Feat: View all questions for all notes
-- [ ] Feat: Sort changed notes by date modified. Consider replacing the "Reviewed" checkbox with a dateModified field instead.
+- [x] Feat: Sort changed notes by date modified. Consider replacing the "Reviewed" checkbox with a dateModified field instead.
 - [ ] Feat: Implement easier navigation when reviewing notes (Single view or multiple views with nav buttons?)
 - [ ] Feat: Add support for codespan rendering
-- [ ] Feat: Add command to review random questions (by default: we will show only 10 questions at a time)
-    - [ ] Allow users to include/exclude which notes to include in this quiz review
+- [x] Feat: Add command to review random questions (by default: we will show only 10 questions at a time)
+- [ ] Feat: Allow users to include/exclude which notes to include for quiz review
 - [x] Feat: Support image rendering in diff views
 - [x] Feat: Add a button to auto-create a new note
 - [x] Bugfix: Prevent empty questions from being shown
