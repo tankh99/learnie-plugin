@@ -29,6 +29,25 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
         modifyFrontmatter(revisionFile, newFrontmatter)
     }
 
+    const navigateToFile = (path: string, newLeaf = true) => {
+        let leaf;
+
+        // If newLeaf is false, we open the file in the most recent leaf
+        // note: There is a circular dependency erorr if we navigate from view -> view -> file -> file (via internal link)
+        // do we always use newLeaf = true for now
+        if (!newLeaf) {
+            leaf = app.workspace.getMostRecentLeaf()
+        } else {
+            leaf = app.workspace.getLeaf(true);
+        }
+        const file = app.vault.getFileByPath(path);
+        if (!file) {
+            new Notice(`Unable to open file with path ${path}`)
+            return;
+        }
+        leaf?.openFile(file)
+    }
+
     return (
         <div style={{ userSelect: "text" }}>
             <h2>{title}</h2>
@@ -44,20 +63,9 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
                     </p>
                 </div>
                 <p> | </p>
-                <a onClick={() => {
-                    const leaf = app.workspace.getMostRecentLeaf()
-                    const file = app.vault.getFileByPath(srcPath);
-                    if (!file) {
-                        new Notice(`Unable to open file with path ${srcPath}`)
-                        return;
-                    }
-                    leaf?.openFile(file)
-                }}>Link to source file</a>
+                <a onClick={() => navigateToFile(srcPath)}>Link to source file</a>
                 <p> | </p>
-                <a onClick={() => {
-                    const leaf = app.workspace.getMostRecentLeaf()
-                    leaf?.openFile(revisionFile)
-                }}>Link to note revision</a>
+                <a onClick={() => navigateToFile(revisionFile.path)}>Link to note revision</a>
             </div>
             <hr/>
             {/* Note: We use setHTML instead of renderMarkdown because latex disappears after being put through renderMarkdown more than once */}
