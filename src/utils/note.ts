@@ -28,9 +28,11 @@ export async function getNoteByNoteId(noteId: string) {
 
 /**
  * On editing of a note, it checks to see if it needs to create  a new note revision given that the previous note 
- * revision 
+ * revision:
  * 1. Doesn't exist OR
  * 2. Is already reviewed and it wasn't created today
+ * 
+ * It also creates a note revision if it doesn't already exist
  */
 export async function handleNoteChange(vault: Vault, file: TFile | null) {
     if (!file) return;
@@ -62,15 +64,15 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
     // Handle creation of new note revision and deletion of old one (if it's already reviewed)
     if (canCreateNewRevision) {
         new Notice("Creating a new note revision")
+        console.info("Creating a new revision");
         await createNoteRevision(vault, noteId, file, true);
         if (isReviewed) {
-
-            new Notice("Note is reviewed")
+            // new Notice("Note is reviewed")
             // Delete the old one, we no longer need it.
+            console.info(`Deleting old note revision ${latestNoteRevision.name}`)
             await deleteFile(vault, latestNoteRevision);
         }
     }
-    // console.log(reviewed);
 }
 
 // Converts a non-note file into a note. 

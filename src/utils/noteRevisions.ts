@@ -72,7 +72,7 @@ export function getNoteRevisionDate(name: string) {
 }
 
 /**
- * Queries the note revisions folder
+ * Queries the note revisions folder to get the most recent note revision
  */
 export async function getLatestNoteRevision(vault: Vault, noteId: string) {
     const folderPath = NOTE_FOLDER_PATH;
@@ -91,7 +91,7 @@ export async function getLatestNoteRevision(vault: Vault, noteId: string) {
     const matchedFiles = matches.filter(file => file != null)
 
     if (matchedFiles.length === 0) {
-        new Notice(`No files found with ID ${noteId} or they are already reviewed.`)
+        new Notice(`No files found with ID ${noteId} or they are already reviewed. Try updating the note first.`)
         return null;
     }
 

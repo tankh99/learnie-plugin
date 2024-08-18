@@ -38,10 +38,11 @@ export async function createNewFile(vault: Vault, folderPath: string, filename: 
 
     let file: TFile | null = null;
     try {
+        console.info(`Creating file: ${filePath}`)
         file = await vault.create(filePath, content)
         new Notice(`File created: ${file.name}`)
     } catch (err) {
-        console.error(err);
+        console.error(`File path: ${filePath} Error: ${err}`);
         new Notice(`${err}`)
         
     }
