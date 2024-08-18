@@ -8,7 +8,8 @@ export type NoteMetadata = {
 
 export type NoteRevisionMetadata = {
     id: string;
-    reviewed: boolean;
+    reviewed?: boolean;
+    lastReviewed?: Date;
     noteLink: string;
     // lastModified: string; // Date format: 6th Aug 2024, 6:30pm
 }

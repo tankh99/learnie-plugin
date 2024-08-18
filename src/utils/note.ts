@@ -3,7 +3,7 @@ import { Commands } from 'src/commands';
 import { NoteMetadata, NoteRevisionMetadata } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
 import { deleteFile, modifyFrontmatter, NOTE_FOLDER_PATH, QUESTION_FOLDER_PATH, readFileContent, readFrontmatter } from "./file";
-import { createNoteRevision, getLatestNoteRevision, getNoteRevisionByNoteId, getNoteRevisionDate } from "./noteRevisions";
+import { checkIfNoteRevisionIsReviewed, createNoteRevision, getLatestNoteRevision, getNoteRevisionByNoteId, getNoteRevisionDate } from "./noteRevisions";
 import { createQuestion } from './questions';
 import { formatDate } from "./date";
 
@@ -56,7 +56,7 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
         console.error(`Error reading frontmatter for ${latestNoteRevision.name}`)
         return;
     }
-    const isReviewed = revisionFrontmatter["reviewed"] == true;
+    const isReviewed = checkIfNoteRevisionIsReviewed(latestNoteRevision);
     const noteRevisionDate = getNoteRevisionDate(latestNoteRevision.name);
     const today = moment().startOf("day");
 
@@ -143,19 +143,24 @@ export async function addMetadataToNoteRevision(file: TFile, metadata: NoteRevis
  */
 export async function noteIsChanged(file: TFile) {
     const today = moment().startOf("D")
-    const fileStats = await this.app.vault.adapter.stat(file.path);
-    const lastModified = moment(fileStats.mtime);
-
     const frontmatter = readFrontmatter(file)
     const noteId = frontmatter["id"]
     const noteRevisionFile = getNoteRevisionByNoteId(noteId)
-
     const noteRevisionFrontmatter = await readFrontmatter(noteRevisionFile)
-    
-    const isReviewed = noteRevisionFrontmatter["reviewed"]
-
+    const fileStats = await this.app.vault.adapter.stat(file.path);
+    const lastModified = moment(fileStats.mtime);
     const withinToday = lastModified.diff(today, "hours") > 0;
-    return withinToday || !isReviewed
+
+    if (frontmatter["lastReviewed"]) {
+        const isReviewed = today.isBefore(moment(noteRevisionFrontmatter["lastReviewed"]))
+        return withinToday || isReviewed;
+    } else {
+        /**
+         * Legacy property: reviewed (boolean) is replaced with lastReviewed (date)
+         */
+        const isReviewed = noteRevisionFrontmatter["reviewed"]
+        return withinToday || !isReviewed
+    }
 }
 
 /**

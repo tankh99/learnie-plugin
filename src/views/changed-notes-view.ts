@@ -1,7 +1,7 @@
 import { ItemView, Notice, TFile, WorkspaceLeaf } from "obsidian";
 import { readFrontmatter } from "src/utils/file";
 import { isValidNotePath, noteIsChanged, readNoteId } from "src/utils/note";
-import { getLatestNoteRevision, getNoteRevisionByNoteId } from "src/utils/noteRevisions";
+import { checkIfNoteRevisionIsReviewed, createNoteRevision, getLatestNoteRevision, getNoteRevisionByNoteId } from "src/utils/noteRevisions";
 import { DIFF_VIEW_TYPE } from "src/views/diff-view";
 
 export const CHANGED_NOTES_VIEW_TYPE = "changed-notes-view"
@@ -69,8 +69,8 @@ export class ChangedNotesView extends ItemView {
           const noteId = frontmatter["id"];
 
           const noteRevision = getNoteRevisionByNoteId(noteId)
-          const noteRevisionFrontmatter = readFrontmatter(noteRevision);
-          const isReviewed = noteRevisionFrontmatter["reviewed"] ?? false
+        //   const noteRevisionFrontmatter = readFrontmatter(noteRevision);
+          const isReviewed = checkIfNoteRevisionIsReviewed(noteRevision)
 
           const div = listItem.createEl("span", {attr: {
             style: `display:flex; align-items:center;`
@@ -103,8 +103,9 @@ export class ChangedNotesView extends ItemView {
     const latestNoteRevision = await getLatestNoteRevision(this.app.vault, noteId);
 
     if (!latestNoteRevision) {
-        new Notice(`No note revision found for today.`);
-      return;
+        console.info("Creating new note revision because we didn't find any")
+        await createNoteRevision(this.app.vault, noteId, file, true);
+        // new Notice(`No note revision found for today.`);
     }
 
     this.app.workspace.getLeaf(false).setViewState({

@@ -21,8 +21,8 @@ export default class Learnie extends Plugin {
 		await this.loadSettings();
 		
 		// This sets the tokenizer globally for all marked import 
-		this.registerEvent(this.app.vault.on("modify", () => {
-			handleNoteChange(this.app.vault, this.app.workspace.getActiveFile())
+		this.registerEvent(this.app.vault.on("modify", async () => {
+			await handleNoteChange(this.app.vault, this.app.workspace.getActiveFile())
 		}))
 
 		registerViews(this, this.settings);

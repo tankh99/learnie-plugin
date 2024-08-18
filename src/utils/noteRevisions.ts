@@ -1,8 +1,29 @@
-import { Notice, TFile, Vault } from "obsidian";
+import { Notice, TFile, Vault, moment } from "obsidian";
 import { NoteRevisionMetadata } from "../types/types";
 import { getDatePart } from "./date";
 import { createNewFile, NOTE_FOLDER_PATH, readContentWithoutFrontmatter, readFileContent, readFrontmatter } from "./file";
 import { addMetadataToNoteRevision } from "./note";
+
+/**
+ * A note revision is considered to be reviewed only if it meetsh te following criteria:
+ * 1. lastReviewed is >= start of today
+ * 2. OR (*deprecated): reviewed is true
+ * @param file 
+ * @returns 
+ */
+export function checkIfNoteRevisionIsReviewed(file: TFile) {
+    const frontmatter = readFrontmatter(file);
+    if (!frontmatter) {
+        return false;
+    }
+    if ("lastReviewed" in frontmatter) {
+        const lastReviewed = moment(frontmatter["lastReviewed"])
+        const startOfDay = moment().startOf("day");
+        return lastReviewed.isAfter(startOfDay);
+    } else {
+        return frontmatter["revision"] ?? false;
+    }
+}
 
 export async function checkIfNoteRevision(file: TFile) {
     const frontmatter = await readFrontmatter(file);
@@ -10,7 +31,7 @@ export async function checkIfNoteRevision(file: TFile) {
         // console.log("No frontmatter found")
         return false;
     }
-    return "reviewed" in frontmatter;
+    return "lastReviewed" in frontmatter || "reviewed" in frontmatter;
 }
 
 export async function createNoteRevision(vault: Vault, noteId: string, file: TFile, isNew = true) {
@@ -27,8 +48,9 @@ export async function createNoteRevision(vault: Vault, noteId: string, file: TFi
     if (isNew) {
         const metadata: NoteRevisionMetadata = {
             id: noteId,
-            reviewed: false,
+            // reviewed: false,
             noteLink: `[[${file.path}]]`,
+            lastReviewed: undefined,
         }
 
         await addMetadataToNoteRevision(createdFile, metadata);
@@ -82,8 +104,6 @@ export async function getLatestNoteRevision(vault: Vault, noteId: string) {
         const frontmatter = readFrontmatter(file);
         if (frontmatter) {
             const result = frontmatter["id"] === noteId;
-            // && "reviewed" in frontmatter 
-            // && frontmatter["reviewed"] === false;
             return result ? file : null;
         }
     }));

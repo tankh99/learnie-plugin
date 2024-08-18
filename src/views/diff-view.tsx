@@ -2,7 +2,7 @@ import { StrictMode, useEffect, useRef } from "react";
 import { App, Component, ItemView, MarkdownRenderer, Notice, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
 import { createRoot, Root } from "react-dom/client";
 import { convertPathToObsidianLink } from "src/utils/obsidian-utils";
-import { getLatestNoteRevision } from "src/utils/noteRevisions";
+import { checkIfNoteRevisionIsReviewed, getLatestNoteRevision } from "src/utils/noteRevisions";
 import * as diff from 'diff';
 import { readNoteId } from "src/utils/note";
 import { formatDiffContent } from "src/utils/diff-utils";
@@ -24,7 +24,8 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
         const target = event.target;
         const newFrontmatter = {
             ...revisionFrontmatter,
-            reviewed: target.checked
+            // reviewed: target.checked
+            lastReviewed: target.checked ? new Date() : undefined,
         }
         modifyFrontmatter(revisionFile, newFrontmatter)
     }
@@ -56,7 +57,7 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
                 <div style={{ display: "flex", alignItems: "center", }}>
                     <input id="learnie-reviewed"
                         onChange={handleReviewed}
-                        defaultChecked={revisionFrontmatter.reviewed}
+                        defaultChecked={checkIfNoteRevisionIsReviewed(revisionFile)}
                         type="checkbox" />
                     <p style={{ paddingLeft: "2px" }}>
                         Reviewed
