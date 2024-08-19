@@ -65,8 +65,9 @@ export async function createNoteRevision(vault: Vault, noteId: string, file: TFi
  * @returns 
  */
 export function getNoteRevisionFileName(noteId: string) {
-    const datePart = getDatePart(new Date())
-    return `${noteId}_${datePart}.md`;
+    // const datePart = getDatePart(new Date())
+    // return `${noteId}_${datePart}.md`;
+    return `${noteId}.md`;
 }
 
 /**

@@ -56,21 +56,36 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
         console.error(`Error reading frontmatter for ${latestNoteRevision.name}`)
         return;
     }
-    const isReviewed = checkIfNoteRevisionIsReviewed(latestNoteRevision);
-    const noteRevisionDate = getNoteRevisionDate(latestNoteRevision.name);
-    const today = moment().startOf("day");
 
-    const canCreateNewRevision = moment(noteRevisionDate).isBefore(today) && isReviewed;
-    // Handle creation of new note revision and deletion of old one (if it's already reviewed)
-    if (canCreateNewRevision) {
-        new Notice("Creating a new note revision")
-        console.info("Creating a new revision");
-        await createNoteRevision(vault, noteId, file, true);
-        if (isReviewed) {
-            // new Notice("Note is reviewed")
-            // Delete the old one, we no longer need it.
-            console.info(`Deleting old note revision ${latestNoteRevision.name}`)
-            await deleteFile(vault, latestNoteRevision);
+    if ("reviewed" in revisionFrontmatter) {
+        /**
+         * DEPRECATED: We delete the old revision and recreate a new one
+         */
+        const isReviewed = checkIfNoteRevisionIsReviewed(latestNoteRevision);
+        const noteRevisionDate = getNoteRevisionDate(latestNoteRevision.name);
+        const today = moment().startOf("day");
+    
+        const canCreateNewRevision = moment(noteRevisionDate).isBefore(today) && isReviewed;
+        // Handle creation of new note revision and deletion of old one (if it's already reviewed)
+        if (canCreateNewRevision) {
+            new Notice("Creating a new note revision")
+            console.info("Creating a new revision");
+            await createNoteRevision(vault, noteId, file, true);
+            if (isReviewed) {
+                // new Notice("Note is reviewed")
+                // Delete the old one, we no longer need it.
+                console.info(`Deleting old note revision ${latestNoteRevision.name}`)
+                await deleteFile(vault, latestNoteRevision);
+            }
+        }
+    } else {
+        // We only modify and update if lastReviewed < today
+        const lastReviewed = moment(revisionFrontmatter[";astReviewed"])
+        const today = moment().startOf("D");
+        if (lastReviewed.isBefore(today)) {
+            await modifyFrontmatter(latestNoteRevision, { lastReviewed: (new Date()) })
+            const newContent = await vault.read(file);
+            await vault.modify(latestNoteRevision, newContent);
         }
     }
 }
@@ -84,10 +99,6 @@ export async function convertToNote(vault: Vault, file: TFile) {
         new Notice("This file cannot be converted to a note")
         return;
     }
-    /** TODO: Create note history file if 
-     * - not exists yet
-     **/
-    // const content = await vault.read(file);
     const noteRevision = await createNoteRevision(vault, noteId, file);
 
     if (!noteRevision) {
@@ -136,7 +147,7 @@ export async function addMetadataToNoteRevision(file: TFile, metadata: NoteRevis
 
 /**
  * checks if a file is considered changed by checking
- * 1. If the file itself has been modified today
+ * 1. If the note itself has been modified today
  * 2. If the note revision associated with the file has not yet been reviewed
  * @param file 
  * @returns 
@@ -151,15 +162,15 @@ export async function noteIsChanged(file: TFile) {
     const lastModified = moment(fileStats.mtime);
     const withinToday = lastModified.diff(today, "hours") > 0;
 
-    if (frontmatter["lastReviewed"]) {
-        const isReviewed = today.isBefore(moment(noteRevisionFrontmatter["lastReviewed"]))
-        return withinToday || isReviewed;
-    } else {
+    if ("reviewed" in noteRevisionFrontmatter) {
         /**
          * Legacy property: reviewed (boolean) is replaced with lastReviewed (date)
-         */
-        const isReviewed = noteRevisionFrontmatter["reviewed"]
-        return withinToday || !isReviewed
+        */
+       const isReviewed = noteRevisionFrontmatter["reviewed"]
+       return withinToday || !isReviewed
+    } else {
+        const lastReviewed = moment(noteRevisionFrontmatter["lastReviewed"])
+        return today.isBefore(lastReviewed)
     }
 }
 
