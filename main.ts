@@ -1,4 +1,4 @@
-import { App, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Notice, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
 import { addCommands } from 'src/commands';
 import { handleNoteChange } from "src/utils/note";
 import { registerViews } from 'src/views';
@@ -21,8 +21,8 @@ export default class Learnie extends Plugin {
 		await this.loadSettings();
 		
 		// This sets the tokenizer globally for all marked import 
-		this.registerEvent(this.app.vault.on("modify", async () => {
-			await handleNoteChange(this.app.vault, this.app.workspace.getActiveFile())
+		this.registerEvent(this.app.vault.on("modify", async (file: TFile) => {
+			await handleNoteChange(this.app.vault, file)
 		}))
 
 		registerViews(this, this.settings);
