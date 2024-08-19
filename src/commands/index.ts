@@ -2,7 +2,7 @@ import { MarkdownView, Plugin } from 'obsidian';
 import { CreateQuestionAnswerModal } from 'src/modals/create-qna-modal';
 import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
 import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles, isValidNotePath, readNoteId } from '../utils/note';
-import { getLatestNoteRevision } from 'src/utils/noteRevisions';
+import { getLatestNoteRevision, migrateNoteRevisions } from 'src/utils/noteRevisions';
 import { UpdateQuestionAnswerModal } from 'src/modals/update-qna-modal';
 import { readFrontmatter } from 'src/utils/file';
 import { getQuestionFile } from 'src/utils/questions';
@@ -17,6 +17,7 @@ export enum Commands {
     VIEW_QUESTIONS = "view-questions",
     VIEW_NOTE_QUESTIONS = "view-note-question",
     UPDATE_QUESTIONS = "update-questions",
+    MIGRATE_NOTE_REVISIONS = "migrate-note-revisions",
     TEST = "test"
 
 }
@@ -132,6 +133,14 @@ export function addCommands(plugin: Plugin) {
                 new UpdateQuestionAnswerModal(this.app, noteId).open();
             }
             return true;
+        }
+    })
+
+    plugin.addCommand({
+        id: Commands.MIGRATE_NOTE_REVISIONS,
+        name: "Migrate Legacy Note Revisions",
+        callback: async () => {
+            await migrateNoteRevisions()
         }
     })
 

@@ -1,7 +1,7 @@
 import { Notice, TFile, Vault, moment } from "obsidian";
 import { NoteRevisionMetadata } from "../types/types";
 import { getDatePart } from "./date";
-import { createNewFile, NOTE_FOLDER_PATH, readContentWithoutFrontmatter, readFileContent, readFrontmatter } from "./file";
+import { createNewFile, deleteFile, modifyFrontmatter, NOTE_FOLDER_PATH, readContentWithoutFrontmatter, readFileContent, readFrontmatter } from "./file";
 import { addMetadataToNoteRevision } from "./note";
 
 /**
@@ -21,7 +21,7 @@ export function checkIfNoteRevisionIsReviewed(file: TFile) {
         const startOfDay = moment().startOf("day");
         return lastReviewed.isAfter(startOfDay);
     } else {
-        return frontmatter["revision"] ?? false;
+        return frontmatter["reviewed"] ?? false;
     }
 }
 
@@ -34,6 +34,14 @@ export async function checkIfNoteRevision(file: TFile) {
     return "lastReviewed" in frontmatter || "reviewed" in frontmatter;
 }
 
+/**
+ * Creates a new note revision file
+ * @param vault 
+ * @param noteId 
+ * @param file 
+ * @param isNew UNUSED PROPERTY FOR NOW AS IT IS ALWAYS TRUE
+ * @returns 
+ */
 export async function createNoteRevision(vault: Vault, noteId: string, file: TFile, isNew = true) {
     const originalContent = await vault.read(file);
     const noteRevisionName = generateNoteRevisionName(noteId)
@@ -126,6 +134,46 @@ export async function getLatestNoteRevision(vault: Vault, noteId: string) {
     return latestNoteRevision;
 }
 export function generateNoteRevisionName(id: string) {
-    const datePart = getDatePart(new Date());
-    return `${id}_${datePart}`;
+    // const datePart = getDatePart(new Date());
+    // return `${id}_${datePart}`;
+    return `${id}`;
+}
+
+/**
+ * Migrates the old note revisions which used a reviewed boolean property to the new lastReviewed property
+ * 
+ * Criteria to be an old note revision: Contains '_' which was used to separate the date and note id itself
+ * 
+ * Upgrade: We use the lastModified property of the revision file itself to serve as the new lastReviewed value
+ */
+export async function migrateNoteRevisions() {
+    const noteRevisions = await getAllNoteRevisions();
+    for (const noteRevision of noteRevisions) {
+        const isLegacyNoteRevision = noteRevision.basename.contains("_");
+        if (isLegacyNoteRevision) {
+            const frontmatter = readFrontmatter(noteRevision);
+            const noteId = frontmatter["id"]
+            const noteLink = frontmatter["noteLink"]
+            const fileStats = await this.app.vault.adapter.stat(noteRevision.path);
+            const lastModified = moment(fileStats.mtime);
+
+            // Note that we use noteRevision to create a new note revision, so the noteLink is overridden
+            const newRevisionFile = await createNoteRevision(this.app.vault, noteId, noteRevision)
+            if (!newRevisionFile) {
+                console.error(`Unable to upgrade revision file for ${noteRevision.basename}`)
+                continue;
+            }
+            // We need to override the noteLink because createNoteRevision uses the noteRevision
+            const newFrontmatter = { 
+                lastReviewed: lastModified, 
+                noteLink: noteLink, 
+                id: noteId 
+            };
+
+            await modifyFrontmatter(newRevisionFile, newFrontmatter)
+
+            await deleteFile(this.app.vault, noteRevision);
+            // return; // TODO: Remove this
+        }
+    }
 }

@@ -80,11 +80,15 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
         }
     } else {
         // We only modify and update if lastReviewed < today
-        const lastReviewed = moment(revisionFrontmatter[";astReviewed"])
+        const lastReviewed = moment(revisionFrontmatter["lastReviewed"])
         const today = moment().startOf("D");
         if (lastReviewed.isBefore(today)) {
-            await modifyFrontmatter(latestNoteRevision, { lastReviewed: (new Date()) })
-            const newContent = await vault.read(file);
+            const newFrontmatter = {
+                ...revisionFrontmatter,
+                lastReviewed: new Date(),
+            };
+            modifyFrontmatter(latestNoteRevision, newFrontmatter);
+            const {content: newContent} = await readFileContent(file);
             await vault.modify(latestNoteRevision, newContent);
         }
     }
