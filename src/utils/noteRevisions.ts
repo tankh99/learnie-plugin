@@ -157,6 +157,7 @@ export async function migrateNoteRevisions() {
             const fileStats = await this.app.vault.adapter.stat(noteRevision.path);
             const lastModified = moment(fileStats.mtime);
 
+            const {content: originalRevisionContent} = await readFileContent(noteRevision)
             // Note that we use noteRevision to create a new note revision, so the noteLink is overridden
             const newRevisionFile = await createNoteRevision(this.app.vault, noteId, noteRevision)
             if (!newRevisionFile) {

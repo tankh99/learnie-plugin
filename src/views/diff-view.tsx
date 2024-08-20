@@ -1,5 +1,5 @@
 import { StrictMode, useEffect, useRef } from "react";
-import { App, Component, ItemView, MarkdownRenderer, Notice, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
+import { App, Component, ItemView, MarkdownRenderer, Notice, TFile, ViewStateResult, WorkspaceLeaf, moment } from 'obsidian';
 import { createRoot, Root } from "react-dom/client";
 import { convertPathToObsidianLink } from "src/utils/obsidian-utils";
 import { checkIfNoteRevisionIsReviewed, getLatestNoteRevision } from "src/utils/noteRevisions";
@@ -20,12 +20,17 @@ type P = {
 }
 
 export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile, revisionFrontmatter, component }: P) => {
+    /**
+     * Sets lastReviewed to now if checked, else, set to start of today
+     * @param event 
+     */
     const handleReviewed = (event: any) => {
         const target = event.target;
+        const today = moment().startOf("D");
         const newFrontmatter = {
             ...revisionFrontmatter,
             // reviewed: target.checked
-            lastReviewed: target.checked ? new Date() : undefined,
+            lastReviewed: target.checked ? new Date() : today.toDate(),
         }
         modifyFrontmatter(revisionFile, newFrontmatter)
     }

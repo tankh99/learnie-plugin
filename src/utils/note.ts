@@ -79,7 +79,7 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
             }
         }
     } else {
-        // We only modify and update if lastReviewed < today
+        // We only modify and update if lastReviewed < today. then we set lastReviewed to today exactly
         const lastReviewed = revisionFrontmatter["lastReviewed"] 
             ? moment(revisionFrontmatter["lastReviewed"])
             : null;
@@ -87,7 +87,7 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
         if (!lastReviewed || lastReviewed.isBefore(today)) {
             const newFrontmatter = {
                 ...revisionFrontmatter,
-                lastReviewed: new Date(),
+                lastReviewed: today,
             };
             const {content: newContent} = await readFileContent(file);
             await vault.modify(latestNoteRevision, newContent);
@@ -154,7 +154,7 @@ export async function addMetadataToNoteRevision(file: TFile, metadata: NoteRevis
 /**
  * checks if a file is considered changed by checking
  * 1. If the note itself has been modified today
- * 2. If the note revision associated with the file has not yet been reviewed
+ * 2. If the note revision associated with the file has not yet been reviewed 
  * @param file 
  * @returns 
  */
@@ -166,7 +166,7 @@ export async function noteIsChanged(file: TFile) {
     const noteRevisionFrontmatter = await readFrontmatter(noteRevisionFile)
     const fileStats = await this.app.vault.adapter.stat(file.path);
     const lastModified = moment(fileStats.mtime);
-    const withinToday = lastModified.diff(today, "hours") > 0;
+    const withinToday = today.isBefore(lastModified); // WE can consider changing this variable to check wtihin a certain timeframe as well
 
     if ("reviewed" in noteRevisionFrontmatter) {
         /**
@@ -175,8 +175,12 @@ export async function noteIsChanged(file: TFile) {
        const isReviewed = noteRevisionFrontmatter["reviewed"]
        return withinToday || !isReviewed
     } else {
-        const lastReviewed = moment(noteRevisionFrontmatter["lastReviewed"])
-        return today.isBefore(lastReviewed)
+        const lastReviewed = noteRevisionFrontmatter["lastReviewed"] 
+            ? moment(noteRevisionFrontmatter["lastReviewed"])
+            : null;
+
+        const pastTodayButNotReviewedYet = lastReviewed && lastReviewed.isBefore(today);
+        return withinToday || pastTodayButNotReviewedYet
     }
 }
 
