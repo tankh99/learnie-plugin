@@ -179,7 +179,8 @@ export async function noteIsChanged(file: TFile) {
             ? moment(noteRevisionFrontmatter["lastReviewed"])
             : null;
 
-        const pastTodayButNotReviewedYet = lastReviewed && lastReviewed.isBefore(lastModified)
+        // const pastTodayButNotReviewedYet = lastReviewed && lastReviewed.isBefore(lastModified)
+        const pastTodayButNotReviewedYet = !lastReviewed
         return withinToday || pastTodayButNotReviewedYet
     }
 }
