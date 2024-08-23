@@ -180,7 +180,7 @@ export async function noteIsChanged(file: TFile) {
             : null;
 
         // const pastTodayButNotReviewedYet = lastReviewed && lastReviewed.isBefore(lastModified)
-        const pastTodayButNotReviewedYet = !lastReviewed
+        const pastTodayButNotReviewedYet = !lastReviewed || lastReviewed.isBefore(lastModified)
         return withinToday || pastTodayButNotReviewedYet
     }
 }

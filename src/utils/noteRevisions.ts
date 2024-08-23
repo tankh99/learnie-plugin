@@ -124,14 +124,14 @@ export async function getLatestNoteRevision(vault: Vault, noteId: string) {
         return null;
     }
 
-    const latestNoteRevision = matchedFiles.reduce((prev, current) => {
-        const [, latestDate] = prev.name.split("_");
-        const [, currentDate] = current.name.split("_");
+    // const latestNoteRevision = matchedFiles.reduce((prev, current) => {
+    //     const [, latestDate] = prev.name.split("_");
+    //     const [, currentDate] = current.name.split("_");
 
-        return currentDate > latestDate ? current : prev
-    })
+    //     return currentDate > latestDate ? current : prev
+    // })
 
-    return latestNoteRevision;
+    return matchedFiles[0];
 }
 export function generateNoteRevisionName(id: string) {
     // const datePart = getDatePart(new Date());
