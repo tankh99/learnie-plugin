@@ -30,7 +30,7 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
         const newFrontmatter = {
             ...revisionFrontmatter,
             // reviewed: target.checked
-            lastReviewed: target.checked ? new Date() : today.toDate(),
+            lastReviewed: target.checked ? moment().toDate() : today.toDate(),
         }
         modifyFrontmatter(revisionFile, newFrontmatter)
     }

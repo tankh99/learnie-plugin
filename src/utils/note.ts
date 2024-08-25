@@ -166,7 +166,7 @@ export async function noteIsChanged(file: TFile) {
     const noteRevisionFrontmatter = await readFrontmatter(noteRevisionFile)
     const fileStats = await this.app.vault.adapter.stat(file.path);
     const lastModified = moment(fileStats.mtime);
-    const withinToday = today.isBefore(lastModified); // WE can consider changing this variable to check wtihin a certain timeframe as well
+    const withinToday = lastModified.isSameOrAfter(today); // WE can consider changing this variable to check wtihin a certain timeframe as well
 
     if ("reviewed" in noteRevisionFrontmatter) {
         /**
@@ -179,9 +179,14 @@ export async function noteIsChanged(file: TFile) {
             ? moment(noteRevisionFrontmatter["lastReviewed"])
             : null;
 
+        if (!lastReviewed) {
+            console.error(`No lastReviewed found in note revision frontmatter for ${file.name}`)
+            return false;
+        }
         // const pastTodayButNotReviewedYet = lastReviewed && lastReviewed.isBefore(lastModified)
-        const pastTodayButNotReviewedYet = !lastReviewed || lastReviewed.isBefore(lastModified)
-        return withinToday || pastTodayButNotReviewedYet
+        
+        const beforeTodayButNotReviewedYet = (lastReviewed.isBefore(lastModified))
+        return withinToday || beforeTodayButNotReviewedYet
     }
 }
 
