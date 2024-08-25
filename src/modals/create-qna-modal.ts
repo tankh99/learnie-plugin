@@ -47,7 +47,7 @@ export class CreateQuestionAnswerModal extends Modal {
                 console.error("No active file")
                 return;
             }
-            await addQuestion(this.noteId, file, this.question, this.answer);
+            await addQuestion(this.noteId, file, this.question, this.answer, []);
             this.close();
         } else {
             new Notice('Please fill in both fields.');

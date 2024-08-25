@@ -112,7 +112,7 @@ export async function convertToNote(vault: Vault, file: TFile) {
         return;
     }
 
-    const questionFile = await createQuestion(noteId, file.path, "", "");
+    const questionFile = await createQuestion(noteId, "", "", []);
     if (!questionFile) {
         console.error(`Error creating question file for ${file.name}`)
         return;

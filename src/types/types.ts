@@ -17,6 +17,8 @@ export type NoteRevisionMetadata = {
 export type QuestionAnswerPair = {
     question: string;
     answer: string;
+    lastSeen?: Date;
+    categories: string[]
 }
 
 export type LearnieSettings = {

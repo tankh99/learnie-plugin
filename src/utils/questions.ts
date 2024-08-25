@@ -1,6 +1,7 @@
-import { Notice, TFile, Vault } from "obsidian";
+import { Notice, TFile, Vault, moment } from "obsidian";
 import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFrontmatter, QUESTION_FOLDER_PATH, readFrontmatter } from "./file";
 import { isValidNotePath } from "./note";
+import { QuestionAnswerPair } from "src/types/types";
 
 
 export function formatQuestionFilename(noteId: string) {
@@ -21,6 +22,11 @@ export async function getQuestionFile(noteId: string) {
     return questionFile;
 }
 
+/**
+ * Gets questions from a specific note with a specified noteId
+ * @param noteId 
+ * @returns 
+ */
 export async function getQuestions(noteId: string) {
     const questionFile = await getQuestionFile(noteId)
     if (!questionFile) {
@@ -34,7 +40,7 @@ export async function getQuestions(noteId: string) {
 }
 
 // Overrides any pre-existing questions array in thr frontmatter
-export async function createQuestion(noteId: string, notePath: string, question: string, answer: string) {
+export async function createQuestion(noteId: string, question: string, answer: string, categories: string[]) {
     const vault = this.app.vault;
 
     const filename = formatQuestionFilename(noteId)
@@ -46,8 +52,16 @@ export async function createQuestion(noteId: string, notePath: string, question:
 
     const questions = []
     if (question && answer) {
-        questions.push({ question, answer})
+        const qna: QuestionAnswerPair = {
+            question,
+            answer,
+            lastSeen: new Date(),
+            categories,
+        }
+
+        questions.push(qna)
     }
+
     await modifyFrontmatter(createdFile, {
         id: noteId,
         questions: questions,
@@ -56,7 +70,7 @@ export async function createQuestion(noteId: string, notePath: string, question:
     return createdFile;
 }
 
-export async function addQuestion(noteId: string, file:TFile, question: string, answer: string) {
+export async function addQuestion(noteId: string, file:TFile, question: string, answer: string, categories: string[]) {
     const filename = formatQuestionFilename(noteId)
     const questionFile = await getFile(QUESTION_FOLDER_PATH, filename)
 
@@ -65,14 +79,20 @@ export async function addQuestion(noteId: string, file:TFile, question: string, 
         return
     }
     if (!questionFile) {
-        await createQuestion(noteId, file.path, question, answer)
+        await createQuestion(noteId, question, answer, categories)
         // await modifyFrontmatter(file, {"questionLink": formatRelativeLink(`${QUESTION_FOLDER_PATH}/${filename}.md`, "View Questions")})
         return;
     }
 
     const frontmatter = readFrontmatter(questionFile)
     const questions = frontmatter["questions"] ?? [];
-    questions.push({ question, answer })
+    const qna: QuestionAnswerPair = {
+        question,
+        answer,
+        lastSeen: moment().toDate(),
+        categories: []
+    }
+    questions.push(qna)
     await modifyFrontmatter(questionFile, { questions })
 }
 

@@ -94,7 +94,7 @@ We use the frontmatter to store important details like a note's id, whether it's
 ---
 
 ## Planned Enhancements
-- [ ] Easier navigation between changed notes
+
 
 ## (Really) Future Enhancements
 - [ ] Create questions with context
