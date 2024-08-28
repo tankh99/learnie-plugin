@@ -2,6 +2,7 @@ import { Notice, TFile, Vault, moment } from "obsidian";
 import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFrontmatter, QUESTION_FOLDER_PATH, readFrontmatter } from "./file";
 import { isValidNotePath } from "./note";
 import { QuestionAnswerPair } from "src/types/types";
+import { v4 as uuidv4 } from 'uuid';
 
 
 export function formatQuestionFilename(noteId: string) {
@@ -53,9 +54,10 @@ export async function createQuestion(noteId: string, question: string, answer: s
     const questions = []
     if (question && answer) {
         const qna: QuestionAnswerPair = {
+            id: uuidv4(),
             question,
             answer,
-            lastSeen: new Date(),
+            lastSeen: moment().toDate(),
             categories,
         }
 
@@ -87,6 +89,7 @@ export async function addQuestion(noteId: string, file:TFile, question: string, 
     const frontmatter = readFrontmatter(questionFile)
     const questions = frontmatter["questions"] ?? [];
     const qna: QuestionAnswerPair = {
+        id: uuidv4(),
         question,
         answer,
         lastSeen: moment().toDate(),
@@ -94,6 +97,7 @@ export async function addQuestion(noteId: string, file:TFile, question: string, 
     }
     questions.push(qna)
     await modifyFrontmatter(questionFile, { questions })
+    new Notice("Successfully added a question");
 }
 
 export async function deleteAllUnusedQuestionFiles() {
@@ -107,4 +111,33 @@ export async function deleteAllUnusedQuestionFiles() {
             await deleteFile(this.app.vault, file)
         }
     })
+}
+
+/**
+ * Updates the lastSeen property for a specific question in a note.
+ * 
+ * @param noteId - The ID of the note containing the question.
+ * @param questionText - The text of the question to update.
+ * @param lastSeen - The new lastSeen timestamp.
+ */
+export async function updateQuestionLastSeen(noteId: string, questionId: string, lastSeen: Date) {
+    const questionFile = await getQuestionFile(noteId);
+    if (!questionFile) {
+        new Notice(`Error: Unable to find note with id ${noteId}`);
+        return;
+    }
+
+    const frontmatter = await readFrontmatter(questionFile);
+
+    if (frontmatter && frontmatter.questions) {
+        for (const qna of frontmatter.questions) {
+            if (qna.question === questionId) {
+                qna.lastSeen = lastSeen;
+                break;
+            }
+        }
+
+
+        await modifyFrontmatter(questionFile, frontmatter); // Save the updated frontmatter back to the file
+    }
 }

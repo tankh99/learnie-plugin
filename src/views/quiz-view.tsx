@@ -1,5 +1,5 @@
-import { ItemView, Notice, WorkspaceLeaf } from 'obsidian';
-import {getAllQuestionFiles} from '../utils/questions'
+import { ItemView, Notice, WorkspaceLeaf, moment } from 'obsidian';
+import {getAllQuestionFiles, updateQuestionLastSeen} from '../utils/questions'
 import { readFrontmatter } from '../utils/file';
 import { renderMarkdown } from 'src/utils/md-utils';
 import { QuestionAnswerPair } from 'src/types/types';
@@ -53,6 +53,17 @@ export class QuizView extends ItemView {
 
         const shuffled = questions.sort(() => 0.5 - Math.random());
         const selectedQuestions = shuffled.slice(0, this.numQuestions);
+
+        const now = moment().toDate();
+
+
+        for (const qna of selectedQuestions) {
+            qna.lastSeen = now; // Update in memory
+
+            // Update in the data source (file, database, etc.)
+            if (!qna.id) continue;
+            await updateQuestionLastSeen(qna.noteId, qna.id, now); // You need to implement this utility function
+        }
 
         const listEl = this.contentEl.createEl("ol", {attr: {
             style: "display:flex; flex-direction:column; gap: 0.5rem"

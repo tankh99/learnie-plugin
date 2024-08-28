@@ -16,6 +16,7 @@ export type NoteRevisionMetadata = {
 }
 
 export type QuestionAnswerPair = {
+    id?: string;
     question: string;
     answer: string;
     lastSeen?: Date;
