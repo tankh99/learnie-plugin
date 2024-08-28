@@ -8,6 +8,7 @@ import { readNoteId } from "src/utils/note";
 import { formatDiffContent } from "src/utils/diff-utils";
 import { modifyFrontmatter, readFileContent, readFrontmatter } from "src/utils/file";
 import { sanitize } from "dompurify";
+import { formatDate } from "src/utils/date";
 
 type P = {
     app: App,
@@ -26,11 +27,12 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
      */
     const handleReviewed = (event: any) => {
         const target = event.target;
-        const today = moment().startOf("D");
+        const today = moment().startOf("D")
+        const lastReviewed = target.checked ? moment().toDate() : today.toDate();
         const newFrontmatter = {
             ...revisionFrontmatter,
             // reviewed: target.checked
-            lastReviewed: target.checked ? moment().toDate() : today.toDate(),
+            lastReviewed,
         }
         modifyFrontmatter(revisionFile, newFrontmatter)
     }
