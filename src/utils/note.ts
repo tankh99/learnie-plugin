@@ -125,6 +125,7 @@ export async function convertToNote(vault: Vault, file: TFile) {
         id: noteId,
         reviewLink: formattedReviewLink,
         questionsLink: formattedQuestionLink,
+        tags: []
     }
     await addMetadataToNote(vault, file, metadata);
 }
