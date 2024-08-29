@@ -1,7 +1,7 @@
 import { Notice, TFile, Vault, moment } from "obsidian";
 import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFrontmatter, QUESTION_FOLDER_PATH, readFrontmatter } from "./file";
 import { isValidNotePath } from "./note";
-import { QuestionAnswerPair } from "src/types/types";
+import { QuestionAnswerPair, QuizQuestion } from "src/types/types";
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -21,6 +21,29 @@ export async function getQuestionFile(noteId: string) {
     const filename = formatQuestionFilename(noteId)
     const questionFile = await getFile(QUESTION_FOLDER_PATH, filename)
     return questionFile;
+}
+
+export async function getAllQuestions() {
+    const allQuestionFiles = getAllQuestionFiles()
+    const questions = []
+    for (const questionFile of allQuestionFiles) {
+        const frontmatter = await readFrontmatter(questionFile);
+        const noteId = frontmatter["id"]
+        const qnas: QuestionAnswerPair[] = frontmatter['questions'] ?? []
+        if (!noteId) {
+            new Notice(`Error: Unable to find note id in ${questionFile.path}`)
+            continue;
+        }
+        const qnasWithFilePath: QuizQuestion[] = qnas.map((qna) => {
+            return {
+                ...qna,
+                noteId,
+                questionFile,
+            }
+        })
+        questions.push(...qnasWithFilePath)
+    }
+    return questions;
 }
 
 /**
@@ -131,7 +154,7 @@ export async function updateQuestionLastSeen(noteId: string, questionId: string,
 
     if (frontmatter && frontmatter.questions) {
         for (const qna of frontmatter.questions) {
-            if (qna.question === questionId) {
+            if (qna.id === questionId) {
                 qna.lastSeen = lastSeen;
                 break;
             }
@@ -140,4 +163,64 @@ export async function updateQuestionLastSeen(noteId: string, questionId: string,
 
         await modifyFrontmatter(questionFile, frontmatter); // Save the updated frontmatter back to the file
     }
+}
+
+/**
+ * Create an array of question-weight pairs, 
+ * then sort them by weight, 
+ * and choose the first n number of question
+ * then shuffle them
+ * @param questions 
+ * @param numQuestions 
+ * @returns 
+ */
+export function selectRandomWeightedQuestions(questions: QuizQuestion[], numQuestions: number) {
+    const selectedQuestions = []
+    
+
+    const weightedQuestions = questions.map((qna, index: number) => {
+        const ageInDays = moment().diff(qna.lastSeen, 'days');
+        return {
+            index,
+            question: qna,
+            age: Math.max(ageInDays, 0)
+        }
+    })
+
+    const sortedWeightedQuestions = weightedQuestions.sort((a,b) => a.age - b.age)
+    for (let i = 0; i < numQuestions; i++) {
+        const selected = sortedWeightedQuestions.shift();
+        if (selected) {
+            selectedQuestions.push(selected.question)
+        }
+    }
+
+    return selectedQuestions.shuffle();
+}
+
+/**
+ * Migrates old questions to add 2 new properties: lastSeen and id
+ */
+export async function migrateQuestions() {
+    const questionFiles = await getAllQuestionFiles();
+    for (const questionFile of questionFiles) {
+        const frontmatter = await readFrontmatter(questionFile);
+        const noteId = frontmatter["id"];
+        if (!noteId) {
+            new Notice(`Error: Unable to find note id in ${questionFile.path}`)
+            continue;
+        }
+
+        const qnas: QuestionAnswerPair[] = frontmatter['questions'] ?? []
+        for (const qna of qnas) {
+            if (!qna.id) {
+                qna.id = uuidv4();
+            }
+            if (!qna.lastSeen) {
+                qna.lastSeen = moment().toDate();
+            }
+        }
+        await modifyFrontmatter(questionFile, { questions: qnas })
+    }
+
 }

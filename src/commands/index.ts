@@ -1,11 +1,12 @@
-import { MarkdownView, Plugin } from 'obsidian';
+import { MarkdownView, Plugin, moment } from 'obsidian';
 import { CreateQuestionAnswerModal } from 'src/modals/create-qna-modal';
 import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
 import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles, isValidNotePath, readNoteId } from '../utils/note';
 import { getLatestNoteRevision, migrateNoteRevisions } from 'src/utils/noteRevisions';
 import { UpdateQuestionAnswerModal } from 'src/modals/update-qna-modal';
 import { readFrontmatter } from 'src/utils/file';
-import { getQuestionFile } from 'src/utils/questions';
+import { getAllQuestions, getQuestionFile, migrateQuestions, selectRandomWeightedQuestions } from 'src/utils/questions';
+import { formatDate } from 'src/utils/date';
 
 
 export enum Commands {
@@ -141,6 +142,32 @@ export function addCommands(plugin: Plugin) {
         name: "Migrate Legacy Note Revisions",
         callback: async () => {
             await migrateNoteRevisions()
+        }
+    })
+
+    // plugin.addCommand({
+    //     id: Commands.TEST,
+    //     name: "test",
+    //     callback: async () => {
+    //         const formatted = formatDate(new Date())
+    //         // console.log(formatted, moment(formatted).toDate())
+    //         // console.log(moment().startOf("d").toDate(), moment().startOf("d").toDate())
+    //         // console.log(moment("2024-08-26T07:19:05.805Z").toDate())
+    //         // console.log(moment("2024-08-25T16:00:00.000Z").toDate())
+    //         // console.log(moment("2024-08-26T14:50:21.454Z").toDate())
+    //         // console.log(new Date().toString(), moment().toDate());
+    //         const questions = await getAllQuestions();
+            
+    //         const qns = selectRandomWeightedQuestions(questions, 10)
+    //         console.log(moment(qns[0].lastSeen).toDate())
+    //     }
+    // })
+
+    plugin.addCommand({
+        id: "migrate-questions",
+        name: "Migrate Questions",
+        callback: async () => {
+            await migrateQuestions()
         }
     })
 

@@ -1,5 +1,5 @@
 import { ItemView, Notice, WorkspaceLeaf, moment } from 'obsidian';
-import {getAllQuestionFiles, updateQuestionLastSeen} from '../utils/questions'
+import {getAllQuestionFiles, getAllQuestions, selectRandomWeightedQuestions, updateQuestionLastSeen} from '../utils/questions'
 import { readFrontmatter } from '../utils/file';
 import { renderMarkdown } from 'src/utils/md-utils';
 import { QuestionAnswerPair } from 'src/types/types';
@@ -31,35 +31,17 @@ export class QuizView extends ItemView {
 
     async onOpen() {
         this.contentEl.createEl("h2", {text: "Quiz view"})
-        const allQuestionFiles = getAllQuestionFiles()
-        const questions = []
-        for (const questionFile of allQuestionFiles) {
-            const frontmatter = await readFrontmatter(questionFile);
-            const noteId = frontmatter["id"]
-            const qnas: QuestionAnswerPair[] = frontmatter['questions'] ?? []
-            if (!noteId) {
-                new Notice(`Error: Unable to find note id in ${questionFile.path}`)
-                continue;
-            }
-            const qnasWithFilePath = qnas.map((qna) => {
-                return {
-                    ...qna,
-                    noteId,
-                    questionFile,
-                }
-            })
-            questions.push(...qnasWithFilePath)
-        }
-
-        const shuffled = questions.sort(() => 0.5 - Math.random());
-        const selectedQuestions = shuffled.slice(0, this.numQuestions);
+        const questions = await getAllQuestions();
+        const selectedQuestions = selectRandomWeightedQuestions(questions, this.numQuestions);
 
         const now = moment().toDate();
 
-
         for (const qna of selectedQuestions) {
+            if (!qna.lastSeen) {
+                new Notice("Error: Please run 'Migrate Questions' to enable the latest features")
+                return;
+            }
             qna.lastSeen = now; // Update in memory
-
             // Update in the data source (file, database, etc.)
             if (!qna.id) continue;
             await updateQuestionLastSeen(qna.noteId, qna.id, now); // You need to implement this utility function

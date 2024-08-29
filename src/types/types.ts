@@ -1,3 +1,4 @@
+import { TFile } from "obsidian";
 
 export type NoteMetadata = {
     id: string;
@@ -20,7 +21,12 @@ export type QuestionAnswerPair = {
     question: string;
     answer: string;
     lastSeen?: Date;
-    categories: string[]
+    categories: string[];
+}
+
+export type QuizQuestion = QuestionAnswerPair & {
+    noteId: string;
+    questionFile: TFile;
 }
 
 export type LearnieSettings = {
