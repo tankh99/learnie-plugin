@@ -187,7 +187,8 @@ export function selectRandomWeightedQuestions(questions: QuizQuestion[], numQues
         }
     })
 
-    const sortedWeightedQuestions = weightedQuestions.sort((a,b) => a.age - b.age)
+    // Sorted by age in descending order so older questions are shown first
+    const sortedWeightedQuestions = weightedQuestions.sort((a,b) => b.age - a.age)
     for (let i = 0; i < numQuestions; i++) {
         const selected = sortedWeightedQuestions.shift();
         if (selected) {
