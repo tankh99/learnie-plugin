@@ -10,3 +10,32 @@
     display: flex;
     padding: 8px;
 }
+
+
+.tag-checkbox-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.tag-checkbox-container > .setting-item {
+    padding: 0px;
+}
+
+.modal-button-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+    margin-top: 20px;
+}
+
+.modal-button-container button {
+    min-width: 80px;
+}
+
+.modal-button-container > .setting-item {
+    padding: 0px;
+}
