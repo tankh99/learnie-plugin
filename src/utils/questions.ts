@@ -64,7 +64,7 @@ export async function getQuestions(noteId: string) {
 }
 
 // Overrides any pre-existing questions array in thr frontmatter
-export async function createQuestion(noteId: string, question: string, answer: string, categories: string[]) {
+export async function createQuestion(noteId: string, question: string, answer: string, categories: string[] = []) {
     const vault = this.app.vault;
 
     const filename = formatQuestionFilename(noteId)
@@ -95,7 +95,7 @@ export async function createQuestion(noteId: string, question: string, answer: s
     return createdFile;
 }
 
-export async function addQuestion(noteId: string, file:TFile, question: string, answer: string, categories: string[]) {
+export async function addQuestion(noteId: string, file:TFile, question: string, answer: string, categories: string[] = []) {
     const filename = formatQuestionFilename(noteId)
     const questionFile = await getFile(QUESTION_FOLDER_PATH, filename)
 
