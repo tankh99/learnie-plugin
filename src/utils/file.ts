@@ -1,4 +1,5 @@
 import { App, FrontMatterCache, Notice, TFile, Vault } from "obsidian"
+import { getAllNotes } from "./note";
 
 export const BASE_FOLDER_PATH = "_learnie";
 export const NOTE_FOLDER_PATH = `${BASE_FOLDER_PATH}/Note Revisions`;
@@ -26,6 +27,11 @@ export async function getFile(folderPath: string, filename: string) {
     const filePath = `${folderPath}/${fileName}`;
     const file = vault.getFileByPath(filePath)
     return file;
+}
+
+export async function getFiles(folderPath: string) {
+    const vault: Vault = this.app.vault;
+    return vault.getFiles().filter(f => f.path.startsWith(folderPath));
 }
 
 export async function createNewFile(vault: Vault, folderPath: string, filename: string, content: string) {

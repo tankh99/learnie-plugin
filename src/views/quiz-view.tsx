@@ -1,10 +1,16 @@
-import { ItemView, Notice, WorkspaceLeaf, moment } from 'obsidian';
-import {getAllQuestionFiles, getAllQuestions, selectRandomWeightedQuestions, updateQuestionLastSeen} from '../utils/questions'
-import { readFrontmatter } from '../utils/file';
+import { ItemView, Notice, ViewStateResult, WorkspaceLeaf, moment } from 'obsidian';
+import { selectRandomWeightedQuestions, updateQuestionLastSeen } from '../utils/questions';
 import { renderMarkdown } from 'src/utils/md-utils';
-import { QuestionAnswerPair } from 'src/types/types';
+import { QuizQuestion } from 'src/types/types';
 import { convertPathToObsidianLink } from 'src/utils/obsidian-utils';
 import { getNoteByNoteId } from 'src/utils/note';
+
+export type QuizViewState = {
+    // files: TFile[];
+    questions: QuizQuestion[];
+    tags: Set<string>;
+}
+
 
 export const QUIZ_VIEW_TYPE = "quiz-view"
 
@@ -15,6 +21,9 @@ export class QuizView extends ItemView {
 
     // Default questions to render
     numQuestions = 10;
+    questions: QuizQuestion[] = [];
+    tags: Set<string> = new Set();
+
     constructor(leaf: WorkspaceLeaf, numQuestions?: number) {
         super(leaf)
         if (numQuestions) {
@@ -29,9 +38,29 @@ export class QuizView extends ItemView {
         return "Quiz"
     }
 
+    // This enables this.file to remain in memory even after navigating aray
+    override getState(): QuizViewState {
+        return {
+            questions: this.questions,
+            tags: this.tags
+        };
+    }
+    
+    async setState(state: QuizViewState, result: ViewStateResult) {
+        this.questions = state.questions ?? [];
+        this.tags = state.tags ?? new Set<string>();
+        this.renderView();
+        return super.setState(state, result);
+    }
+
+
     async onOpen() {
+
+    }
+
+    async renderView() {
         this.contentEl.createEl("h2", {text: "Quiz view"})
-        const questions = await getAllQuestions();
+        const questions = this.questions;
         const selectedQuestions = selectRandomWeightedQuestions(questions, this.numQuestions);
 
         const now = moment().toDate();
@@ -54,20 +83,19 @@ export class QuizView extends ItemView {
             const listItem = listEl.createEl("li")
             const detailsEl = listItem.createEl("details")
 
-            const srcNote = await getNoteByNoteId(qna.noteId);
-            if (!srcNote) {
-                new Notice(`Error: Unable to find note with id ${qna.noteId}`)
-                continue;
-            }
+            const srcNote = qna.noteFile
             const questionLink = convertPathToObsidianLink(this.app, srcNote.path)
             const questionEl = detailsEl.createEl("summary", {text: `${qna.question}`})
             const questionLinkEl = questionEl.createEl("a", {attr: {href: questionLink, style: "margin-left: 0.5rem"}})
             questionLinkEl.textContent = `${srcNote.basename}`
             
-            const ans = await renderMarkdown(qna.answer, qna.questionFile.path, this);
+            const ans = await renderMarkdown(qna.answer, qna.noteFile.path, this);
             const answerelem = detailsEl.createEl('div');
             answerelem.innerHTML = ans
         }
+    }
+
+    async onClose() {
 
     }
 

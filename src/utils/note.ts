@@ -27,6 +27,30 @@ export async function getNoteByNoteId(noteId: string) {
 }
 
 /**
+ * Gets all notes with specified tags in its frontmatter
+ * @param tags 
+ * @returns 
+ */
+export async function getNotesByTags(tags: Set<string>) {
+    const files = await getAllNotes()
+    const filesWithTags: TFile[] = []
+
+    for (const file of files) {
+        const fileCache = this.app.metadataCache.getFileCache(file);
+        const frontmatter = fileCache.frontmatter;
+        if (frontmatter && frontmatter.tags) {
+            for (const tag of frontmatter.tags) {
+                if (tags.has(tag)) {
+                    filesWithTags.push(file)
+                }
+            }
+        }
+    }
+
+    return filesWithTags;
+}
+
+/**
  * On editing of a note, it checks to see if it needs to create  a new note revision given that the previous note 
  * revision:
  * 1. Doesn't exist OR

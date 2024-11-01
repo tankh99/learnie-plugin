@@ -4,7 +4,7 @@ import { DIFF_VIEW_TYPE, DiffView } from "./diff-view";
 import { QUESTIONS_VIEW, QuestionsView } from "./questions-view";
 import { QUIZ_VIEW_TYPE, QuizView } from "./quiz-view";
 import { Commands } from "src/commands";
-import { LearnieSettings } from "src/types/types";
+import { LearnieSettings, QuizQuestion } from "src/types/types";
 
 export async function activateChangedNotesView(newLeaf = false) {
     const leaf = this.app.workspace.getLeaf(newLeaf);
@@ -30,11 +30,12 @@ export async function activateDiffView(newLeaf = false, file?: TFile) {
     this.app.workspace.revealLeaf(leaf);
 }
 
-export async function activateQuizView(newLeaf = false) {
+export async function activateQuizView(newLeaf = false, questions: QuizQuestion[], tags = new Set<string>()) {
     const leaf = this.app.workspace.getLeaf(newLeaf);
     await leaf.setViewState({
         type: QUIZ_VIEW_TYPE, state: {
-
+            questions,
+            tags,
         }, active: true
     });
     this.app.workspace.revealLeaf(leaf);

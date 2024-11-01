@@ -1,12 +1,11 @@
-import { MarkdownView, Plugin, moment } from 'obsidian';
+import { MarkdownView, Plugin } from 'obsidian';
 import { CreateQuestionAnswerModal } from 'src/modals/create-qna-modal';
-import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
+import { activateChangedNotesView, activateDiffView, activateQuestionsView, activateQuizView } from 'src/views';
 import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles, isValidNotePath, readNoteId } from '../utils/note';
 import { getLatestNoteRevision, migrateNoteRevisions } from 'src/utils/noteRevisions';
 import { UpdateQuestionAnswerModal } from 'src/modals/update-qna-modal';
 import { readFrontmatter } from 'src/utils/file';
-import { getAllQuestions, getQuestionFile, migrateQuestions, selectRandomWeightedQuestions } from 'src/utils/questions';
-import { formatDate } from 'src/utils/date';
+import { getAllQuestionsByTags, getQuestionFile, migrateQuestions } from 'src/utils/questions';
 
 
 export enum Commands {
@@ -163,11 +162,27 @@ export function addCommands(plugin: Plugin) {
     //     }
     // })
 
+    /**
+     * Migrates notes that use the old data format (storing isReviewed) to use the new data format (reviewedDate)
+     */
     plugin.addCommand({
         id: "migrate-questions",
         name: "Migrate Questions",
         callback: async () => {
             await migrateQuestions()
+        }
+    })
+
+    plugin.addCommand({
+        id: "quiz-test",
+        name: "Test quiz",
+        callback: async () => {
+            // const tags = getAllTags()
+            // new QuizModal(plugin.app, tags).open()
+            const tags = new Set<string>();
+            tags.add("#cs3263")
+            const questionsByTags = await getAllQuestionsByTags(tags)
+            activateQuizView(true, questionsByTags, tags);
         }
     })
 

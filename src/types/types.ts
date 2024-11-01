@@ -25,8 +25,8 @@ export type QuestionAnswerPair = {
 }
 
 export type QuizQuestion = QuestionAnswerPair & {
-    noteId: string;
-    questionFile: TFile;
+    noteId: string; // Deperecated
+    noteFile: TFile;
 }
 
 export type LearnieSettings = {

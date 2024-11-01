@@ -1,6 +1,6 @@
 import { Notice, TFile, Vault, moment } from "obsidian";
 import { checkIfDerivativeFileIsValid, createNewFile, deleteFile, getFile, modifyFrontmatter, QUESTION_FOLDER_PATH, readFrontmatter } from "./file";
-import { isValidNotePath } from "./note";
+import { getNoteByNoteId, getNotesByTags, isValidNotePath } from "./note";
 import { QuestionAnswerPair, QuizQuestion } from "src/types/types";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -25,22 +25,51 @@ export async function getQuestionFile(noteId: string) {
 
 export async function getAllQuestions() {
     const allQuestionFiles = getAllQuestionFiles()
+    const questions = await getQuestionsFromFiles(allQuestionFiles)
+    return questions
+}
+
+export async function getAllQuestionsByTags(tags: Set<string>): Promise<QuizQuestion[]> {
+    const notesByTags = await getNotesByTags(tags);
     const questions = []
-    for (const questionFile of allQuestionFiles) {
-        const frontmatter = await readFrontmatter(questionFile);
+    for (const note of notesByTags) {
+        const frontmatter = readFrontmatter(note);
+        const noteId = frontmatter["id"];
+        if (!noteId) {
+            new Notice(`Error: Unable to find note id in ${note.path}`)
+            continue;
+        }
+        const qnas = await getQuestions(noteId)
+        const qnasWithFilePath: QuizQuestion[] = qnas.map((qna) => convertQnaPairToQuizQuestion(noteId, note, qna))
+        questions.push(...qnasWithFilePath)
+    }
+    return questions
+}
+
+export function convertQnaPairToQuizQuestion(noteId: string, noteFile: TFile, quizQuestion: QuestionAnswerPair): QuizQuestion {
+    return {
+        ...quizQuestion,
+        noteId,
+        noteFile: noteFile,
+    }
+}
+
+export async function getQuestionsFromFiles(files: TFile[]): Promise<QuizQuestion[]> {
+    const questions = []
+    for (const questionFile of files) {
+        const frontmatter = readFrontmatter(questionFile);
         const noteId = frontmatter["id"]
         const qnas: QuestionAnswerPair[] = frontmatter['questions'] ?? []
         if (!noteId) {
             new Notice(`Error: Unable to find note id in ${questionFile.path}`)
             continue;
         }
-        const qnasWithFilePath: QuizQuestion[] = qnas.map((qna) => {
-            return {
-                ...qna,
-                noteId,
-                questionFile,
-            }
-        })
+        const noteFile = await getNoteByNoteId(noteId)
+        if (!noteFile) {
+            new Notice(`Error: Unable to find note with id ${noteId}`)
+            continue;
+        }
+        const qnasWithFilePath: QuizQuestion[] = qnas.map((qna) => convertQnaPairToQuizQuestion(noteId, noteFile, qna))
         questions.push(...qnasWithFilePath)
     }
     return questions;
@@ -51,11 +80,11 @@ export async function getAllQuestions() {
  * @param noteId 
  * @returns 
  */
-export async function getQuestions(noteId: string) {
+export async function getQuestions(noteId: string): Promise<QuestionAnswerPair[]> {
     const questionFile = await getQuestionFile(noteId)
     if (!questionFile) {
         console.error(`Question file not found for note: ${noteId}`)
-        return null;
+        return [];
     }
 
     const frontmatter = readFrontmatter(questionFile)
