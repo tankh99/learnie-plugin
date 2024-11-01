@@ -4,6 +4,7 @@ import { renderMarkdown } from 'src/utils/md-utils';
 import { QuizQuestion } from 'src/types/types';
 import { convertPathToObsidianLink } from 'src/utils/obsidian-utils';
 import { getNoteByNoteId } from 'src/utils/note';
+import { normalizeTag } from 'src/utils/tags';
 
 export type QuizViewState = {
     // files: TFile[];
@@ -59,7 +60,16 @@ export class QuizView extends ItemView {
     }
 
     async renderView() {
-        this.contentEl.createEl("h2", {text: "Quiz view"})
+        const title = `Quiz View`
+        let tagString = "Tags: "
+        if (this.tags.size > 0) {
+            for (const tag of this.tags) {
+                
+                tagString += `${normalizeTag(tag)} `
+            }
+        }
+        this.contentEl.createEl("h2", {text: title})
+        this.contentEl.createEl("p", {text: tagString, attr: {style: "font-style: italic"}})
         const questions = this.questions;
         const selectedQuestions = selectRandomWeightedQuestions(questions, this.numQuestions);
 

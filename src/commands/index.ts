@@ -6,6 +6,8 @@ import { getLatestNoteRevision, migrateNoteRevisions } from 'src/utils/noteRevis
 import { UpdateQuestionAnswerModal } from 'src/modals/update-qna-modal';
 import { readFrontmatter } from 'src/utils/file';
 import { getAllQuestionsByTags, getQuestionFile, migrateQuestions } from 'src/utils/questions';
+import { QuizModal } from 'src/modals/quiz-modal';
+import { getAllTags } from 'src/utils/tags';
 
 
 export enum Commands {
@@ -177,12 +179,9 @@ export function addCommands(plugin: Plugin) {
         id: "quiz-test",
         name: "Test quiz",
         callback: async () => {
-            // const tags = getAllTags()
-            // new QuizModal(plugin.app, tags).open()
-            const tags = new Set<string>();
-            tags.add("#cs3263")
-            const questionsByTags = await getAllQuestionsByTags(tags)
-            activateQuizView(true, questionsByTags, tags);
+            const tags = getAllTags()
+
+            new QuizModal(plugin.app, tags).open()
         }
     })
 

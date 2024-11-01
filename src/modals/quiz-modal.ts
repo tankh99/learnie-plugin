@@ -1,4 +1,6 @@
 import { App, Modal, Notice, Setting } from "obsidian";
+import { getAllQuestionsByTags } from "src/utils/questions";
+import { activateQuizView } from "src/views";
 
 export class QuizModal extends Modal {
 
@@ -62,6 +64,11 @@ export class QuizModal extends Modal {
                         return;
                     }
                     // this.onSubmit(Array.from(this.selectedTags));
+
+                    getAllQuestionsByTags(this.selectedTags)
+                    .then(questionsByTags => {
+                        activateQuizView(true, questionsByTags, this.selectedTags);
+                    })
                     this.close();
                 })
             );

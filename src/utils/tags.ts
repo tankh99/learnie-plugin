@@ -9,3 +9,7 @@ export function getAllTags(): Set<string> {
     }
     return tagStrings
 }
+
+export function normalizeTag(tag: string): string {
+    return tag.startsWith('#') ? tag.slice(1) : tag;
+}
