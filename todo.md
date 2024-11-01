@@ -1,8 +1,8 @@
+- [x] Feat: Enable question tagging based on notes itself
 - [x] Feat: Notify users every day at a specific time review their notes
 - [ ] --Feat: Implement easier navigation when reviewing notes (Single view or multiple views with nav buttons?)--
-- [ ] Feat: Add properties for questions
-    - [ ] lastSeen - When was it last shown in a quiz/questions-view
-    - [ ] 
+- [x] Feat: Add properties for questions
+    - [x] lastSeen - When was it last shown in a quiz/questions-view 
 - [ ] Feat (v2): Add questions with context. Allow these context questions to have multiple questions tagged to them
 - [ ] Feat: Allow users to include/exclude which notes to include for quiz review
 - [ ] Feat: Add button to view a random note (Default random note view button opens generated files)
