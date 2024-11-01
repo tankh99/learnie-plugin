@@ -1,8 +1,9 @@
 import { createNewFile, getUniqueFileName } from "src/utils/file";
-import { activateChangedNotesView, activateQuestionsView, activateQuizView } from "../views";
+import { activateChangedNotesView, activateQuestionsView } from "../views";
 import { Plugin } from "obsidian";
-import { convertToNote, getAllNotes } from "src/utils/note";
-import { getAllQuestions } from "src/utils/questions";
+import { convertToNote } from "src/utils/note";
+import { getAllTags } from "src/utils/tags";
+import { QuizModal } from "src/modals/quiz-modal";
 
 export function registerRibbonIcons(plugin: Plugin) {
     plugin.addRibbonIcon('book', 'Review notes', async () => {
@@ -23,8 +24,8 @@ export function registerRibbonIcons(plugin: Plugin) {
     })
     
     plugin.addRibbonIcon("badge-help", "Start quiz", async () => {
-        const allQuestions = await getAllQuestions();
-        activateQuizView(true, allQuestions);
+        const tags = getAllTags()
+        new QuizModal(plugin.app, tags).open()
     })
 
 }

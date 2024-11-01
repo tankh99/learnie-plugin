@@ -1,5 +1,6 @@
 import { App, Modal, Notice, Setting } from "obsidian";
 import { getAllQuestionsByTags } from "src/utils/questions";
+import { getAllTags } from "src/utils/tags";
 import { activateQuizView } from "src/views";
 
 export class QuizModal extends Modal {
@@ -21,9 +22,7 @@ export class QuizModal extends Modal {
         contentEl.empty();
 
         contentEl.createEl("h2", {text: "Start a quiz based on tags"})
-        this.tags.forEach(tag => {
-            
-        })
+        contentEl.createEl("p", {text: `Choose tags you want to quiz yourself on. Don't select anything to quiz yourself on all types of questions.`})
 
         // Container for checkboxes
         const checkboxContainer = contentEl.createDiv({ 
@@ -59,15 +58,14 @@ export class QuizModal extends Modal {
             .addButton(button => button
                 .setButtonText('Create')
                 .onClick(() => {
+                    let tags = this.selectedTags
                     if (this.selectedTags.size === 0) {
-                        new Notice('Please select at least one tag.');
-                        return;
+                        tags = getAllTags()
                     }
-                    // this.onSubmit(Array.from(this.selectedTags));
 
-                    getAllQuestionsByTags(this.selectedTags)
+                    getAllQuestionsByTags(tags)
                     .then(questionsByTags => {
-                        activateQuizView(true, questionsByTags, this.selectedTags);
+                        activateQuizView(true, questionsByTags, tags);
                     })
                     this.close();
                 })

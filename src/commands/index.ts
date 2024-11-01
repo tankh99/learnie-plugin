@@ -1,13 +1,11 @@
 import { MarkdownView, Plugin } from 'obsidian';
 import { CreateQuestionAnswerModal } from 'src/modals/create-qna-modal';
-import { activateChangedNotesView, activateDiffView, activateQuestionsView, activateQuizView } from 'src/views';
+import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
 import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles, isValidNotePath, readNoteId } from '../utils/note';
 import { getLatestNoteRevision, migrateNoteRevisions } from 'src/utils/noteRevisions';
 import { UpdateQuestionAnswerModal } from 'src/modals/update-qna-modal';
 import { readFrontmatter } from 'src/utils/file';
-import { getAllQuestionsByTags, getQuestionFile, migrateQuestions } from 'src/utils/questions';
-import { QuizModal } from 'src/modals/quiz-modal';
-import { getAllTags } from 'src/utils/tags';
+import { getQuestionFile, migrateQuestions } from 'src/utils/questions';
 
 
 export enum Commands {
@@ -174,15 +172,4 @@ export function addCommands(plugin: Plugin) {
             await migrateQuestions()
         }
     })
-
-    plugin.addCommand({
-        id: "quiz-test",
-        name: "Test quiz",
-        callback: async () => {
-            const tags = getAllTags()
-
-            new QuizModal(plugin.app, tags).open()
-        }
-    })
-
 }
