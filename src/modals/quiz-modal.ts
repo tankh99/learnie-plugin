@@ -1,6 +1,5 @@
-import { App, Modal, Notice, Setting } from "obsidian";
-import { getAllQuestionsByTags } from "src/utils/questions";
-import { getAllTags } from "src/utils/tags";
+import { App, Modal, Setting } from "obsidian";
+import { getAllQuestions, getAllQuestionsByTags } from "src/utils/questions";
 import { activateQuizView } from "src/views";
 
 export class QuizModal extends Modal {
@@ -58,15 +57,19 @@ export class QuizModal extends Modal {
             .addButton(button => button
                 .setButtonText('Create')
                 .onClick(() => {
-                    let tags = this.selectedTags
                     if (this.selectedTags.size === 0) {
-                        tags = getAllTags()
-                    }
+                        getAllQuestions()
+                        .then(questions => {
+                            activateQuizView(true, questions);
+                        })
+                    } else {   
+                        const tags = this.selectedTags
 
-                    getAllQuestionsByTags(tags)
-                    .then(questionsByTags => {
-                        activateQuizView(true, questionsByTags, tags);
-                    })
+                        getAllQuestionsByTags(tags)
+                        .then(questionsByTags => {
+                            activateQuizView(true, questionsByTags, tags);
+                        })
+                    }
                     this.close();
                 })
             );
