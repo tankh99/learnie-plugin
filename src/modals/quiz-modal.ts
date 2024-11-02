@@ -1,5 +1,6 @@
 import { App, Modal, Setting } from "obsidian";
 import { getAllQuestions, getAllQuestionsByTags } from "src/utils/questions";
+import { normalizeTag } from "src/utils/tags";
 import { activateQuizView } from "src/views";
 
 export class QuizModal extends Modal {
@@ -30,6 +31,7 @@ export class QuizModal extends Modal {
         
         // Create a checkbox for each tag
         this.tags.forEach(tag => {
+            tag = normalizeTag(tag);
             new Setting(checkboxContainer)
                 .setName(tag)
                 .addToggle(toggle => toggle
@@ -64,7 +66,6 @@ export class QuizModal extends Modal {
                         })
                     } else {   
                         const tags = this.selectedTags
-
                         getAllQuestionsByTags(tags)
                         .then(questionsByTags => {
                             activateQuizView(true, questionsByTags, tags);

@@ -1,3 +1,4 @@
+import { normalizeTag } from 'src/utils/tags';
 import { App, moment, Notice, TFile, Vault } from "obsidian";
 import { Commands } from 'src/commands';
 import { NoteMetadata, NoteRevisionMetadata } from '../types/types';
@@ -40,7 +41,7 @@ export async function getNotesByTags(tags: Set<string>) {
         const frontmatter = fileCache.frontmatter;
         if (frontmatter && frontmatter.tags) {
             for (const tag of frontmatter.tags) {
-                if (tags.has(tag)) {
+                if (tags.has(normalizeTag(tag))) {
                     filesWithTags.push(file)
                 }
             }
