@@ -195,20 +195,26 @@ export async function updateQuestionLastSeen(noteId: string, questionId: string,
 }
 
 /**
- * Create an array of question-weight pairs, 
- * then sort them by weight, 
- * and choose the first n number of question
- * then shuffle them
- * @param questions 
- * @param numQuestions 
- * @returns 
+ * Selects and randomizes a subset of quiz questions, prioritizing questions that haven't been seen recently.
+ * 
+ * @param questions - Array of quiz questions, each containing a lastSeen timestamp
+ * @param numQuestions - Number of questions to select (must be positive and not exceed questions array length)
+ * @returns Array of randomly ordered quiz questions, weighted by time since last seen
+ * @throws {Error} If questions array is empty or numQuestions is invalid
+ * 
+ * @example
+ * const allQuestions = [
+ *   { question: "2+2?", lastSeen: "2024-01-01" },
+ *   { question: "3+3?", lastSeen: "2024-03-01" }
+ * ];
+ * const selected = selectRandomWeightedQuestions(allQuestions, 1);
  */
 export function selectRandomWeightedQuestions(questions: QuizQuestion[], numQuestions: number) {
     const selectedQuestions = []
     
 
     const weightedQuestions = questions.map((qna, index: number) => {
-        const ageInDays = moment().diff(qna.lastSeen, 'days');
+        const ageInDays = moment().diff(qna.lastSeen);
         return {
             index,
             question: qna,
