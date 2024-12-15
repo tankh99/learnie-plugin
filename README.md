@@ -26,7 +26,7 @@ Each tracked note is assigned an ID and includes links to view the differences b
 
 ### 3. Create and Review Questions
 
-Create review questions directly within your notes. Select text to automatically use it as an answer, streamlining the question creation process. This feature uses the flashcard strategy and helps you prepare for exams by regularly reviewing the questions you've created.
+Create review questions directly within your notes. Select text to automatically use it as an answer, streamlining the question creation process. This feature uses the flashcard strategy and helps you prepare for exams by regularly reviewing the questions you've created. *Note that questions can only be created for valid notes*
 
 **Create new questions**
 ![Create question](assets/create-qns.gif)
@@ -50,14 +50,20 @@ Mark note revisions as reviewed to keep track of your progress and ensure no cha
 ### 6. Flashcard Quizzes
 
 **Quizzes**
-You can easily create flashcard-like quizzes which takes a fixed number of questions every time
+You can easily create flashcard-like quizzes which takes a fixed number of questions every time. You can even choose what topics to test yourself on by adding a tag into the note's `tags` property like so below
+
+![Note with tags](assets/note-with-tag.png)
+
+*Note that it has to specifically be in a Learnie note with the tags property. Notes created before an earlier update may not have this property, and you simply just need to create a new "tags" property*
+
+Then when starting a quiz, choose the topics you wish to test yourself on and voila!
+
+![Start Quiz Selection](assets/start-quiz-selection.png)
 
 ![Start quiz](assets/start-quiz.png)
 
-
 **View all questions** - You can also view all questions across all notes if you'd like
 ![View all questions](assets/view-all-qns.png)
-
 
 ### 7. Settings
 Currently configurable settings
@@ -105,6 +111,7 @@ We use the frontmatter to store important details like a note's id, whether it's
 - [x] Allow users to modify questions
 - [x] Add daily notification which reminds users to review their notes at a certain time
 - [x] Review Questions: Opens a view with 10 random questions that have not yet been reviewed today
+- [x] Allow users to view questions of a specific topic/s
 
 **Note**: Learnie is in early development and may have some instabilities. Regular updates will be provided to improve functionality and user experience.
 
