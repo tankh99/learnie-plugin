@@ -50,6 +50,7 @@ Mark note revisions as reviewed to keep track of your progress and ensure no cha
 ### 6. Flashcard Quizzes
 
 **Quizzes**
+
 You can easily create flashcard-like quizzes which takes a fixed number of questions every time. You can even choose what topics to test yourself on by adding a tag into the note's `tags` property like so below
 
 ![Note with tags](assets/note-with-tag.png)
@@ -62,7 +63,8 @@ Then when starting a quiz, choose the topics you wish to test yourself on and vo
 
 ![Start quiz](assets/start-quiz.png)
 
-**View all questions** - You can also view all questions across all notes if you'd like
+**View all questions** - You can also view all questions across all notes if you'd like by clicking on the "View all questions" button at the lef tsidebar
+
 ![View all questions](assets/view-all-qns.png)
 
 ### 7. Settings
