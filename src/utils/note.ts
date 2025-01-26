@@ -84,7 +84,8 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
 
     if ("reviewed" in revisionFrontmatter) {
         /**
-         * DEPRECATED: We delete the old revision and recreate a new one
+         * This condition block is for the DEPRECATED property "reviewed" 
+         * We delete the old revision and recreate a new one
          */
         const isReviewed = checkIfNoteRevisionIsReviewed(latestNoteRevision);
         const noteRevisionDate = getNoteRevisionDate(latestNoteRevision.name);
@@ -109,7 +110,9 @@ export async function handleNoteChange(vault: Vault, file: TFile | null) {
             ? moment(revisionFrontmatter["lastReviewed"])
             : null;
         const today = moment().startOf("D");
-        if (!lastReviewed || lastReviewed.isBefore(today)) {
+        // If there is no lastReviewed property, create it
+        const isReviewed = checkIfNoteRevisionIsReviewed(latestNoteRevision)
+        if (!lastReviewed || (lastReviewed.isBefore(today) && isReviewed)) {
             const newFrontmatter = {
                 ...revisionFrontmatter,
                 lastReviewed: today,
