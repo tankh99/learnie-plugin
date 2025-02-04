@@ -1,14 +1,12 @@
 import { StrictMode, useEffect, useRef } from "react";
 import { App, Component, ItemView, MarkdownRenderer, Notice, TFile, ViewStateResult, WorkspaceLeaf, moment } from 'obsidian';
 import { createRoot, Root } from "react-dom/client";
-import { convertPathToObsidianLink } from "src/utils/obsidian-utils";
 import { checkIfNoteRevisionIsReviewed, getLatestNoteRevision } from "src/utils/noteRevisions";
 import * as diff from 'diff';
 import { readNoteId } from "src/utils/note";
 import { formatDiffContent } from "src/utils/diff-utils";
-import { modifyFrontmatter, readFileContent, readFrontmatter } from "src/utils/file";
+import { getFile, modifyFrontmatter, NOTE_REVISION_FOLDER_PATH, readFileContent, readFrontmatter } from "src/utils/file";
 import { sanitize } from "dompurify";
-import { formatDate } from "src/utils/date";
 
 type P = {
     app: App,
@@ -25,7 +23,7 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
      * Sets lastReviewed to now if checked, else, set to start of today
      * @param event 
      */
-    const handleReviewed = (event: any) => {
+    const handleReviewed = async (event: any) => {
         const target = event.target;
         const today = moment().startOf("D")
         const lastReviewed = target.checked ? moment().toDate() : today.toDate();
@@ -34,7 +32,15 @@ export const ReactMarkdownView = ({ app, title, markdown, srcPath, revisionFile,
             // reviewed: target.checked
             lastReviewed,
         }
+
+        // Upon checking the review button, copy all contents from the current file onto the revision file
+        if (event.target.checked) {
+            const currentFile = await getFile("", srcPath, null)
+            const {content: newContent} = await readFileContent(currentFile);
+            await app.vault.modify(revisionFile, newContent);
+        }
         modifyFrontmatter(revisionFile, newFrontmatter)
+
     }
 
     const navigateToFile = (path: string, newLeaf = true) => {

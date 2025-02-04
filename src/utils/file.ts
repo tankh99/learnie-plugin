@@ -2,7 +2,7 @@ import { App, FrontMatterCache, Notice, TFile, Vault } from "obsidian"
 import { getAllNotes } from "./note";
 
 export const BASE_FOLDER_PATH = "_learnie";
-export const NOTE_FOLDER_PATH = `${BASE_FOLDER_PATH}/Note Revisions`;
+export const NOTE_REVISION_FOLDER_PATH = `${BASE_FOLDER_PATH}/Note Revisions`;
 export const QUESTION_FOLDER_PATH = `${BASE_FOLDER_PATH}/Questions`;
 
 export async function getUniqueFileName(baseName: string, extension: string) {
@@ -19,12 +19,19 @@ export async function getUniqueFileName(baseName: string, extension: string) {
  * Gets a file by a specific folder path and file name. Mostly used to get generated files like revisions and questions
  * @param folderPath Folder path, e.g. NOTE_FOLDER_PATH
  * @param filename file name to get
+ * @param includeExtension whether to include the extension or not
  * @returns 
  */
-export async function getFile(folderPath: string, filename: string) {
+export async function getFile(folderPath: string, filename: string, extension: string | null = "md") {
     const vault = this.app.vault;
-    const fileName = `${filename}.md`
-    const filePath = `${folderPath}/${fileName}`;
+    let fileName = `${filename}`
+    if (extension) {
+        fileName = `${fileName}.${extension}`
+    }
+    let filePath = `${fileName}`;
+    if (folderPath) {
+        filePath = `${folderPath}/${filePath}`
+    }
     const file = vault.getFileByPath(filePath)
     return file;
 }

@@ -1,7 +1,7 @@
 import { Notice, TFile, Vault, moment } from "obsidian";
 import { NoteRevisionMetadata } from "../types/types";
 import { getDatePart } from "./date";
-import { createNewFile, deleteFile, modifyFrontmatter, NOTE_FOLDER_PATH, readContentWithoutFrontmatter, readFileContent, readFrontmatter } from "./file";
+import { createNewFile, deleteFile, modifyFrontmatter, NOTE_REVISION_FOLDER_PATH, readContentWithoutFrontmatter, readFileContent, readFrontmatter } from "./file";
 import { addMetadataToNoteRevision } from "./note";
 
 /**
@@ -46,7 +46,7 @@ export async function createNoteRevision(vault: Vault, noteId: string, file: TFi
     const originalContent = await vault.read(file);
     const noteRevisionName = generateNoteRevisionName(noteId)
     const originalContentWithoutFrontmatter = readContentWithoutFrontmatter(originalContent);
-    const folderPath = NOTE_FOLDER_PATH
+    const folderPath = NOTE_REVISION_FOLDER_PATH
     const createdFile = await createNewFile(vault, folderPath, noteRevisionName, originalContentWithoutFrontmatter);
 
     if (!createdFile) {
@@ -84,7 +84,7 @@ export function getNoteRevisionFileName(noteId: string) {
  */
 export function getNoteRevisionByNoteId(noteId: string) {
     const vault: Vault = this.app.vault;
-    const files = vault.getFiles().filter(file => file.path.startsWith(NOTE_FOLDER_PATH));
+    const files = vault.getFiles().filter(file => file.path.startsWith(NOTE_REVISION_FOLDER_PATH));
     const matches = files.filter(file => file.path.includes(noteId))[0];
     return matches;
 }
@@ -92,7 +92,7 @@ export function getNoteRevisionByNoteId(noteId: string) {
 // Get all files inside the note revisions folder
 export function getAllNoteRevisions() {
     const vault: Vault = this.app.vault;
-    const files = vault.getFiles().filter(file => file.path.startsWith(NOTE_FOLDER_PATH));
+    const files = vault.getFiles().filter(file => file.path.startsWith(NOTE_REVISION_FOLDER_PATH));
     return files;
 }
 
@@ -106,7 +106,7 @@ export function getNoteRevisionDate(name: string) {
  * Queries the note revisions folder to get the most recent note revision
  */
 export async function getLatestNoteRevision(vault: Vault, noteId: string) {
-    const folderPath = NOTE_FOLDER_PATH;
+    const folderPath = NOTE_REVISION_FOLDER_PATH;
     const files = vault.getFiles().filter(file => file.path.startsWith(folderPath));
 
     const matches = await Promise.all(files.map(async (file) => {

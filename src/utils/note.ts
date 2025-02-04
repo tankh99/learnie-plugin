@@ -3,7 +3,7 @@ import { App, moment, Notice, TFile, Vault } from "obsidian";
 import { Commands } from 'src/commands';
 import { NoteMetadata, NoteRevisionMetadata } from '../types/types';
 import { v4 as uuidv4 } from 'uuid';
-import { deleteFile, modifyFrontmatter, NOTE_FOLDER_PATH, QUESTION_FOLDER_PATH, readFileContent, readFrontmatter } from "./file";
+import { deleteFile, modifyFrontmatter, NOTE_REVISION_FOLDER_PATH, QUESTION_FOLDER_PATH, readFileContent, readFrontmatter } from "./file";
 import { checkIfNoteRevisionIsReviewed, createNoteRevision, getLatestNoteRevision, getNoteRevisionByNoteId, getNoteRevisionDate } from "./noteRevisions";
 import { createQuestion } from './questions';
 import { formatDate } from "./date";
@@ -270,5 +270,5 @@ export async function deleteAllUnusedNoteRevisionFiles() {
  * A valid note is any note that is not under the plugin's generated folders, e.g. revisions and questions
  */
 export function isValidNotePath(filePath: string) {
-    return !filePath.startsWith(NOTE_FOLDER_PATH) && !filePath.startsWith(QUESTION_FOLDER_PATH)
+    return !filePath.startsWith(NOTE_REVISION_FOLDER_PATH) && !filePath.startsWith(QUESTION_FOLDER_PATH)
 }
