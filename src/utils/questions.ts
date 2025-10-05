@@ -43,7 +43,12 @@ export async function getAllQuestionsByTags(tags: Set<string>): Promise<QuizQues
         const qnasWithFilePath: QuizQuestion[] = qnas.map((qna) => convertQnaPairToQuizQuestion(noteId, note, qna))
         questions.push(...qnasWithFilePath)
     }
-    return questions
+    // Now, deduplicate the questions
+    const uniqueQuestions = new Map<string, QuizQuestion>();
+    for (const question of questions) {
+        uniqueQuestions.set(question.id ?? "", question);
+    }
+    return Array.from(uniqueQuestions.values());
 }
 
 export function convertQnaPairToQuizQuestion(noteId: string, noteFile: TFile, quizQuestion: QuestionAnswerPair): QuizQuestion {
