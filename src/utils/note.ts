@@ -153,7 +153,8 @@ export async function convertToNote(vault: Vault, file: TFile) {
         id: noteId,
         reviewLink: formattedReviewLink,
         questionsLink: formattedQuestionLink,
-        tags: []
+        // TODO: Commenting so it doesn't nuke existing tags. Why was it added in the first place?
+        // tags: []
     }
     await addMetadataToNote(vault, file, metadata);
 }
