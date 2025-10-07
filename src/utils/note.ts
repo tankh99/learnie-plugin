@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { deleteFile, modifyFrontmatter, NOTE_REVISION_FOLDER_PATH, QUESTION_FOLDER_PATH, readFileContent, readFrontmatter } from "./file";
 import { checkIfNoteRevisionIsReviewed, createNoteRevision, getLatestNoteRevision, getNoteRevisionByNoteId, getNoteRevisionDate } from "./noteRevisions";
 import { createQuestion } from './questions';
-import { formatDate } from "./date";
 
 export const idMarker = "---"
 
@@ -149,11 +148,14 @@ export async function convertToNote(vault: Vault, file: TFile) {
     const formattedReviewLink = `obsidian://${Commands.SHOW_DIFF}`
     const formattedQuestionLink = `obsidian://${Commands.VIEW_QUESTIONS}?file=${encodeURIComponent(questionFile.path)}`
 
+    const frontmatter = readFrontmatter(file);
+    const existingTags = frontmatter && frontmatter.tags ? frontmatter.tags : [];
+
     const metadata: NoteMetadata = {
         id: noteId,
         reviewLink: formattedReviewLink,
         questionsLink: formattedQuestionLink,
-        tags: []
+        tags: existingTags
     }
     await addMetadataToNote(vault, file, metadata);
 }
