@@ -102,11 +102,13 @@ We use the frontmatter to store important details like a note's id, whether it's
 ---
 
 ## Planned Enhancements
-
+- [ ] Fix LaTeX and markdown rendering in note revisions and questions
+- [ ] Create a local LLM vector search function for notes and questions
 
 ## (Really) Future Enhancements
 - [ ] Create questions with context
 	- [ ] Users can create multiple questions for the same context
+ 
 
 ## Completed features
 - [x] Fix bug where text is deleted after being idle on an active note for a some time
