@@ -1,5 +1,5 @@
 import { ItemView, Notice, TFile, ViewStateResult, WorkspaceLeaf } from 'obsidian';
-import { getFile, QUESTION_FOLDER_PATH } from "src/utils/file";
+import { QUESTION_FOLDER_PATH } from "src/utils/file";
 import { readFrontmatter } from '../utils/file';
 import { QuestionAnswerPair } from 'src/types/types';
 import { renderMarkdown } from 'src/utils/md-utils';
@@ -102,7 +102,9 @@ export class QuestionsView extends ItemView {
                 const listItem = listEl.createEl('li');
                 const detailsEl = listItem.createEl('details');
 
-                detailsEl.createEl('summary', { text: `${qna.question}` });
+                const question = await renderMarkdown(qna.question, noteQna.filePath, this);
+                const summaryEl = detailsEl.createEl('summary', { cls: "learnie-question-summary" });
+                summaryEl.innerHTML = question;
 
                 const ans = await renderMarkdown(qna.answer, noteQna.filePath, this);
                 const answerelem = detailsEl.createEl('div');

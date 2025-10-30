@@ -40,3 +40,7 @@
 .modal-button-container > .setting-item {
     padding: 0px;
 }
+
+.learnie-question-summary > p {
+    display: inline;
+}
