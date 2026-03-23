@@ -33,4 +33,5 @@ export type LearnieSettings = {
 	enableNotification: boolean;
 	notificationTime: string;
     numQuizQuestions: number;
+    aiModel: string;
 };

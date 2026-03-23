@@ -1,12 +1,12 @@
-import { MarkdownView, Plugin } from 'obsidian';
+import { MarkdownView, Notice, Plugin } from 'obsidian';
 import { CreateQuestionAnswerModal } from 'src/modals/create-qna-modal';
 import { activateChangedNotesView, activateDiffView, activateQuestionsView } from 'src/views';
 import { convertToNote, deleteAllUnusedNoteRevisionFiles as deleteAllUnusedGeneratedFiles, isValidNotePath, readNoteId } from '../utils/note';
 import { getLatestNoteRevision, migrateNoteRevisions } from 'src/utils/noteRevisions';
 import { UpdateQuestionAnswerModal } from 'src/modals/update-qna-modal';
 import { readFrontmatter } from 'src/utils/file';
-import { getQuestionFile, migrateQuestions } from 'src/utils/questions';
-
+import { addQuestion, getQuestionFile, migrateQuestions } from 'src/utils/questions';
+import { aiService } from 'src/utils/ai';
 
 export enum Commands {
     REVIEW = "review-notes",
@@ -18,6 +18,7 @@ export enum Commands {
     VIEW_NOTE_QUESTIONS = "view-note-question",
     UPDATE_QUESTIONS = "update-questions",
     MIGRATE_NOTE_REVISIONS = "migrate-note-revisions",
+    GENERATE_QUESTIONS_AI = "generate-questions-ai",
     TEST = "test"
 
 }
@@ -141,6 +142,53 @@ export function addCommands(plugin: Plugin) {
         name: "Migrate Legacy Note Revisions",
         callback: async () => {
             await migrateNoteRevisions()
+        }
+    })
+
+    plugin.addCommand({
+        id: Commands.GENERATE_QUESTIONS_AI,
+        name: "Generate Quiz Questions with Local AI",
+        checkCallback: (checking) => {
+            const file = plugin.app.workspace.getActiveFile();
+            if (!file) return false;
+            
+            const validNotePath = isValidNotePath(file.path);
+            if (!validNotePath) return false;
+
+            if (!checking) {
+                if (!aiService.isReady()) {
+                    new Notice("Please initialize the AI Engine in settings first.");
+                    return true;
+                }
+
+                readNoteId(plugin.app.vault, file).then(async (noteId) => {
+                    if (!noteId) {
+                        new Notice("Could not find note ID.");
+                        return;
+                    }
+
+                    new Notice("Generating questions with Local AI...");
+                    try {
+                        const content = await plugin.app.vault.read(file);
+                        const questions = await aiService.generateQuestions(content);
+                        
+                        if (questions.length === 0) {
+                            new Notice("AI did not generate any questions.");
+                            return;
+                        }
+
+                        for (const q of questions) {
+                            await addQuestion(noteId, file, q.question, q.answer);
+                        }
+                        
+                        new Notice(`Successfully generated and added ${questions.length} questions!`);
+                    } catch (error) {
+                        console.error("Failed to generate questions:", error);
+                        new Notice("Failed to generate questions. Check console for details.");
+                    }
+                });
+            }
+            return true;
         }
     })
 

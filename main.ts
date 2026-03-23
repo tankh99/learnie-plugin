@@ -6,11 +6,13 @@ import "./styles.css";
 import { registerRibbonIcons } from 'src/ribbon-icons';
 import { notificationTimeoutId, scheduleDailyNotification } from 'src/utils/notifications';
 import { LearnieSettings } from 'src/types/types';
+import { aiService } from 'src/utils/ai';
 
 const DEFAULT_SETTINGS: LearnieSettings = {
 	enableNotification: false,
 	notificationTime: "20:00",
 	numQuizQuestions: 10,
+	aiModel: "Phi-3-mini-4k-instruct-q4f16_1-MLC",
 }
 
 export default class Learnie extends Plugin {
@@ -164,5 +166,51 @@ class LearnieSettingTab extends PluginSettingTab {
 					}));
 		}
 
+		containerEl.createEl("h2", {text: "Local AI Settings"});
+
+		new Setting(containerEl)
+			.setName('AI Model')
+			.setDesc('Select the local AI model to use for generating questions.')
+			.addDropdown(dropdown => dropdown
+				.addOption('Phi-3-mini-4k-instruct-q4f16_1-MLC', 'Phi-3 Mini (Small, Fast)')
+				.addOption('Llama-3-8B-Instruct-q4f32_1-MLC', 'Llama 3 8B (Larger, Slower)')
+				.addOption('gemma-2-8b-it-q4f32_1-MLC', 'Gemma 2 8B')
+				.setValue(this.plugin.settings.aiModel)
+				.onChange(async (value) => {
+					this.plugin.settings.aiModel = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		const progressEl = containerEl.createEl("div", { text: "" });
+		progressEl.style.marginTop = "10px";
+		progressEl.style.fontSize = "0.9em";
+		progressEl.style.color = "var(--text-muted)";
+
+		new Setting(containerEl)
+			.setName('Initialize AI Engine')
+			.setDesc('Download and load the selected model into memory. This may take a while the first time.')
+			.addButton(button => button
+				.setButtonText('Load Model')
+				.onClick(async () => {
+					button.setDisabled(true);
+					button.setButtonText('Loading...');
+					progressEl.setText("Initializing...");
+
+					const success = await aiService.initialize(this.plugin.settings.aiModel, (progress) => {
+						progressEl.setText(progress.text);
+					});
+
+					if (success) {
+						new Notice("AI Engine initialized successfully!");
+						progressEl.setText("AI Engine is ready.");
+						button.setButtonText('Model Loaded');
+					} else {
+						progressEl.setText("Failed to initialize AI Engine.");
+						button.setDisabled(false);
+						button.setButtonText('Load Model');
+					}
+				})
+			);
 	}
 }
