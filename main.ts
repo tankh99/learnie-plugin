@@ -172,9 +172,14 @@ class LearnieSettingTab extends PluginSettingTab {
 			.setName('AI Model')
 			.setDesc('Select the local AI model to use for generating questions.')
 			.addDropdown(dropdown => dropdown
-				.addOption('Phi-3-mini-4k-instruct-q4f16_1-MLC', 'Phi-3 Mini 4B')
-				.addOption('Llama-3-8B-Instruct-q4f32_1-MLC', 'Llama 3 8B')
-				.addOption('gemma-2-8b-it-q4f32_1-MLC', 'Gemma 2 8B')
+				.addOption('Phi-3.5-mini-instruct-q4f32_1-MLC', 'Phi-3.5 Mini Instruct')
+				.addOption('DeepSeek-R1-Distill-Qwen-7B-q4f16_1-MLC', 'Deepseek-R1 (Qwen-7B Distill)')
+				.addOption('WizardMath-7B-V1.1-q4f16_1-MLC', 'WziardMath-7B')
+				.addOption('gemma-2-2b-it-q4f32_1-MLC-1k', 'Gemma2-2B')
+				.addOption('gemma-2-9b-it-q4f16_1-MLC', 'Gemma2-9B')
+				.addOption('Qwen3-1.7B-q4f32_1-MLC', 'Qwen3-1.7B')
+				.addOption('Qwen3-4B-q4f16_1-MLC', 'Qwen3-4B')
+				.addOption('Qwen3-8B-q4f32_1-MLC', 'Qwen3-8B')
 				.setValue(this.plugin.settings.aiModel)
 				.onChange(async (value) => {
 					this.plugin.settings.aiModel = value;
