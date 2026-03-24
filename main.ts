@@ -172,8 +172,8 @@ class LearnieSettingTab extends PluginSettingTab {
 			.setName('AI Model')
 			.setDesc('Select the local AI model to use for generating questions.')
 			.addDropdown(dropdown => dropdown
-				.addOption('Phi-3-mini-4k-instruct-q4f16_1-MLC', 'Phi-3 Mini (Small, Fast)')
-				.addOption('Llama-3-8B-Instruct-q4f32_1-MLC', 'Llama 3 8B (Larger, Slower)')
+				.addOption('Phi-3-mini-4k-instruct-q4f16_1-MLC', 'Phi-3 Mini 4B')
+				.addOption('Llama-3-8B-Instruct-q4f32_1-MLC', 'Llama 3 8B')
 				.addOption('gemma-2-8b-it-q4f32_1-MLC', 'Gemma 2 8B')
 				.setValue(this.plugin.settings.aiModel)
 				.onChange(async (value) => {

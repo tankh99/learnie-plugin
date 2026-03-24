@@ -30,7 +30,7 @@ export function registerRibbonIcons(plugin: Plugin) {
         new QuizModal(plugin.app, tags).open()
     })
 
-    plugin.addRibbonIcon("sparkles", "Generate Quiz Questions with Local AI", async () => {
+    plugin.addRibbonIcon("sparkles", "Auto-Generate Quiz Questions", async () => {
         const file = plugin.app.workspace.getActiveFile();
         if (!file) {
             new Notice("Please open a note first.");
@@ -54,7 +54,7 @@ export function registerRibbonIcons(plugin: Plugin) {
             return;
         }
 
-        new Notice("Generating questions with Local AI...");
+        new Notice("Generating questions, please wait...");
         try {
             const content = await plugin.app.vault.read(file);
             const questions = await aiService.generateQuestions(content);
