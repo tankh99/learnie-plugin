@@ -97,7 +97,6 @@ export type DiffMarkdownState = {
 export class DiffView extends ItemView {
 
     root: Root | null = null
-    app: App;
     file: TFile | undefined = undefined;
 
     constructor(leaf: WorkspaceLeaf, file?: TFile) {
